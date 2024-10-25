@@ -22,7 +22,7 @@
       "imports": []
     },
     "src/utils/misc.js": {
-      "bytes": 10201,
+      "bytes": 10202,
       "imports": [
         {
           "path": "src/utils/attrs.js",
@@ -699,7 +699,7 @@
           "bytesInOutput": 248
         },
         "src/utils/misc.js": {
-          "bytesInOutput": 2867
+          "bytesInOutput": 2868
         },
         "src/utils/attrs.js": {
           "bytesInOutput": 878
@@ -792,7 +792,7 @@
           "bytesInOutput": 5
         }
       },
-      "bytes": 35382
+      "bytes": 35383
     }
   }
 }

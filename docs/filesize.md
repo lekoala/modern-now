@@ -1,7 +1,7 @@
 
   modern-now.min.js  34.6kb
 
-Done in 35ms
+Done in 6ms
 
   modern-now.min.js                               34.6kb  100.0%
    ├ src/tooltip.js                                3.5kb   10.0%
