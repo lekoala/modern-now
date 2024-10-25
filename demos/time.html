@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../modern-now.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+        <h2>Time</h2>
+
+        <h3>Intro</h3>
+
+        <p>Inspired by <a href="https://shoelace.style/components/format-date" target="_blank">shoelace</a> but usable on regular
+            <code>time</code> elements with a <code>datetime</code> attribute.
+        </p>
+
+        <p>The <code>datetime</code> attribute is observed and changing it will render the tag again.</p>
+
+
+        <h3>Demos</h3>
+
+        <p><code>lang</code> is supported.</p>
+
+        <p>
+            Date time in german : <time lang="de" datetime="2024-06-07 20:00"></time>
+            <br />Date time in german (long date, short time) : <time lang="de" datetime="2024-06-07 20:00" data-date-style="long" data-time-style="short"></time>
+            <br />Date time in german (long date, short time using config) : <time lang="de" datetime="2024-06-07 20:00" data-datetime-config="dateStyle:'long',timeStyle:'short'"></time>
+        </p>
+
+        <p>Use default locale if not specified. Specify formats using <code>data-year</code>, <code>data-month</code> or
+            <code>data-style</code></p>
+
+        <p>Date in current locale : <time datetime="2024-06-07"></time>
+            <br />Date (y) in current locale : <time datetime="2024" data-year="numeric"></time>
+            <br />Date (Y-m) in current locale : <time datetime="2024-06" data-year="numeric" data-month="numeric"></time>
+            <br />Date in german : <time lang="de" datetime="2024-06-07"></time>
+            <br />Date in german : <time lang="de" datetime="2024-06-07" data-style="long"></time>
+        </p>
+
+        <p>Use 24h format with <code>data-hour12="false"</code></p>
+        <p>Time in current locale : <time datetime="20:00"></time>
+            <br />Time in current locale 24h : <time datetime="20:00" data-hour12="false"></time>
+            <br />Time in current locale 24h with incompatible option: <time datetime="20:00" data-hour12="false" data-hour="numeric"></time>
+            <br />Time in german : <time lang="de" datetime="20:00"></time>
+            <br />Time in german : <time lang="de" datetime="20:00" data-style="long"></time>
+        </p>
+
+        <p>Use <code>data-relative</code> for relative time.</p>
+        <p>
+            Relative time: <time datetime="2024-06-07 20:00" data-relative></time>
+            <br />Relative time in german: <time lang="de" datetime="2024-06-07 20:00" data-relative></time>
+        </p>
+
+        <p>If a value is provided (eg: server side value) nothing will happen unless <code>data-render</code> is used</p>
+        <p>
+            Server time: <time datetime="2024-06-07">07/06/2024 (from server)</time>
+            <br /> Server time: <time datetime="2024-06-07" data-render="true">07/06/2024 (from server)</time>
+        </p>
+    </main>
+
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>

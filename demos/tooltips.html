@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../modern-now.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <script type="module">
+        document.getElementById('add').addEventListener('click', () => {
+            let tt = document.createElement('button');
+            tt.dataset.tooltip = "";
+            tt.title = "my tooltip for dynamic";
+            tt.innerText = "my dynamic button with a tooltip";
+            tt.classList.add('dynamic');
+
+            document.getElementById('target').appendChild(tt);
+        });
+
+        document.getElementById('rm').addEventListener('click', () => {
+            const btn = document.querySelector('button.dynamic');
+            if (btn) {
+                btn.remove();
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+        <h2>Tooltips</h2>
+
+        <h3>Introduction</h3>
+
+        <p>Simply add a <code>data-tooltip</code> and you are good to go! Tooltips have built-in styles and are customizable with css
+            variables.</p>
+
+        <p>Adjust placement with <code>data-tooltip-placement</code> or directly in <code>data-tooltip</code> as a shortcut.</p>
+
+        <p>Tooltips can also target a specific div using <code>data-tooltip-target</code> or a the second parameter of
+            <code>data-tooltip</code>.
+        </p>
+
+        <p>Tooltips can act as popovers and trigger on click instead with <code>data-tooltip-click</code></p>
+
+        <h3>Demo</h3>
+
+        <p>Nostrud deserunt culpa aliqua mollit sit ex mollit irure incididunt non anim. Anim aliquip ullamco
+            dolor anim Lorem
+            deserunt <a href="#" data-tooltip title="Some tooltip">i have a tooltip</a> consectetur consectetur aliquip voluptate. Esse
+            incididunt adipisicing irure ipsum enim quis fugiat animated <a href="#" data-tooltip="bottom"
+                title="I'm at the bottom with a very long content but still max 40ch">a bottom tootlip</a>. I have a <a href="#"
+                data-tooltip="placement: 'top', target:'tt-target'">specific target</a>. I'm a <a href="#popover-target" data-tooltip="placement:'right'" data-tooltip-click
+                data-tooltip-distance="12px">popover target that triggers on click</a>.</p>
+
+        <div id="tt-target" hidden>I'm a custom target</div>
+        <div id="popover-target" hidden>I'm a popover target that<br />flips to right or left<br /> depending on the available space</div>
+
+        <hr>
+
+        <button data-tooltip data-tooltip-click title="In a button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle"
+                viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
+            </svg>
+            I'm a button with a popover. The svg icon doesn't break the tooltip</button>
+
+        <hr>
+
+        <button id="add">Add a tooltip dynamically</button>
+        <button id="rm">Remove button and see cleanup</button>
+
+        <div id="target"></div>
+    </main>
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>

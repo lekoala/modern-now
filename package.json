@@ -1,0 +1,35 @@
+{
+  "name": "modern-now",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "HTML as it should be",
+  "keywords": [
+    "DOM",
+    "dialog",
+    "es6"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lekoala/modern-now"
+  },
+  "main": "modern-now.js",
+  "author": "LeKoala",
+  "license": "MIT",
+  "scripts": {
+    "test": "bun test --preload ./tests/setup.js",
+    "test-watch": "bun run test -- --watch",
+    "build": "esbuild --bundle --minify --format=esm modern-now.js --target=safari11.1,chrome63 --outfile=modern-now.min.js",
+    "build-meta": "esbuild --bundle --minify --format=esm modern-now.js --target=safari11.1,chrome63 --outfile=modern-now.min.js --metafile=meta.json --analyze 2> ./docs/filesize.md",
+    "start": "bun run build -- --servedir=.",
+    "watch": "bun run build -- --watch",
+    "test-server": "bun run ./bin/test-server.js",
+    "lint-fix": "bunx biome lint --write ./src"
+  },
+  "dependencies": {
+    "nonchalance": "^0.5.0"
+  },
+  "devDependencies": {
+    "@happy-dom/global-registrator": "^14.12.3",
+    "@types/bun": "^1.1.11"
+  }
+}

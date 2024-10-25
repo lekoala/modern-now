@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../modern-now.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+        #customtooltip {
+            max-width: 200px;
+        }
+
+        .form-control {
+            position: relative;
+            width: fit-content;
+        }
+
+        .form-password>input {
+            padding-inline-end: 2rem;
+        }
+
+        .form-password .eye {
+            position: absolute;
+            inset-block-end: 0;
+            inset-inline-end: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        .form-password .eye input {
+            margin: 0;
+        }
+
+        .form-password .eye span {
+            display: none;
+        }
+
+        .invalid-feedback {
+            display: none;
+            font-size: 0.8em;
+            color: var(--code);
+            margin-bottom: 0.5em;
+        }
+
+        :invalid+.invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+
+        <h2>Inputs</h2>
+
+        <h3>Intro</h3>
+
+        <p>Improve your forms with simple, yet powerful, elements</p>
+
+        <h3>Autogrowing textareas</h3>
+
+        <p>Add <code>data-autogrow</code> to your textarea. Add <code>data-trim</code> to trim value automatically</p>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-autogrow">Textarea autogrow</label>
+                <textarea id="input-autogrow" name="autogrow" data-autogrow></textarea>
+            </div>
+            <div>
+                <label for="input-autogrow_trim">Textarea autogrow + trim</label>
+                <textarea id="input-autogrow_trim" name="autogrow" data-autogrow data-trim></textarea>
+            </div>
+        </form>
+
+        <h3>Toggle Password</h3>
+
+        <p>Add <code>data-password</code> on a checkbox to toggle its corresponding field.</p>
+
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <input type="text" placeholder="username" autocomplete="username">
+            <input type="password" id="password" placeholder="password" autocomplete="new-password">
+            <label><input type="checkbox" data-password="password"> Show password</label>
+        </form>
+        <hr>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div class="form-control">
+                <input type="text" placeholder="username2" autocomplete="username">
+            </div>
+            <div class="form-control form-password">
+                <input type="password" id="password2" placeholder="password" autocomplete="new-password">
+                <label class="eye"><input type="checkbox" data-password="password2" data-tooltip title="Show password"> <span>Show
+                        password</span></label>
+            </div>
+        </form>
+
+        <h3>Toggle checkboxes</h3>
+
+        <p>Tick a checkbox to show new options! Set <code>data-toggle="id_of_fieldset"</code>. Clear values when hiding by setting
+            <code>data-toggle-clear</code>.
+        </p>
+
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <label><input type="checkbox" data-toggle="advanced-options" data-toggle-clear> Enable advanced potions</label>
+            <fieldset id="advanced-options" hidden>
+                <label for="input-autogrow2">Textarea autogrow</label>
+                <textarea id="input-autogrow2" name="autogrow" data-autogrow></textarea>
+            </fieldset>
+        </form>
+
+        <h3>Limited inputs</h3>
+
+        <p>Limit what can be set in the input with <code>data-limited</code>. You can specify multiple limitators using |.</p>
+
+        <p>Limit to lowercase with <code>lower</code> or to uppercase with <code>upper</code>. Entered characters are transformed as needed.
+        </p>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-lower">Limited lowercase</label>
+                <input type="text" id="input-lower" name="lower" data-limited="lower">
+            </div>
+            <div>
+                <label for="input-upper">Limited uppercase</label>
+                <input type="text" id="input-upper" name="upper" data-limited="upper">
+            </div>
+        </form>
+
+        <p>Limit to numerical values with <code>numeric</code>. Can be useful when you want to have a type=text (for example, when you allow
+            values like 01) or to alpha values with <code>alpha</code></p>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-numeric">Limited numeric (dots are allowed for decimals, and comma are converted automatically)</label>
+                <input type="text" id="input-numeric" name="numeric" data-limited="numeric">
+            </div>
+            <div>
+                <label for="input-int">Limited int</label>
+                <input type="text" id="input-int" name="int" data-limited="int">
+            </div>
+            <div>
+                <label for="input-alpha">Limited alpha (a-z A-Z)</label>
+                <input type="text" id="input-alpha" name="alpha" data-limited="alpha">
+            </div>
+            <div>
+                <label for="input-chars">Limited chars (any valid, no numbers or symbols)</label>
+                <input type="text" id="input-chars" name="chars" data-limited="chars">
+            </div>
+        </form>
+
+        <p>Limit to a character range using <code>regex</code>. Any regex expression is valid.</p>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-regex">Limited custom regex (type only azerty chars range)</label>
+                <input type="text" id="input-regex" name="regex" data-limited="regex" data-regex="azerty">
+            </div>
+        </form>
+
+        <p>Limit to a given mask using <code>mask</code>. Use <code>0-9</code> for numbers, <code>a</code> for letters and <code>*</code>
+            for
+            any. Others characters are added automatically.</p>
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-placeholder">Limited based on mask. Try to paste a value like 10:00 or 10/00.</label>
+
+                <!-- this is by no means an attempt to be able to really set a time expression, it's just a basic mask. 24:69 would not be a valid time -->
+                <input type="text" id="input-placeholder" name="placeholder" data-limited="mask" data-mask="99:99" placeholder="HH:mm"
+                    size="5">
+                <p><small>For a more robust solution, use <a href="https://formidable-elements.vercel.app/demo/input-mask.html"
+                            target="_blank">input-mask</a></small>
+                </p>
+
+                <label for="input-placeholder2">Limited based on mask + uppercase</label>
+                <input type="text" id="input-placeholder2" name="placeholder2" data-limited="mask|upper" data-mask="aaa-999"
+                    placeholder="XYZ-999" size="7">
+
+                <label for="input-tel">Limited tel</label>
+                <input type="tel" id="input-tel" name="tel" data-limited="mask" data-mask="+999999999999999999">
+                <p><small>For a more robust solution, use <a href="https://formidable-elements.vercel.app/demo/tel-input.html"
+                            target="_blank">intl-tel-input</a></small>
+                </p>
+            </div>
+        </form>
+
+        <h3>Bound inputs</h3>
+
+        <p>Add <code>data-to</code> to send content to another element. Can be combined with limited inputs.</p>
+
+        <form method="post" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-bound">Bound with a tooltip to an input that normalize the string to a valid url segment</label>
+                <input type="text" id="input-bound" name="bound" data-to="input-bound2"
+                    data-tooltip="placement: 'left', target:'customtooltip'">
+                <div class="tooltip" id="customtooltip" hidden>
+                    This is a custom input<br />Any value is replicated in the other one
+                </div>
+                <input type="text" id="input-bound2" name="bound2" disabled data-limited="slug">
+            </div>
+
+        </form>
+
+        <h3>File uploads</h3>
+
+        <p>Uploads are great, but dealing with large images is annoying. It's much better to let the browser deal with it. By default,
+            images will fit in a 1920*1920 square. Simply add a <code>data-resize</code> attribute!</p>
+
+        <p>Input files are augmented with the following data attributes:</p>
+
+        <ul>
+            <li><code>data-min-width</code>: min width in pixels. Mark input as :invalid if the file is too small.</li>
+            <li><code>data-min-height</code>: min height in pixels. Mark input as :invalid if the file is too small.</li>
+            <li><code>data-max-width</code>: max width in pixels. Original image ratio is preserved.</li>
+            <li><code>data-max-height</code>: max height in pixels. Original image ratio is preserved.</li>
+            <li><code>data-image-ratio</code>: a ratio (eg: 16:9). Will crop from the center if needed.</li>
+            <li><code>data-quality</code>: image quality (0 to 1, or a two digit value).</li>
+        </ul>
+
+        <p>You can also use the <code>data-resize</code> attribute with a simple config string.</p>
+
+        <form method="post" enctype="multipart/form-data" action="https://vercel-dumper.vercel.app/">
+            <div>
+                <label for="input-file">Upload an image (will fit to in a 100x100 square and keep ratio). Notice the size in bytes when
+                    posting.</label>
+                <input type="file" id="input-file" name="file" accept="image/*" data-resize data-max-width="100" data-max-height="100" />
+
+                <label for="input-file512">Upload an image of at least 512x512.</label>
+                <input type="file" id="input-file512" name="file512" accept="image/*" data-resize="minWidth:512, minHeight:512" />
+                <div class="invalid-feedback">Please upload a file that is at least 512x512</div>
+            </div>
+
+            <button type="submit">Submit!</button>
+        </form>
+    </main>
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>

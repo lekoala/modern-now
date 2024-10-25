@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../modern-now.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+        /* was-validated is necessary to avoid showing invalid styles on load */
+        .is-invalid,
+        .was-validated :invalid {
+            border-color: var(--code);
+            outline-color: var(--code);
+        }
+
+        .tooltip.tooltip-error {
+            --tooltip-color-start: var(--code);
+            --tooltip-color-end: var(--code);
+        }
+
+        .invalid-feedback {
+            display: none;
+            font-size: 0.8em;
+            color: var(--code);
+            margin-bottom: 0.5em;
+        }
+
+        .is-invalid+.invalid-feedback,
+        .was-validated :invalid+.invalid-feedback {
+            display: block;
+        }
+    </style>
+    <style>
+        @keyframes slideDownFromTop {
+            from {
+                top: -2rem;
+            }
+
+            to {
+                top: 0;
+            }
+        }
+
+        @keyframes slideUpToTop {
+            from {
+                top: 0;
+            }
+
+            to {
+                top: -2rem;
+            }
+        }
+
+        [aria-live="assertive"] {
+            position: fixed;
+            inset: unset;
+            border: 0;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 80vw;
+            max-height: 80vh;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            border-radius: 0 0 4px 4px;
+            color: #fff;
+        }
+
+        [aria-live="assertive"]:not(:empty) {
+            padding: .25em 1em;
+            background: var(--code);
+            animation: slideDownFromTop 0.3s;
+        }
+
+        [aria-live="assertive"].is-closing {
+            animation: slideUpToTop 0.3s;
+        }
+    </style>
+
+    <!-- <link href="https://cdn.jsdelivr.net/gh/lekoala/pop-notify/pop-notify.css" rel="stylesheet"> -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/lekoala/pop-notify@1.2.1/pop-notify.min.js"></script> -->
+</head>
+
+<body>
+    <!-- https://www.sarasoueidan.com/blog/accessible-notifications-with-aria-live-regions-part-1/ -->
+    <div aria-live="assertive" data-status popover="manual"></div>
+
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+
+        <h2>Forms</h2>
+
+        <h3>Send forms using ajax</h3>
+
+        <p>Specify <code>data-ajax</code> to send forms in ajax. Notice how the send button is disabled while sending. File uploads work
+            and <code>canvas</code> elements work just fine as well. Configuration can be passed directly inside <code>data-ajax</code>.
+            Some shortcuts as direct data attributes are supported.</p>
+
+        <p>Ajax forms expect either:</p>
+
+        <ul>
+            <li><strong>an html response</strong>: that will be shown in the <code>data-ajax-target</code> element.</li>
+            <li><strong>a json response</strong>: with a message key that will be shown in the <code>data-ajax-target</code> element.</li>
+        </ul>
+
+        <p>You can also set a <code>data-ajax-handler</code> function that will be called (check the logs!).</p>
+
+        <div id="form-target"></div>
+        <form method="post" data-ajax data-ajax-target="this" data-ajax-handler="someHandlerFunction" data-ajax-remove="true"
+            action="https://vercel-dumper.vercel.app/">
+            <input type="text" name="name" value="John">
+            <input type="text" name="surname" value="Smith">
+
+            <canvas id="canvasElem" data-name="canvas" width="100" height="80" style="border:1px solid"></canvas>
+            <script>
+                canvasElem.onmousemove = function (e) {
+                    let ctx = canvasElem.getContext('2d');
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                    ctx.stroke();
+                };
+            </script>
+
+            <input type="file" id="input-file2" name="file2" accept="image/*" data-max-width="100" data-max-height="100" />
+
+            <input type="submit">
+        </form>
+        <script>
+            window['someHandlerFunction'] = function (result, event, form) {
+                console.log(result, event, form);
+            }
+        </script>
+
+        <p>Specify <code>data-ajax-remove</code> to remove right after sending.</p>
+
+        <form method="post" data-ajax data-ajax-remove="true" action="https://vercel-dumper.vercel.app/">
+            <input type="text" name="name" value="John">
+            <input type="text" name="surname" value="Smith">
+            <input type="submit">
+        </form>
+
+        <p>Specify <code>data-ajax-reset</code> to reset fields after sending (to their initial values). Targets status window.</p>
+
+        <form method="post" data-ajax="reset:true,target:'status'" action="https://vercel-dumper.vercel.app/">
+            <input type="text" name="name" value="Init">
+            <input type="text" name="surname" value="">
+            <input type="submit">
+        </form>
+
+        <p>Specify <code>data-ajax-clear</code> to clear fields after sending (even if they had initial values).</p>
+
+        <form method="post" data-ajax data-ajax-clear="true" action="https://vercel-dumper.vercel.app/">
+            <input type="text" name="name" value="John">
+            <input type="text" name="surname" value="Smith">
+            <input type="submit">
+        </form>
+
+        <h3>Form validation</h3>
+
+        <p>Form validation made easy. Add <code>data-validate</code> to override native html validation with custom messages and layout.</p>
+
+        <p>Use built in html 5 validators like required, minlength & maxlength, min and max, type, pattern or any of the custom ones in
+            <code>data-validate-xxx</code>.
+        </p>
+
+        <ul>
+            <li>same</li>
+            <li>number</li>
+            <li>digits</li>
+            <li>alnum</li>
+        </ul>
+
+        <p>Set a custom message with <code>data-validate-message</code> on the form that will be seen as ephemeral text in a div matching <code>data-status</code> key.</p>
+        <p>To show validation message, use css to show/hide validation message as needed.</p>
+        <p>You can also use tooltips on fields with <code>data-validate-tooltip</code>. Otherwise, works as a regular tooltip.</p>
+
+        <p>Notice how validation happen on blur if invalid.</p>
+
+        <form method="post" data-validate="message: 'Please fix the errors'" action="https://vercel-dumper.vercel.app/">
+
+            <div>
+                <input type="text" name="firstname" placeholder="first name" value="" required>
+                <div class="invalid-feedback">Please enter your firstname.</div>
+
+            </div>
+
+            <div>
+                <input type="text" name="surname" placeholder="surname" value="" required>
+                <div class="invalid-feedback">Please enter your surname.</div>
+            </div>
+
+
+            <div>
+                <input type="email" name="email" placeholder="email (tooltip validation)" value="" required data-tooltip data-tooltip-class="tooltip-error"
+                    title="Enter a valid email" data-validate-tooltip>
+            </div>
+
+            <hr>
+
+            <input type="text" id="my-input" placeholder="enter text" required>
+            <input type="text" id="my-input-copy" placeholder="enter the same text" required data-validate-same="#my-input">
+
+            <hr>
+
+            <input type="text" data-validate-number="" placeholder="Numbers only">
+            <input type="text" data-validate-digits="" placeholder="Digits only">
+            <input type="text" data-validate-alnum="" placeholder="Alnum only">
+
+            <hr>
+
+            <p>Accordion (or any parent really) also get the <code>is-invalid</code> class if the field is hidden to help the user.</p>
+            <div class="accordion">
+                <details>
+                    <summary>Advanced options with required field</summary>
+                    <input type="text" name="special" placeholder="enter special values" value="" required>
+                </details>
+            </div>
+
+            <hr>
+            <input type="submit">
+        </form>
+
+        <p>Server side based validation, expect a 200/400 combo or a json response.
+            Check how action name or <code>formaction</code> attributes are handled properly, even when navigating back from the results
+            page.</p>
+
+        <form method="post" data-validate="message: 'Please fix the errors'" action="https://vercel-dumper.vercel.app/">
+
+            <input type="text" name="input1" data-validate-ajax="url: 'http://localhost:3000/validate'" data-validate-trigger="input,blur"
+                placeholder="enter a 5 chars string" required>
+            <input type="text" name="input2" data-validate-ajax="url: 'http://localhost:3000/validate_json'"
+                data-validate-trigger="input,blur" placeholder="enter a 5 chars string" required>
+            <br />
+            <input type="submit" name="action_1" value="action 1">
+            <input type="submit" name="action_2" value="action 2" formaction="https://vercel-dumper.vercel.app/?testformaction">
+            <button type="submit" name="action_3">action 3</button>
+        </form>
+
+    </main>
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,798 @@
+{
+  "inputs": {
+    "node_modules/qsa-observer/esm.js": {
+      "bytes": 1399,
+      "imports": []
+    },
+    "src/utils/events.js": {
+      "bytes": 3529,
+      "imports": [
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/utils/query.js": {
+      "bytes": 1093,
+      "imports": []
+    },
+    "src/utils/str.js": {
+      "bytes": 1340,
+      "imports": []
+    },
+    "src/utils/misc.js": {
+      "bytes": 10201,
+      "imports": [
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/str.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/utils/attrs.js": {
+      "bytes": 4653,
+      "imports": [
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/utils/map.js": {
+      "bytes": 468,
+      "imports": []
+    },
+    "src/utils/lazy.js": {
+      "bytes": 745,
+      "imports": [
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/dynamicBehaviour.js": {
+      "bytes": 1912,
+      "imports": [
+        {
+          "path": "node_modules/qsa-observer/esm.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/lazy.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/addDialogPolyfill.js": {
+      "bytes": 1536,
+      "imports": [
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/behaviour.js": {
+      "bytes": 1147,
+      "imports": [
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "node_modules/custom-function/esm/factory.js": {
+      "bytes": 651,
+      "imports": []
+    },
+    "node_modules/nonchalance/esm/upgrade.js": {
+      "bytes": 3001,
+      "imports": []
+    },
+    "node_modules/nonchalance/esm/ce.js": {
+      "bytes": 11566,
+      "imports": [
+        {
+          "path": "node_modules/custom-function/esm/factory.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/upgrade.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "node_modules/element-notifier/esm/index.js": {
+      "bytes": 1705,
+      "imports": []
+    },
+    "node_modules/qsa-observer/esm/index.js": {
+      "bytes": 2089,
+      "imports": [
+        {
+          "path": "node_modules/element-notifier/esm/index.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "node_modules/nonchalance/esm/selector.js": {
+      "bytes": 539,
+      "imports": [
+        {
+          "path": "node_modules/qsa-observer/esm/index.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/button-dialog.js": {
+      "bytes": 3773,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/button-toggle.js": {
+      "bytes": 1792,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/utils/floating.js": {
+      "bytes": 10698,
+      "imports": [
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/button-dropdown.js": {
+      "bytes": 3836,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/floating.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/input.js": {
+      "bytes": 4304,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/str.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/input-file.js": {
+      "bytes": 7490,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/input-toggle.js": {
+      "bytes": 1522,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/input-password.js": {
+      "bytes": 677,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/FormValidator.js": {
+      "bytes": 8528,
+      "imports": [
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/str.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/form.js": {
+      "bytes": 8099,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/FormValidator.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/textarea-autogrow.js": {
+      "bytes": 1143,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/utils/date.js": {
+      "bytes": 5095,
+      "imports": []
+    },
+    "src/time-datetime.js": {
+      "bytes": 4140,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/date.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/span-number.js": {
+      "bytes": 1976,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/mark-animated.js": {
+      "bytes": 1961,
+      "imports": [
+        {
+          "path": "node_modules/nonchalance/esm/ce.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/nonchalance/esm/selector.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/lazy.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/tooltip.js": {
+      "bytes": 7688,
+      "imports": [
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/floating.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/htmx.js": {
+      "bytes": 5619,
+      "imports": [
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/date.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "modern-now.js": {
+      "bytes": 706,
+      "imports": [
+        {
+          "path": "src/addDialogPolyfill.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/behaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/button-dialog.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/button-toggle.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/button-dropdown.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/input.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/input-file.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/input-toggle.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/input-password.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/form.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/textarea-autogrow.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/time-datetime.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/span-number.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/mark-animated.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/tooltip.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/htmx.js",
+          "kind": "import-statement"
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "modern-now.min.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "modern-now.js",
+      "inputs": {
+        "node_modules/qsa-observer/esm.js": {
+          "bytesInOutput": 1339
+        },
+        "src/utils/events.js": {
+          "bytesInOutput": 723
+        },
+        "src/utils/query.js": {
+          "bytesInOutput": 190
+        },
+        "src/utils/str.js": {
+          "bytesInOutput": 248
+        },
+        "src/utils/misc.js": {
+          "bytesInOutput": 2867
+        },
+        "src/utils/attrs.js": {
+          "bytesInOutput": 878
+        },
+        "src/utils/map.js": {
+          "bytesInOutput": 93
+        },
+        "src/utils/lazy.js": {
+          "bytesInOutput": 233
+        },
+        "src/dynamicBehaviour.js": {
+          "bytesInOutput": 274
+        },
+        "src/addDialogPolyfill.js": {
+          "bytesInOutput": 586
+        },
+        "src/behaviour.js": {
+          "bytesInOutput": 266
+        },
+        "node_modules/custom-function/esm/factory.js": {
+          "bytesInOutput": 119
+        },
+        "node_modules/nonchalance/esm/upgrade.js": {
+          "bytesInOutput": 1138
+        },
+        "node_modules/nonchalance/esm/ce.js": {
+          "bytesInOutput": 647
+        },
+        "node_modules/element-notifier/esm/index.js": {
+          "bytesInOutput": 455
+        },
+        "node_modules/qsa-observer/esm/index.js": {
+          "bytesInOutput": 902
+        },
+        "node_modules/nonchalance/esm/selector.js": {
+          "bytesInOutput": 257
+        },
+        "src/button-dialog.js": {
+          "bytesInOutput": 905
+        },
+        "src/button-toggle.js": {
+          "bytesInOutput": 681
+        },
+        "src/utils/floating.js": {
+          "bytesInOutput": 2590
+        },
+        "src/button-dropdown.js": {
+          "bytesInOutput": 1359
+        },
+        "src/input.js": {
+          "bytesInOutput": 1319
+        },
+        "src/input-file.js": {
+          "bytesInOutput": 2111
+        },
+        "src/input-toggle.js": {
+          "bytesInOutput": 528
+        },
+        "src/input-password.js": {
+          "bytesInOutput": 270
+        },
+        "src/FormValidator.js": {
+          "bytesInOutput": 2505
+        },
+        "src/form.js": {
+          "bytesInOutput": 2020
+        },
+        "src/textarea-autogrow.js": {
+          "bytesInOutput": 433
+        },
+        "src/utils/date.js": {
+          "bytesInOutput": 850
+        },
+        "src/time-datetime.js": {
+          "bytesInOutput": 1304
+        },
+        "src/span-number.js": {
+          "bytesInOutput": 717
+        },
+        "src/mark-animated.js": {
+          "bytesInOutput": 1196
+        },
+        "src/tooltip.js": {
+          "bytesInOutput": 3553
+        },
+        "src/htmx.js": {
+          "bytesInOutput": 1533
+        },
+        "modern-now.js": {
+          "bytesInOutput": 5
+        }
+      },
+      "bytes": 35382
+    }
+  }
+}

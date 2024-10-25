@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../modern-now.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+
+    <script type="module">
+        window['myJsFunc'] = function (el, config) {
+            console.log("created", el, config);
+            return () => {
+                console.log('cleanup', el);
+            }
+        }
+        console.log("js func defined");
+
+        document.getElementById('rm').addEventListener('click', () => {
+            let el = document.getElementById('test-node');
+            if (!el) {
+                el = document.querySelector('[data-behaviour]');
+            }
+            if (el) {
+                el.remove();
+            }
+
+        })
+
+        document.getElementById('add').addEventListener('click', () => {
+            const el = document.createElement('div');
+            el.dataset.behaviour = 'myJsFunc';
+            el.innerHTML = "I'm dynamically created";
+            document.getElementById('target').appendChild(el);
+        })
+
+    </script>
+
+    <script type="module">
+        import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/+esm';
+
+        window['countup'] = function (el, config) {
+            var countUp = new CountUp(el, el.dataset.value, config);
+            countUp.start();
+            console.log("start counting!");
+
+            el.addEventListener("dblclick", (ev) => {
+                el.remove();
+            })
+            return () => {
+                console.log('remove count up');
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+        <h2>Behaviour</h2>
+
+        <p>Inspired by my library <a href="https://github.com/lekoala/modular-behaviour.js/">modular behaviour</a>, simply bind js code to
+            html nodes with <code>data-behaviour=name_of_my_func</code>!</p>
+
+        <p>Pass config as json or in <a href="notes.html#simple-config">simple config format</a> in <code>data-behaviour-config</code>.
+            Nodes with <code>data-lazy</code> are initialized when in the viewport.</p>
+
+        <h3>Demo</h3>
+
+        <div class="somenode" data-behaviour="myJsFunc" data-behaviour-config="test: 'value'" id="test-node">Some content here</div>
+
+        <button id="rm">Remove test node to see cleanup</button>
+        <button id="add">Add new node</button>
+
+        <div id="target"></div>
+
+        <h3>Countup demo</h3>
+
+        <span data-behaviour="countup" data-value="2500">0000</span>
+
+        <p>Scroll below to see lazy countup using <code>data-lazy</code>.</p>
+
+        <div style="margin-top:75vh"> <span data-behaviour="countup" data-value="2500" data-lazy>0000</span></div>
+    </main>
+
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>
