@@ -1,20 +1,6 @@
-Dynamically import polyfills to support
+> HTML as it should be
 
-## Popover
-
-Backdrop may not be supported by all browsers. Use a dialog instead if needed.
-
-Sample css for open popovers:
-
-```css
-/* You need two distinct declaration because otherwise an invalid declaration invalidates all rules */
-[popover]:popover-open {
-}
-[popover].\:popover-open {
-}
-```
-
-https://github.com/oddbird/popover-polyfill
+README is work in progress, check the demos
 
 ## Dialog
 
