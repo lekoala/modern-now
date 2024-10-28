@@ -28,4 +28,4 @@ Basically anything supporting module and [dynamic imports](https://caniuse.com/e
 Firefox 67+ (2019-05)
 Chrome 63+ (2017-12)
 Edge 79+ (2020-01)
-Safari 11.1+ (2018-29)
+Safari 12.1+ (2019-03)

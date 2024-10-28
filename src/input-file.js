@@ -151,14 +151,11 @@ define(
                 ctx.drawImage(img, 0, 0, width, height);
             }
 
-            // @link https://caniuse.com/?search=toblob
-            ctx.canvas.toBlob(
-                (blob) => {
-                    this.createProcessedFile(file, blob);
-                },
-                file.type,
-                config.quality,
-            );
+            // @link https://caniuse.com/mdn-api_htmlcanvaselement_toblob
+            const processHandler = (blob) => {
+                this.createProcessedFile(file, blob);
+            };
+            ctx.canvas.toBlob(processHandler, file.type, config.quality);
         }
 
         /**

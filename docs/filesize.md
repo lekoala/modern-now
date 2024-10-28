@@ -2,7 +2,7 @@
   dist\full.js    34.6kb
   dist\dialog.js   9.6kb
 
-Done in 7ms
+Done in 13ms
 
   dist/full.js                                    34.6kb  100.0%
    ├ src/tooltip.js                                3.5kb   10.0%
@@ -32,7 +32,7 @@ Done in 7ms
    ├ src/textarea-autogrow.js                      433b     1.2%
    ├ src/dynamicBehaviour.js                       274b     0.8%
    ├ src/input-password.js                         270b     0.8%
-   ├ src/behaviour.js                              266b     0.8%
+   ├ src/behaviour.js                              266b     0.7%
    ├ src/utils/lazy.js                             263b     0.7%
    ├ node_modules/nonchalance/esm/selector.js      257b     0.7%
    ├ src/utils/str.js                              248b     0.7%

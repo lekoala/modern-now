@@ -329,7 +329,7 @@
       ]
     },
     "src/input-file.js": {
-      "bytes": 7490,
+      "bytes": 7488,
       "imports": [
         {
           "path": "node_modules/nonchalance/esm/ce.js",
@@ -829,7 +829,7 @@
           "bytesInOutput": 1319
         },
         "src/input-file.js": {
-          "bytesInOutput": 2111
+          "bytesInOutput": 2119
         },
         "src/input-toggle.js": {
           "bytesInOutput": 528
@@ -868,7 +868,7 @@
           "bytesInOutput": 5
         }
       },
-      "bytes": 35466
+      "bytes": 35474
     }
   }
 }
