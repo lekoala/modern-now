@@ -15,6 +15,6 @@
     "alwaysStrict": true,
     "esModuleInterop": true
   },
-  "include": ["*.js"],
+  "include": ["*.js", "builds/modern-now.js"],
   "exclude": ["node_modules", "./tests/"]
 }
