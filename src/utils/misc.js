@@ -216,7 +216,7 @@ export function clearInputs(elements) {
 export function debounce(fn, timeout = 300) {
     let timer;
     return (...args) => {
-        clearTimeout(timer);
+        clearTo(timer);
         timer = setTimeout(() => {
             timer = undefined;
             fn(...args);
@@ -236,7 +236,7 @@ export function debounceLeading(fn, timeout = 300) {
         if (!timer) {
             fn(...args);
         }
-        clearTimeout(timer);
+        clearTo(timer);
         timer = setTimeout(() => {
             timer = undefined;
         }, timeout);
@@ -354,6 +354,16 @@ export function animationEnabled() {
     );
 }
 
+/**
+ * This simply avoids doing if(to) clearTimeout(to);
+ * @param {*} to
+ */
+export function clearTo(to) {
+    if (to) {
+        clearTimeout(to);
+    }
+}
+
 const timeoutMap = new WeakMap();
 /**
  * Add a temporary text to a node
@@ -366,11 +376,9 @@ const timeoutMap = new WeakMap();
  */
 export function ephemeralText(el, text) {
     const to = timeoutMap.get(el);
-    if (to) {
-        clearTimeout(to);
-    }
+    clearTo(to);
     el.innerHTML = text;
-    if (hasAttr(el, "popover")) {
+    if (hasAttr(el, "popover") && supportsPopover()) {
         el.showPopover();
     }
     timeoutMap.set(
@@ -392,10 +400,11 @@ export function ephemeralText(el, text) {
  */
 export function doWithAnimation(el, cb) {
     const CLOSING_CLASS = "is-closing";
+
     if (animationEnabled()) {
         const styles = getComputedStyle(el);
         // no animation, simply close
-        if (styles.animation.startsWith("none ")) {
+        if (styles.animation.length === 0 || styles.animation.startsWith("none ")) {
             cb();
         } else {
             addClass(el, CLOSING_CLASS);

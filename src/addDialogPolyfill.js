@@ -18,7 +18,7 @@ export default () => {
     const id = "dialog-polyfill";
     addClass(document.documentElement, id);
     // inline and customize css from https://github.com/GoogleChrome/dialog-polyfill/blob/master/dist/dialog-polyfill.css
-    const css = /*css*/ `dialog{position:fixed;left:0;right:0;top:0;bottom:0;width:fit-content;height:fit-content;overflow:auto;max-height:90vh;max-width:90vw}
+    const css = /*css*/ `dialog{position:fixed;left:0;right:0;top:0;bottom:0;width:fit-content;height:fit-content;overflow:auto;max-height:90vh;max-width:90vw;background: white}
 dialog:not([open]){display:none}
 dialog+.backdrop{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop-bg,rgba(0,0,0,.1))}
 ._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}`;

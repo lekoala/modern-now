@@ -130,6 +130,9 @@ export function setAttr(el, name, value = null) {
  * @param {string|Array} name
  */
 export function removeAttr(el, name) {
+    if (!el) {
+        return;
+    }
     const arr = Array.isArray(name) ? name : [name];
     for (const k of arr) {
         el.removeAttribute(k);

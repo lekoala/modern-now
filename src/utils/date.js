@@ -90,7 +90,7 @@ export function asDate(str = null) {
     if (Number.isInteger(str)) {
         return new Date(str);
     }
-    return new Date(expandDateTime(str));
+    return new Date(toIsoDateTime(expandDateTime(str)));
 }
 
 /**
@@ -110,6 +110,16 @@ export function expandDateTime(str) {
         v = `1970-01-01 ${v}`;
     }
     return expandWithFormat(v, "1970-01-01 00:00:00");
+}
+
+/**
+ *
+ * @param {string} str 2024-01-01 00:00:00
+ * @returns {string} 2024-01-01T00:00:00Z
+ */
+export function toIsoDateTime(str) {
+    const s = str.split(" ");
+    return `${s[0]}T${s[1]}Z`;
 }
 
 /**
@@ -230,4 +240,13 @@ export function toTimestamp(date = null) {
         return 0;
     }
     return asDate(date).getTime();
+}
+
+/**
+ * IOS >= 14
+ * @link https://caniuse.com/mdn-javascript_builtins_intl_relativetimeformat
+ * @returns {Boolean}
+ */
+export function supportsRelativeTime() {
+    return Intl.RelativeTimeFormat !== undefined;
 }

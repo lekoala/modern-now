@@ -1,8 +1,19 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
-import { getAttr, getBoolData, getData, getMixedBoolData, hasAttr, hasData } from "./utils/attrs.js";
-import { hasTime, hasDate, asDate, toDate, toDateTime, toTime, dateRanges, expandDateTime } from "./utils/date.js";
-import { simpleConfig } from "./utils/misc.js";
+import { getAttr, getBoolData, getData, getMixedBoolData } from "./utils/attrs.js";
+import {
+    hasTime,
+    hasDate,
+    asDate,
+    toDate,
+    toDateTime,
+    toTime,
+    dateRanges,
+    expandDateTime,
+    toIsoDateTime,
+    supportsRelativeTime,
+} from "./utils/date.js";
+import { simpleConfig, toInt } from "./utils/misc.js";
 
 const { HTML } = createRegistry();
 define(
@@ -92,19 +103,37 @@ define(
                         for (const key in ranges) {
                             if (ranges[key] < Math.abs(secondsElapsed)) {
                                 const delta = secondsElapsed / ranges[key];
-                                //@ts-ignore
-                                f = new Intl.RelativeTimeFormat(lang).format(Math.round(delta), key);
+
+                                if (supportsRelativeTime()) {
+                                    //@ts-ignore
+                                    f = new Intl.RelativeTimeFormat(lang).format(Math.round(delta), key);
+                                } else {
+                                    // This is a very crude polyfill that only works in english
+                                    const v = Math.abs(Math.floor(delta));
+                                    const u = v === 1 ? key.replace(/s$/, "") : key;
+                                    f = `${v} ${u}`;
+                                }
+
                                 break;
                             }
                         }
                     } else {
                         //@ts-ignore
-                        f = new Intl.DateTimeFormat(lang, options).format(new Date(expandDateTime(dt)));
+                        try {
+                            // IOS is very sensitive, always use proper iso format
+                            const dateObj = Date.parse(toIsoDateTime(expandDateTime(dt)));
+
+                            f = new Intl.DateTimeFormat(lang, options).format(dateObj);
+                        } catch (error) {
+                            this.dataset.error = error;
+                        }
                     }
 
                     break;
             }
-            this.innerText = f;
+            if (f.length > 0) {
+                this.innerText = f;
+            }
         }
     },
 );

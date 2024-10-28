@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { getBoolData, getMixedBoolData, hasAttr, hasData, removeAttr, setAttr } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
-import { as, ce, clearInputs, dotPath, ephemeralText, simpleConfig } from "./utils/misc.js";
+import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, simpleConfig } from "./utils/misc.js";
 import FormValidator from "./FormValidator.js";
 import { qs, qsa } from "./utils/query.js";
 
@@ -188,9 +188,7 @@ define(
                 isValid = await validator.validate(ev);
             }
             if (!isValid) {
-                if (disabledTo) {
-                    clearTimeout(disabledTo);
-                }
+                clearTo(disabledTo);
                 removeAttr(submitter, "disabled");
                 return;
             }

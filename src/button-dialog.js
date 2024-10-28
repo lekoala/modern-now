@@ -36,8 +36,9 @@ function closeDialogWithAnimation(dialog) {
 
 /**
  * @param {HTMLButtonElement} btn
+ * @param {MouseEvent} ev
  */
-const handleDialogClick = (btn) => {
+const handleDialogClick = (btn, ev) => {
     // If it doesn't support dialog and it's not yet polyfilled
     // see https://github.com/GoogleChrome/dialog-polyfill/blob/master/dist/dialog-polyfill.esm.js#L850
     if (!supportsDialog() && !HTMLFormElement.prototype.submit.toString().includes("call(this)")) {
@@ -114,7 +115,7 @@ define(
         }
 
         $click(ev) {
-            handleDialogClick(this);
+            handleDialogClick(this, ev);
         }
     },
 );
