@@ -1,6 +1,6 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
-import { injectCss } from "./utils/misc.js";
+import { globalContext, injectCss } from "./utils/misc.js";
 import lazy from "./utils/lazy.js";
 import { setCssVar } from "./utils/attrs.js";
 import { getAndRun } from "./utils/map.js";
@@ -34,7 +34,7 @@ const id = "mark-style";
 injectCss(css, id);
 
 const cleanupMap = new WeakMap();
-const { HTML } = createRegistry();
+const { HTML } = createRegistry(globalContext());
 define(
     "mark[data-animated]",
     class extends HTML.Mark {

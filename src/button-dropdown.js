@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
 import { autoUpdate, reposition } from "./utils/floating.js";
-import { hide, show } from "./utils/misc.js";
+import { globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
@@ -11,8 +11,7 @@ const events = ["click"];
 const floatingEvents = ["floatingReposition", "floatingHide"];
 const cleanupMap = new WeakMap();
 
-const { HTML } = createRegistry();
-
+const { HTML } = createRegistry(globalContext());
 define(
     "button[data-dropdown]",
     class extends HTML.Button {

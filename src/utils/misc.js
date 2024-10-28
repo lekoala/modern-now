@@ -404,6 +404,7 @@ export function doWithAnimation(el, cb) {
     if (animationEnabled()) {
         const styles = getComputedStyle(el);
         // no animation, simply close
+        // TODO: requires some work on older browser
         if (styles.animation.length === 0 || styles.animation.startsWith("none ")) {
             cb();
         } else {
@@ -423,4 +424,17 @@ export function doWithAnimation(el, cb) {
     } else {
         cb();
     }
+}
+
+/**
+ * Return required objects for createRegistry to help nonchalance when globalThis
+ * is not defined (IOS 11)
+ * @returns {Object}
+ */
+export function globalContext() {
+    return {
+        document: document,
+        MutationObserver: window.MutationObserver,
+        Element: window.Element,
+    };
 }

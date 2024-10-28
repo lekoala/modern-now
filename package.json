@@ -18,8 +18,8 @@
   "scripts": {
     "test": "bun test --preload ./tests/setup.js",
     "test-watch": "bun run test -- --watch",
-    "build": "esbuild --bundle  --format=esm builds/*.js --target=safari12.1,chrome63 --outdir=./dist/",
-    "build-meta": "esbuild --bundle --minify --format=esm builds/*.js --target=safari12.1,chrome63 --outdir=./dist/ --metafile=meta.json --analyze 2> ./docs/filesize.md",
+    "build": "esbuild --bundle --minify --format=esm builds/*.js --target=safari11.1,chrome63 --outdir=./dist/",
+    "build-meta": "esbuild --bundle --minify --format=esm builds/*.js --target=safari11.1,chrome63 --outdir=./dist/ --metafile=meta.json --analyze 2> ./docs/filesize.md",
     "start": "bun run build -- --servedir=.",
     "watch": "bun run build -- --watch",
     "test-server": "bun run ./bin/test-server.js",

@@ -2,9 +2,9 @@ import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { byId } from "./utils/query.js";
+import { globalContext } from "./utils/misc.js";
 
-const { HTML } = createRegistry();
-
+const { HTML } = createRegistry(globalContext());
 define(
     "input[data-password]",
     class extends HTML.Input {

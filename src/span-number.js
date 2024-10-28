@@ -1,9 +1,9 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { getAttr, getData, getMixedBoolData, hasAttr, hasData } from "./utils/attrs.js";
-import { dataAsConfig, simpleConfig } from "./utils/misc.js";
+import { dataAsConfig, globalContext, simpleConfig } from "./utils/misc.js";
 
-const { HTML } = createRegistry();
+const { HTML } = createRegistry(globalContext());
 define(
     "span[data-number]",
     class extends HTML.Span {

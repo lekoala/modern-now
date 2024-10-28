@@ -4,9 +4,9 @@ import { on, off, dispatch } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
 import { byId } from "./utils/query.js";
 import { normalize, slugify } from "./utils/str.js";
+import { globalContext } from "./utils/misc.js";
 
-const { HTML } = createRegistry();
-
+const { HTML } = createRegistry(globalContext());
 define(
     "input[data-to],input[data-limited]",
     class extends HTML.Input {

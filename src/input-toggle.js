@@ -2,11 +2,10 @@ import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off } from "./utils/events.js";
 import { setAttr, hasNotAttrString, toggleAttr, setRemoveAttr, getBoolData } from "./utils/attrs.js";
-import { clearInputs, templateAsData } from "./utils/misc.js";
+import { clearInputs, globalContext, templateAsData } from "./utils/misc.js";
 import { byId, qs, qsa } from "./utils/query.js";
 
-const { HTML } = createRegistry();
-
+const { HTML } = createRegistry(globalContext());
 define(
     "input[data-toggle]",
     class extends HTML.Input {

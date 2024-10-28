@@ -2,10 +2,11 @@ import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off } from "./utils/events.js";
 import { getBoolData } from "./utils/attrs.js";
+import { globalContext } from "./utils/misc.js";
 
 // add mouseenter to allow proper size after resizing the window
 const events = ["input", "focusout", "mouseenter"];
-const { HTML } = createRegistry();
+const { HTML } = createRegistry(globalContext());
 define(
     "textarea[data-autogrow]",
     class extends HTML.TextArea {

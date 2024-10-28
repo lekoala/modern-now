@@ -1,7 +1,7 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off } from "./utils/events.js";
-import { dataAsConfig, simpleConfig, toInt } from "./utils/misc.js";
+import { dataAsConfig, globalContext, simpleConfig, toInt } from "./utils/misc.js";
 import { getData } from "./utils/attrs.js";
 
 /**
@@ -15,8 +15,7 @@ import { getData } from "./utils/attrs.js";
  * @property {Number} quality
  */
 
-const { HTML } = createRegistry();
-
+const { HTML } = createRegistry(globalContext());
 // https://github.com/lekoala/superfile
 define(
     "input[type=file][data-resize]",

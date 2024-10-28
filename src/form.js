@@ -3,13 +3,13 @@ import { define } from "nonchalance/selector";
 import { getBoolData, getMixedBoolData, hasAttr, hasData, removeAttr, setAttr } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
-import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, simpleConfig } from "./utils/misc.js";
+import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, globalContext, simpleConfig } from "./utils/misc.js";
 import FormValidator from "./FormValidator.js";
 import { qs, qsa } from "./utils/query.js";
 
 const validators = new WeakMap();
 
-const { HTML } = createRegistry();
+const { HTML } = createRegistry(globalContext());
 define(
     "form[data-ajax],form[data-validate]",
     class extends HTML.Form {

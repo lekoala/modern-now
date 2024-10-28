@@ -13,9 +13,9 @@ import {
     toIsoDateTime,
     supportsRelativeTime,
 } from "./utils/date.js";
-import { simpleConfig, toInt } from "./utils/misc.js";
+import { globalContext, simpleConfig, toInt } from "./utils/misc.js";
 
-const { HTML } = createRegistry();
+const { HTML } = createRegistry(globalContext());
 define(
     "time[datetime]",
     class extends HTML.Time {

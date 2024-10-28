@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="stylesheet" href="demo.css">
     <style>
+        /* inset is not supported in ios < 14  https://caniuse.com/mdn-css_properties_inset */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -32,21 +33,21 @@
 
         @keyframes slideIn {
             from {
-                inset-inline-start: -2em;
+                left: -2em;
             }
 
             to {
-                inset-inline-start: 0;
+                left: 0;
             }
         }
 
         @keyframes slideOut {
             from {
-                inset-inline-start: 0;
+                left: 0;
             }
 
             to {
-                inset-inline-start: -2em;
+                left: -2em;
             }
         }
 
@@ -72,7 +73,10 @@
     </style>
     <style>
         dialog {
-            inset: 0;
+            top: 0px;
+            right: 0px;
+            left: 0px;
+            bottom: 0px;
         }
 
         dialog[data-dialog-dismissible] {

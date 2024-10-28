@@ -18,6 +18,9 @@ import { byId } from "./utils/query.js";
  */
 
 // see https://css-generators.com/tooltip-speech-bubble/
+// cannot use inset as it's only supported in ios > 14 https://caniuse.com/mdn-css_properties_inset
+// requires -webkit prefix for clip path
+// data-placement is set by floating utils
 const css = /*css*/ `
 .tooltip {
   --b: 12px;
@@ -40,33 +43,43 @@ const css = /*css*/ `
   font-size: 0.875rem;
 }
 .tooltip:before {
-  content: "";
+  content: " ";
   position: absolute;
   z-index: -1;
   background-image: inherit;
-  inset: 0 0 calc(-1*var(--h));
+  right: 0px;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+}
+.tooltip[data-placement="top"]:before {
+  bottom: calc(-1*var(--h));
   clip-path: polygon(min(100%,var(--p) + var(--b)/2) calc(100% - var(--h)),var(--p) 100%,max(0%,var(--p) - var(--b)/2) calc(100% - var(--h)),50% 50%);
+  -webkit-clip-path: polygon(min(100%,var(--p) + var(--b)/2) calc(100% - var(--h)),var(--p) 100%,max(0%,var(--p) - var(--b)/2) calc(100% - var(--h)),50% 50%);
 }
 .tooltip[data-placement="bottom"] {
   background: 0 100%/100% calc(100% + var(--h)) var(--tooltip-bg);
 }
 .tooltip[data-placement="bottom"]:before {
-  inset: calc(-1*var(--h)) 0 0;
+  top: calc(-1*var(--h));
   clip-path: polygon(min(100%,var(--p) + var(--b)/2) var(--h),var(--p) 0,max(0%,var(--p) - var(--b)/2) var(--h),50% 50%);
+  -webkit-clip-path: polygon(min(100%,var(--p) + var(--b)/2) var(--h),var(--p) 0,max(0%,var(--p) - var(--b)/2) var(--h),50% 50%);
 }
 .tooltip[data-placement="right"] {
   background:  0/calc(100% + var(--h)) 100%  var(--tooltip-bg);
 }
 .tooltip[data-placement="right"]:before {
-  inset: 0 0 0 calc(-1*var(--h));
+  left: calc(-1*var(--h));
   clip-path: polygon(var(--h) max(0%,var(--p) - var(--b)/2),0 var(--p),var(--h) min(100%,var(--p) + var(--b)/2),50% 50%);
+  -webkit-clip-path: polygon(var(--h) max(0%,var(--p) - var(--b)/2),0 var(--p),var(--h) min(100%,var(--p) + var(--b)/2),50% 50%);
 }
 .tooltip[data-placement="left"] {
   background: 100%/calc(100% + var(--h)) 100% var(--tooltip-bg);
 }
 .tooltip[data-placement="left"]:before {
-  inset: 0 calc(-1*var(--h)) 0 0;
+  right: calc(-1*var(--h));
   clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
+  -webkit-clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
 }
 `;
 const id = "tooltip-style";
