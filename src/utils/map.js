@@ -6,7 +6,7 @@
 export function getAndRun(map, el) {
     const fn = map.get(el);
     if (fn && typeof fn === "function") {
-        fn();
+        fn(el);
     }
 }
 

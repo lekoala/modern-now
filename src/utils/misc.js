@@ -336,6 +336,14 @@ export function supportsPopover() {
 }
 
 /**
+ * @link https://caniuse.com/intersectionobserver
+ * @returns {Boolean}
+ */
+export function supportsIntersectionObserver() {
+    return "IntersectionObserver" in window;
+}
+
+/**
  * @returns {Boolean}
  */
 export function animationEnabled() {
