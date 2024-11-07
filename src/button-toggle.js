@@ -53,11 +53,18 @@ define(
             const d = this.dataset;
 
             if (d.toggleGroup) {
+                // It's already opened, return
+                if (this.ariaExpanded === "true") {
+                    return;
+                }
+
+                // Close others
                 const others = qsa(`[data-toggle-group="${d.toggleGroup}"]`);
                 for (const other of others) {
                     if (other === this) {
                         continue;
                     }
+                    other.ariaCurrent = "false";
                     dispatch("toggleClose", other);
                 }
             }
@@ -79,11 +86,14 @@ define(
         /**
          * @param {String} state true|false
          */
-        update(state) {
+        update(state = null) {
             const el = this.el;
             const d = this.dataset;
 
             this.ariaExpanded = state || hasNotAttrString(el, "hidden");
+            if (d.toggleGroup) {
+                this.ariaSelected = this.ariaExpanded;
+            }
 
             if (d.toggleVisible || d.toggleHidden) {
                 if (this.ariaExpanded === "true") {
