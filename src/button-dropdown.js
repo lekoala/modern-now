@@ -10,7 +10,30 @@ import { getAndRun } from "./utils/map.js";
 const events = ["click"];
 const floatingEvents = [floatingReposition, floatingHide];
 const cleanupMap = new WeakMap();
-let curr;
+const openMenus = new Set();
+
+const globalHandler = (ev) => {
+    if (openMenus.size === 0) {
+        return;
+    }
+    for (const menu of openMenus) {
+        // https://getbootstrap.com/docs/5.3/components/dropdowns/#auto-close-behavior
+        // default | inside | outside | manual
+        const close = menu.dataset.dropdownClose;
+        if (close === "manual") {
+            return;
+        }
+        const contains = menu.contains(ev.target);
+        if (close === "inside" && contains) {
+            continue;
+        }
+        if (close === "outside" && !contains) {
+            continue;
+        }
+        dispatch(floatingHide, menu);
+    }
+};
+on("click", globalHandler);
 
 const { HTML } = createRegistry(globalContext());
 define(
@@ -28,6 +51,7 @@ define(
             // Options can be defined on the button or on the menu
             const placement = data.dropdownPlacement || elData.dropdownPlacement || "bottom-start";
             const distance = data.dropdownDistance || elData.dropdownDistance || 6;
+            const close = data.dropdownClose || elData.dropdownClose || "default";
 
             // https://meowni.ca/hidden.is.a.lie.html
             this.ariaExpanded = hasNotAttrString(el, "hidden");
@@ -38,6 +62,7 @@ define(
             setData(el, {
                 dropdownPlacement: placement,
                 dropdownDistance: distance,
+                dropdownClose: close,
             });
             cleanupMap.set(el, autoUpdate(el));
             on(events, this);
@@ -46,7 +71,7 @@ define(
 
         disconnectedCallback() {
             off(events, this);
-            off(floatingEvents, this.el);
+            off(floatingEvents, this, this.el);
             getAndRun(cleanupMap, this.el);
         }
 
@@ -68,6 +93,7 @@ define(
 
         $floatingHide(ev) {
             const el = this.el;
+            openMenus.delete(el);
             hide(el);
             this.ariaExpanded = "false";
         }
@@ -78,7 +104,7 @@ define(
          */
         $keydown(ev) {
             // Multiple menus opened
-            if (this.el !== curr) {
+            if (this.el !== Array.from(openMenus).pop()) {
                 return;
             }
             // esc is handled by reposition util
@@ -114,14 +140,16 @@ define(
          * @param {MouseEvent} ev
          */
         $click(ev) {
+            ev.stopPropagation(); // Don't trigger global handler
             const el = this.el;
             this.ariaExpanded = this.ariaExpanded === "true" ? "false" : "true";
             if (this.ariaExpanded === "true") {
-                curr = el;
+                openMenus.add(el);
                 show(el);
                 dispatch(floatingReposition, el);
                 on("keydown", this, document);
             } else {
+                openMenus.delete(el);
                 hide(el);
                 off("keydown", this, document);
             }
