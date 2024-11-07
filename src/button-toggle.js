@@ -1,10 +1,11 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
-import { on, off } from "./utils/events.js";
-import { setAttr, hasNotAttrString, toggleAttr, hasAttr } from "./utils/attrs.js";
+import { on, off, dispatch } from "./utils/events.js";
+import { setAttr, hasNotAttrString, toggleAttr, hasAttr, removeAttr } from "./utils/attrs.js";
 import { doWithAnimation, globalContext, templateAsData } from "./utils/misc.js";
-import { byId } from "./utils/query.js";
+import { byId, qsa } from "./utils/query.js";
 
+const events = ["click", "toggleClose"];
 const { HTML } = createRegistry(globalContext());
 define(
     "button[data-toggle]",
@@ -14,7 +15,7 @@ define(
         }
 
         connectedCallback() {
-            on("click", this);
+            on(events, this);
             const el = this.el;
             const d = this.dataset;
             this.ariaExpanded = hasNotAttrString(el, "hidden");
@@ -31,11 +32,17 @@ define(
         }
 
         disconnectedCallback() {
-            off("click", this);
+            off(events, this);
         }
 
         handleEvent(ev) {
             this[`$${ev.type}`](ev);
+        }
+
+        $toggleClose() {
+            const el = this.el;
+            setAttr(el, "hidden");
+            this.update("false");
         }
 
         /**
@@ -43,25 +50,35 @@ define(
          */
         $click(ev) {
             const el = this.el;
+            const d = this.dataset;
+
+            if (d.toggleGroup) {
+                const others = qsa(`[data-toggle-group="${d.toggleGroup}"]`);
+                for (const other of others) {
+                    if (other === this) {
+                        continue;
+                    }
+                    dispatch("toggleClose", other);
+                }
+            }
 
             // make sure to have something like [hidden] { display: none !important}
             // https://meowni.ca/hidden.is.a.lie.html
             const open = this.ariaExpanded === "false";
             if (open) {
-                doWithAnimation(el, () => {}, open);
+                doWithAnimation(el, () => {}, true);
                 toggleAttr(el, "hidden");
             } else {
-                doWithAnimation(
-                    el,
-                    () => {
-                        toggleAttr(el, "hidden");
-                    },
-                    open,
-                );
+                doWithAnimation(el, () => {
+                    toggleAttr(el, "hidden");
+                });
             }
             this.update(open ? "true" : "false");
         }
 
+        /**
+         * @param {String} state true|false
+         */
         update(state) {
             const el = this.el;
             const d = this.dataset;
