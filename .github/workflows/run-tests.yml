@@ -1,4 +1,4 @@
-name: Run Ava Tests
+name: Run Tests
 
 on:
   push:
@@ -16,10 +16,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm test
+          bun-version: latest
+      - run: bun install
+      - run: bun run test
