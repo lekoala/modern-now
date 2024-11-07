@@ -110,6 +110,65 @@
         }
       ]
     },
+    "src/button-dialog.js": {
+      "bytes": 3919,
+      "imports": [
+        {
+          "path": "src/utils/attrs.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/query.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "builds/dialog.js": {
+      "bytes": 296,
+      "imports": [
+        {
+          "path": "src/addDialogPolyfill.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/button-dialog.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "src/behaviour.js": {
+      "bytes": 1147,
+      "imports": [
+        {
+          "path": "src/dynamicBehaviour.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/misc.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/map.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "src/utils/events.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
     "node_modules/custom-function/esm/factory.js": {
       "bytes": 651,
       "imports": []
@@ -153,69 +212,6 @@
         }
       ]
     },
-    "src/button-dialog.js": {
-      "bytes": 3837,
-      "imports": [
-        {
-          "path": "node_modules/nonchalance/esm/ce.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "node_modules/nonchalance/esm/selector.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/attrs.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/events.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/query.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/misc.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
-    "builds/dialog.js": {
-      "bytes": 296,
-      "imports": [
-        {
-          "path": "src/addDialogPolyfill.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/button-dialog.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
-    "src/behaviour.js": {
-      "bytes": 1147,
-      "imports": [
-        {
-          "path": "src/dynamicBehaviour.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/misc.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/map.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "src/utils/events.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
     "src/button-toggle.js": {
       "bytes": 1821,
       "imports": [
@@ -246,7 +242,7 @@
       ]
     },
     "src/utils/floating.js": {
-      "bytes": 10698,
+      "bytes": 10795,
       "imports": [
         {
           "path": "src/utils/attrs.js",
@@ -578,7 +574,7 @@
       ]
     },
     "src/tooltip.js": {
-      "bytes": 8525,
+      "bytes": 8542,
       "imports": [
         {
           "path": "src/dynamicBehaviour.js",
@@ -707,6 +703,15 @@
           "kind": "import-statement"
         }
       ]
+    },
+    "builds/tooltip.js": {
+      "bytes": 125,
+      "imports": [
+        {
+          "path": "src/tooltip.js",
+          "kind": "import-statement"
+        }
+      ]
     }
   },
   "outputs": {
@@ -725,49 +730,31 @@
           "bytesInOutput": 132
         },
         "src/utils/misc.js": {
-          "bytesInOutput": 1776
+          "bytesInOutput": 1676
         },
         "src/utils/attrs.js": {
-          "bytesInOutput": 264
+          "bytesInOutput": 265
         },
         "src/utils/map.js": {
           "bytesInOutput": 61
         },
         "src/utils/lazy.js": {
-          "bytesInOutput": 253
+          "bytesInOutput": 252
         },
         "src/dynamicBehaviour.js": {
-          "bytesInOutput": 265
+          "bytesInOutput": 264
         },
         "src/addDialogPolyfill.js": {
-          "bytesInOutput": 604
-        },
-        "node_modules/custom-function/esm/factory.js": {
-          "bytesInOutput": 119
-        },
-        "node_modules/nonchalance/esm/upgrade.js": {
-          "bytesInOutput": 1138
-        },
-        "node_modules/nonchalance/esm/ce.js": {
-          "bytesInOutput": 644
-        },
-        "node_modules/element-notifier/esm/index.js": {
-          "bytesInOutput": 455
-        },
-        "node_modules/qsa-observer/esm/index.js": {
-          "bytesInOutput": 902
-        },
-        "node_modules/nonchalance/esm/selector.js": {
-          "bytesInOutput": 254
+          "bytesInOutput": 603
         },
         "src/button-dialog.js": {
-          "bytesInOutput": 916
+          "bytesInOutput": 785
         },
         "builds/dialog.js": {
           "bytesInOutput": 5
         }
       },
-      "bytes": 10010
+      "bytes": 6093
     },
     "dist/full.js": {
       "imports": [],
@@ -807,6 +794,9 @@
         "src/behaviour.js": {
           "bytesInOutput": 266
         },
+        "src/button-dialog.js": {
+          "bytesInOutput": 785
+        },
         "node_modules/custom-function/esm/factory.js": {
           "bytesInOutput": 119
         },
@@ -825,14 +815,11 @@
         "node_modules/nonchalance/esm/selector.js": {
           "bytesInOutput": 257
         },
-        "src/button-dialog.js": {
-          "bytesInOutput": 914
-        },
         "src/button-toggle.js": {
           "bytesInOutput": 684
         },
         "src/utils/floating.js": {
-          "bytesInOutput": 2590
+          "bytesInOutput": 2602
         },
         "src/button-dropdown.js": {
           "bytesInOutput": 1362
@@ -871,7 +858,7 @@
           "bytesInOutput": 1199
         },
         "src/tooltip.js": {
-          "bytesInOutput": 4206
+          "bytesInOutput": 4128
         },
         "src/htmx.js": {
           "bytesInOutput": 1533
@@ -880,7 +867,51 @@
           "bytesInOutput": 5
         }
       },
-      "bytes": 36670
+      "bytes": 36475
+    },
+    "dist/tooltip.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "builds/tooltip.js",
+      "inputs": {
+        "node_modules/qsa-observer/esm.js": {
+          "bytesInOutput": 1333
+        },
+        "src/utils/events.js": {
+          "bytesInOutput": 630
+        },
+        "src/utils/query.js": {
+          "bytesInOutput": 133
+        },
+        "src/utils/str.js": {
+          "bytesInOutput": 59
+        },
+        "src/utils/misc.js": {
+          "bytesInOutput": 1459
+        },
+        "src/utils/attrs.js": {
+          "bytesInOutput": 601
+        },
+        "src/utils/map.js": {
+          "bytesInOutput": 61
+        },
+        "src/utils/lazy.js": {
+          "bytesInOutput": 253
+        },
+        "src/dynamicBehaviour.js": {
+          "bytesInOutput": 267
+        },
+        "src/utils/floating.js": {
+          "bytesInOutput": 2569
+        },
+        "src/tooltip.js": {
+          "bytesInOutput": 4124
+        },
+        "builds/tooltip.js": {
+          "bytesInOutput": 0
+        }
+      },
+      "bytes": 11621
     }
   }
 }

@@ -64,9 +64,9 @@ See demos for more informations
 ## Builds
 
 You can either have:
-- full
-- dialog
-- tooltip
+- full - 36kb
+- dialog - 6kb (+ dynamically loaded polyfill if needed)
+- tooltip - 11kb
 
 Solo builds are only provided if the component is not using nonchalance.
 
