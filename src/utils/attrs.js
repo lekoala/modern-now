@@ -188,6 +188,26 @@ export function hasClass(el, name) {
 }
 
 /**
+ * Returns true|false as string
+ * @param {HTMLElement} el
+ * @param {string} name
+ * @returns {string}
+ */
+export function hasClassString(el, name) {
+    return hasClass(el, name) ? "true" : "false";
+}
+
+/**
+ * Returns true|false as string
+ * @param {HTMLElement} el
+ * @param {string} name
+ * @returns {string}
+ */
+export function hasNotClassString(el, name) {
+    return hasClass(el, name) ? "false" : "true";
+}
+
+/**
  *
  * @param {HTMLElement} el
  * @param {string} name

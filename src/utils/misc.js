@@ -397,29 +397,33 @@ export function ephemeralText(el, text) {
  * Add a "is-closing" helper class while closing
  * @param {HTMLElement} el
  * @param {Function} cb
+ * @param {Boolean} open
  */
-export function doWithAnimation(el, cb) {
-    const CLOSING_CLASS = "is-closing";
+export function doWithAnimation(el, cb, open = false) {
+    const closingClass = "is-closing";
+    const openingClass = "is-opening";
+    const cls = open ? openingClass : closingClass;
 
     if (animationEnabled()) {
         const styles = getComputedStyle(el);
         // no animation, simply close
         // TODO: requires some work on older browser
-        if (styles.animation.length === 0 || styles.animation.startsWith("none ")) {
+        const noAnimation = styles.animation.length === 0 || styles.animation.startsWith("none ");
+        if (noAnimation) {
             cb();
         } else {
-            addClass(el, CLOSING_CLASS);
             once(
-                ["animationend"],
+                "animationend",
                 /**
                  * @param {AnimationEvent} ev
                  */
                 (ev) => {
-                    removeClass(el, CLOSING_CLASS);
+                    removeClass(el, cls);
                     cb();
                 },
                 el,
             );
+            addClass(el, cls);
         }
     } else {
         cb();
