@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
-import { globalContext, hide, show } from "./utils/misc.js";
+import { doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
@@ -70,9 +70,11 @@ define(
         }
 
         disconnectedCallback() {
+            const el = this.el;
             off(events, this);
-            off(floatingEvents, this, this.el);
-            getAndRun(cleanupMap, this.el);
+            off(floatingEvents, this, el);
+            getAndRun(cleanupMap, el);
+            openMenus.delete(el);
         }
 
         handleEvent(ev) {
@@ -145,12 +147,15 @@ define(
             this.ariaExpanded = this.ariaExpanded === "true" ? "false" : "true";
             if (this.ariaExpanded === "true") {
                 openMenus.add(el);
+                doWithAnimation(el, () => {}, true);
                 show(el);
                 dispatch(floatingReposition, el);
                 on("keydown", this, document);
             } else {
                 openMenus.delete(el);
-                hide(el);
+                doWithAnimation(el, () => {
+                    hide(el);
+                });
                 off("keydown", this, document);
             }
         }
