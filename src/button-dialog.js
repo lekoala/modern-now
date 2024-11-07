@@ -1,9 +1,8 @@
-import createRegistry from "nonchalance/ce";
-import { define } from "nonchalance/selector";
 import { getBoolData, getData, hasData, setCssVar } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { byId } from "./utils/query.js";
-import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, globalContext } from "./utils/misc.js";
+import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, as } from "./utils/misc.js";
+import dynamicBehaviour from "./dynamicBehaviour.js";
 
 /**
  * @typedef {Object} HTML
@@ -34,14 +33,24 @@ function closeDialogWithAnimation(dialog) {
     });
 }
 
+function refreshScrollbarVar() {
+    setCssVar(document.documentElement, "scrollbar-width", `${getScrollBarWidth()}px`);
+}
+
 /**
- * @param {HTMLButtonElement} btn
  * @param {MouseEvent} ev
  */
-const handleDialogClick = (btn, ev) => {
+const handleDialogClick = (ev) => {
     // If it doesn't support dialog and it's not yet polyfilled
     // see https://github.com/GoogleChrome/dialog-polyfill/blob/master/dist/dialog-polyfill.esm.js#L850
     if (!supportsDialog() && !HTMLFormElement.prototype.submit.toString().includes("call(this)")) {
+        return;
+    }
+
+    // Look for button, maybe we clicked on some nested html tag (or svg) inside the button
+    //@ts-ignore
+    const btn = ev.target.closest("button");
+    if (!btn) {
         return;
     }
 
@@ -49,6 +58,8 @@ const handleDialogClick = (btn, ev) => {
     const dialog = getData(btn, "dialog");
     // close (current dialog or parent)
     const dialogClose = getBoolData(btn, "dialogClose");
+
+    // If we have a dialog setting on the button
     if (dialog) {
         const dialogEl = byId(dialog, "dialog");
         if (!dialogEl) {
@@ -73,7 +84,7 @@ const handleDialogClick = (btn, ev) => {
             if (dialogConfig.dismissible || dialogConfig.modal) {
                 // useful for offcanvas or modals with scroll disabled
                 // we want to avoid content reflow due to the scrollbars being hidden
-                setCssVar(document.documentElement, "scrollbar-width", `${getScrollBarWidth()}px`);
+                refreshScrollbarVar();
                 dialogEl.showModal();
 
                 // listen for a click outside the modal
@@ -96,26 +107,21 @@ const handleDialogClick = (btn, ev) => {
 };
 
 // Init variable
-setCssVar(document.documentElement, "scrollbar-width", `${getScrollBarWidth()}px`);
+refreshScrollbarVar();
 
-const { HTML } = createRegistry(globalContext());
-define(
+// Don't use nonchalance as it increases the solo build size
+dynamicBehaviour(
     "button[data-dialog],button[data-dialog-close]",
-    class extends HTML.Button {
-        connectedCallback() {
-            on("click", this);
-        }
-
-        disconnectedCallback() {
-            off("click", this);
-        }
-
-        handleEvent(ev) {
-            this[`$${ev.type}`](ev);
-        }
-
-        $click(ev) {
-            handleDialogClick(this, ev);
-        }
+    /**
+     * @param {HTMLButtonElement} el
+     */
+    (el) => {
+        on("click", handleDialogClick, el);
+    },
+    /**
+     * @param {HTMLButtonElement} el
+     */
+    (el) => {
+        off("click", handleDialogClick, el);
     },
 );

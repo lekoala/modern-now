@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/lekoala/modern-now"
   },
-  "main": "modern-now.js",
+  "main": "builds/full.js",
   "author": "LeKoala",
   "license": "MIT",
   "scripts": {

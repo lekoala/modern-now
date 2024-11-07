@@ -1,20 +1,18 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "baseUrl": "./",
-    "lib": [
-        "es5", "es6", "dom", "dom.iterable"
-    ],
-    "allowJs": true,
-    "checkJs": true,
-    "noEmit": true,
-    "strict": false,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true
-  },
-  "include": ["*.js", "builds/modern-now.js"],
-  "exclude": ["node_modules", "./tests/"]
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "baseUrl": "./",
+        "lib": ["es5", "es6", "dom", "dom.iterable"],
+        "allowJs": true,
+        "checkJs": true,
+        "noEmit": true,
+        "strict": false,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "esModuleInterop": true
+    },
+    "include": ["*.js", "builds/full.js"],
+    "exclude": ["node_modules", "./tests/"]
 }

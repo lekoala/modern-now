@@ -3,7 +3,7 @@ import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./
 import { dispatch, off, on } from "./utils/events.js";
 import { autoUpdate, reposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
-import { injectCss, show, hide, ce, isVisible, as, simpleConfig, toInt, dataAsConfig } from "./utils/misc.js";
+import { injectCss, show, hide, ce, isVisible, as, simpleConfig, dataAsConfig } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
 /**
