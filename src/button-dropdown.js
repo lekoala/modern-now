@@ -2,14 +2,15 @@ import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
-import { autoUpdate, reposition } from "./utils/floating.js";
+import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
 import { globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
 const events = ["click"];
-const floatingEvents = ["floatingReposition", "floatingHide"];
+const floatingEvents = [floatingReposition, floatingHide];
 const cleanupMap = new WeakMap();
+let curr;
 
 const { HTML } = createRegistry(globalContext());
 define(
@@ -76,6 +77,10 @@ define(
          * @param {KeyboardEvent} ev
          */
         $keydown(ev) {
+            // Multiple menus opened
+            if (this.el !== curr) {
+                return;
+            }
             // esc is handled by reposition util
             switch (ev.key) {
                 case "ArrowDown":
@@ -89,6 +94,9 @@ define(
             }
         }
 
+        /**
+         * @param {Number} dir
+         */
         selectAdjacentItem(dir) {
             const el = this.el;
             const links = qsa("a", "a", el);
@@ -109,8 +117,9 @@ define(
             const el = this.el;
             this.ariaExpanded = this.ariaExpanded === "true" ? "false" : "true";
             if (this.ariaExpanded === "true") {
+                curr = el;
                 show(el);
-                dispatch("floatingReposition", el);
+                dispatch(floatingReposition, el);
                 on("keydown", this, document);
             } else {
                 hide(el);
