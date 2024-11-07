@@ -1,7 +1,7 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
 import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./utils/attrs.js";
 import { dispatch, off, on } from "./utils/events.js";
-import { autoUpdate, reposition } from "./utils/floating.js";
+import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
 import { injectCss, show, hide, ce, isVisible, as, simpleConfig, dataAsConfig } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
@@ -86,7 +86,7 @@ const id = "tooltip-style";
 injectCss(css, id);
 
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
-const floatingEvents = ["floatingReposition", "floatingHide"];
+const floatingEvents = [floatingHide, floatingReposition];
 /**
  * @param {MouseEvent} ev
  */
@@ -114,7 +114,7 @@ const eventHandler = (ev) => {
         if (!hidden) {
             show(tooltip);
             // compute initial position
-            dispatch("floatingReposition", tooltip);
+            dispatch(floatingReposition, tooltip);
         }
     } else if (action === "hide") {
         // Hide, unless it's focused
@@ -133,7 +133,7 @@ const tooltipHandler = (ev) => {
     const t = ev.target;
     const type = ev.type;
     const d = t.dataset;
-    if (type === "floatingReposition") {
+    if (type === floatingReposition) {
         const el = byId(d.tooltipElement);
         reposition(el, t, {
             placement: d.tooltipPlacement,
@@ -144,7 +144,7 @@ const tooltipHandler = (ev) => {
             shiftPadding: 6,
         });
     }
-    if (type === "floatingHide") {
+    if (type === floatingHide) {
         hide(t);
     }
 };

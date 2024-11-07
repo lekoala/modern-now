@@ -14,7 +14,7 @@ It's very simple and can be easily extended with your own features.
 Add [`dialog-polyfill`](
 https://github.com/GoogleChrome/dialog-polyfill) dynamically if needed and register it using `qsa-observer`.
 
-Provides extra button controls for the js dialog api.
+Provides extra button controls for the js dialog api and animation.
 
 ### Css
 
@@ -38,6 +38,14 @@ Add `data-tooltip` to any element to get nice tooltips with dynamic placement.
 Placement is made by our home made floating utils, inspired by floating ui.
 
 Css is dynamically inserted and can be adjusted with css variables.
+
+Positioning will be done according to available size, for example:
+
+![right](./demos/tooltip-1.png)
+
+![left](./demos/tooltip-2.png) 
+
+![top](./demos/tooltip-3.png) 
 
 ## Other features included in full build
 

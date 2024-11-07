@@ -42,6 +42,9 @@ import { toInt } from "./misc.js";
  * @typedef {( 'top' | 'right' | 'bottom' | 'left')} Side
  */
 
+export const floatingReposition = "floatingReposition";
+export const floatingHide = "floatingHide";
+
 // Update position of elements on scroll or resize
 // We need a set to allow looping over elements
 const elements = new Set();
@@ -57,7 +60,7 @@ const onResize = (ev) => {
         // Only position if the event contains our target
         const shouldCompute = t instanceof Window || t.contains(el);
         if (shouldCompute) {
-            dispatch("floatingReposition", el);
+            dispatch(floatingReposition, el);
         }
     }
     ticking = false;
@@ -87,7 +90,7 @@ on(
             const isNotCombinedKey = !(ev.ctrlKey || ev.altKey || ev.shiftKey);
             if (isNotCombinedKey) {
                 for (const el of elements) {
-                    dispatch("floatingHide", el);
+                    dispatch(floatingHide, el);
                 }
             }
         }
