@@ -113,7 +113,26 @@
         #arrow-drop.is-closing {
             animation: fadeOut 0.3s, zoomOut 0.3s
         }
+
+        /* nested styles compat with simple.css */
+
+        .dropdown-sub {
+            margin: 0;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        button.dropdown-item:focus {
+            outline: -webkit-focus-ring-color auto 1px;
+        }
+
+        .dropdown-sub svg path {
+            fill: var(--accent);
+        }
     </style>
+
 </head>
 
 <body>
@@ -128,7 +147,8 @@
         <h2>Dropdowns</h2>
 
         <p>Even if select can be created with <a href="https://moderncss.dev/custom-select-styles-with-pure-css/">pure css</a>, it's
-            necessary to add some js for some features (placement, centering, keyboard support...). Dropdowns don't have any default styles.
+            necessary to add some js for some features (placement, centering, nesting, auto close, keyboard support...). Dropdowns don't
+            have any default styles.
             For this demo, we borrowed bootstrap styles and classes.</p>
 
         <p>aria attributes are added automatically, and keyboard navigation is supported (try esc, up, down...).</p>
@@ -172,7 +192,8 @@
             <li><a href="#" class="dropdown-item">Bonbons</a></li>
         </ul>
 
-        <p>Closing modes : choose between manual, inside or outside</p>
+        <p>Closing modes : choose between manual (you have to press esc or click the button again), inside (clicking inside closes the menu)
+            or outside (clicking outside closes the menu)</p>
 
         <button type="button" data-dropdown="sweets-dropdown3" data-dropdown-close="manual">
             Manual
@@ -201,6 +222,31 @@
             <li><a href="#" class="dropdown-item">Chocolate</a></li>
             <li><a href="#" class="dropdown-item">Bonbons</a></li>
         </ul>
+
+        <p>Nested dropdowns</p>
+
+        <button type="button" data-dropdown="nested-dropdown">
+            Nested
+        </button>
+        <ul id="nested-dropdown" class="dropdown-menu" hidden>
+            <li><a href="#" class="dropdown-item">Donuts</a></li>
+            <li>
+                <button class="dropdown-item dropdown-sub" data-dropdown="sub-dropdown" data-dropdown-placement="right">More stuff
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M6 12.796V3.204L11.481 8zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753" />
+                    </svg>
+                </button>
+                <ul id="sub-dropdown" class="dropdown-menu" hidden>
+                    <li><a href="#" class="dropdown-item">2nd level dropdown</a></li>
+                    <li><a href="#" class="dropdown-item">2nd level dropdown</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="dropdown-item">Chocolate</a></li>
+            <li><a href="#" class="dropdown-item">Bonbons</a></li>
+        </ul>
+
     </main>
 
     <footer>

@@ -60,6 +60,16 @@ export function hide(el) {
 }
 
 /**
+ * @returns {HTMLElement}
+ */
+export function activeEl() {
+    const el = document.activeElement;
+    if (el instanceof HTMLElement) {
+        return el;
+    }
+}
+
+/**
  * @template {keyof HTMLElementTagNameMap} K
  * @param {K} tagName
  * @param {HTMLElement} parent

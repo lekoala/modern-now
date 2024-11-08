@@ -3,14 +3,17 @@ import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
-import { doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
+import { activeEl, doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
 const events = ["click"];
 const floatingEvents = [floatingReposition, floatingHide];
+const docEvents = ["keydown", "keyup"];
 const cleanupMap = new WeakMap();
 const openMenus = new Set();
+let curr;
+let lastTrigger;
 
 const globalHandler = (ev) => {
     if (openMenus.size === 0) {
@@ -24,16 +27,22 @@ const globalHandler = (ev) => {
             return;
         }
         const contains = menu.contains(ev.target);
-        if (close === "inside" && contains) {
+        // close when you click outside
+        if (close === "outside" && contains) {
             continue;
         }
-        if (close === "outside" && !contains) {
+        // close when you click inside
+        if (close === "inside" && !contains) {
             continue;
         }
         dispatch(floatingHide, menu);
     }
 };
 on("click", globalHandler);
+
+function getLastOpenedMenu() {
+    return Array.from(openMenus).pop();
+}
 
 const { HTML } = createRegistry(globalContext());
 define(
@@ -60,6 +69,7 @@ define(
             hide(el);
             removeAttr(el, "hidden"); // don't use hidden attribute
             setData(el, {
+                dropdown: "true",
                 dropdownPlacement: placement,
                 dropdownDistance: distance,
                 dropdownClose: close,
@@ -94,10 +104,18 @@ define(
         }
 
         $floatingHide(ev) {
-            const el = this.el;
-            openMenus.delete(el);
-            hide(el);
             this.ariaExpanded = "false";
+            this.hideMenu();
+        }
+
+        $keyup(ev) {
+            // When tabbing, we might change menu
+            if (ev.key === "Tab") {
+                const ac = activeEl();
+                if (ac) {
+                    curr = ac.closest('[data-dropdown="true"]');
+                }
+            }
         }
 
         /**
@@ -106,9 +124,11 @@ define(
          */
         $keydown(ev) {
             // Multiple menus opened
-            if (this.el !== Array.from(openMenus).pop()) {
+            if (this.el !== curr) {
                 return;
             }
+            const ac = activeEl();
+
             // esc is handled by reposition util
             switch (ev.key) {
                 case "ArrowDown":
@@ -119,6 +139,14 @@ define(
                     ev.preventDefault();
                     this.selectAdjacentItem(-1);
                     break;
+                case "ArrowRight":
+                    if (ac && ac.tagName === "BUTTON") {
+                        dispatch("click", ac);
+                    }
+                    break;
+                case "ArrowLeft":
+                    this.hideMenu();
+                    break;
             }
         }
 
@@ -127,9 +155,10 @@ define(
          */
         selectAdjacentItem(dir) {
             const el = this.el;
-            const links = qsa("a", "a", el);
+            const scope = el.tagName === "UL" ? ":scope > li" : ":scope";
+            const links = qsa(`${scope} > a, ${scope} > button`, "a", el);
             //@ts-ignore
-            const idx = links.indexOf(document.activeElement);
+            const idx = links.indexOf(activeEl());
             let offset = dir;
             if (idx + dir >= links.length) {
                 offset = 0;
@@ -143,21 +172,39 @@ define(
          */
         $click(ev) {
             ev.stopPropagation(); // Don't trigger global handler
-            const el = this.el;
-            this.ariaExpanded = this.ariaExpanded === "true" ? "false" : "true";
-            if (this.ariaExpanded === "true") {
-                openMenus.add(el);
-                doWithAnimation(el, () => {}, true);
-                show(el);
-                dispatch(floatingReposition, el);
-                on("keydown", this, document);
+            if (this.ariaExpanded === "false") {
+                this.showMenu();
+                lastTrigger = this;
             } else {
-                openMenus.delete(el);
-                doWithAnimation(el, () => {
-                    hide(el);
-                });
-                off("keydown", this, document);
+                this.hideMenu();
             }
+        }
+
+        showMenu() {
+            this.ariaExpanded = "true";
+            const el = this.el;
+            openMenus.add(el);
+            curr = el;
+            doWithAnimation(el, () => {}, true);
+            show(el);
+            dispatch(floatingReposition, el);
+            on(docEvents, this, document);
+        }
+
+        hideMenu() {
+            this.ariaExpanded = "false";
+            const el = this.el;
+            openMenus.delete(el);
+            if (curr === el) {
+                curr = getLastOpenedMenu();
+                if (curr && lastTrigger) {
+                    lastTrigger.focus(); // restore focus
+                }
+            }
+            doWithAnimation(el, () => {
+                hide(el);
+            });
+            off(docEvents, this, document);
         }
     },
 );
