@@ -1,5 +1,5 @@
 /**
- * Modern html - tooltip build
+ * Modern now - tooltip build
  * https://github.com/lekoala/modern-now
  * @license MIT
  */

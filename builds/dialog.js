@@ -1,6 +1,5 @@
 /**
- * Modern html - dialog build
- * https://github.com/lekoala/modern-now
+ * Modern now/github.com/lekoala/modern-now
  * @license MIT
  */
 

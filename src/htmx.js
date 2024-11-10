@@ -1,9 +1,10 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
 import { getAttr, removeAttr, setAttr } from "./utils/attrs.js";
 import { dispatch, off, on } from "./utils/events.js";
-import { ce, debounce, debounceLeading, isString, simpleConfig } from "./utils/misc.js";
+import { ce, debounce, debounceLeading, isString, observeAttrs, simpleConfig } from "./utils/misc.js";
 import { qs } from "./utils/query.js";
 import { toMs } from "./utils/date.js";
+import { updateMapData } from "./utils/map.js";
 
 const map = new WeakMap();
 
@@ -18,6 +19,9 @@ function getDefaultTrigger(el) {
     if (n === "FORM") {
         return "submit";
     }
+    if (n === "DIALOG") {
+        return "dialogOpen";
+    }
     if (["INPUT", "SELECT", "TEXTAREA"].includes(n)) {
         return "change";
     }
@@ -26,15 +30,23 @@ function getDefaultTrigger(el) {
 
 /**
  * @param {HTMLElement} el
- * @param {*} k
- * @param {*} v
+ * @returns {string}
  */
-function updateMapData(el, k, v) {
-    const data = map.get(el);
-    if (data) {
-        data.k = v;
-        map.set(el, data);
+function getDefaultMethod(el) {
+    if (["A", "DIALOG"].includes(el.nodeName)) {
+        return "GET";
     }
+    return "POST";
+}
+
+function resolveTarget(el, target) {
+    if (target === "parent") {
+        return el.parentElement;
+    }
+    if (isString(target)) {
+        return qs(target);
+    }
+    return el; // itself
 }
 
 dynamicBehaviour(
@@ -44,7 +56,7 @@ dynamicBehaviour(
      */
     (el) => {
         const defaultTrigger = getDefaultTrigger(el);
-        const defaultMethod = el.nodeName === "A" ? "get" : "post";
+        const defaultMethod = getDefaultMethod(el);
         const config = simpleConfig(el.dataset.hx);
         const trigger = config.trigger || defaultTrigger;
         const triggers = trigger.split(" ");
@@ -65,17 +77,12 @@ dynamicBehaviour(
                 controller.abort();
             }
             controller = new AbortController();
-            updateMapData(el, "controller", controller);
+
+            // Update controller ref in case the node get's removed and the request cancelled
+            updateMapData(map, el, "controller", controller);
 
             // Resolve target
-            let targetEl = null;
-            if (target === "parent") {
-                targetEl = el.parentElement;
-            } else if (isString(target)) {
-                targetEl = qs(target);
-            } else {
-                targetEl = el; // itself
-            }
+            const targetEl = resolveTarget(el, target);
             setAttr(targetEl, "aria-busy", "true");
 
             // Build headers @link https://htmx.org/docs/#request-headers
@@ -88,7 +95,7 @@ dynamicBehaviour(
             };
 
             // Make the request
-            const urlObj = new URL(url);
+            const urlObj = new URL(url, window.location.toString());
             if (el instanceof HTMLInputElement) {
                 urlObj.searchParams.set(el.name, el.value);
             }
@@ -134,6 +141,16 @@ dynamicBehaviour(
         } else {
             //@ts-ignore
             fetchContent = debounceLeading(fetchContent);
+        }
+
+        // There is no "open" event in js, so we watch the open attribute and
+        // trigger a custom event
+        if (el.tagName === "DIALOG" && triggers.includes("dialogOpen")) {
+            // observe changes on open attribute
+            observeAttrs(el, ["open"], (dialog, oldValue) => {
+                const open = oldValue === null;
+                dispatch("dialogOpen", dialog, { open });
+            });
         }
 
         const eventHandler = (event) => {

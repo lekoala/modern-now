@@ -1,5 +1,5 @@
 /**
- * Modern html
+ * Modern now
  * https://github.com/lekoala/modern-now
  * @license MIT
  */

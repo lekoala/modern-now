@@ -300,6 +300,17 @@
             </div>
         </dialog>
 
+        <h3>Ajax demos</h3>
+
+        <p>You might be interested to load `dialog`'s content when opening, since they often contain optional things. This can be easily
+            achieved in combination with `data-hx` attribute. HX will make GET requests on "open" triggers by default (a custom event is fired
+            since none exist in js).
+        </p>
+
+        <button data-dialog="demo-ajax">Show ajax modal</button>
+
+        <dialog id="demo-ajax" data-dialog-dismissible data-hx="url: 'dialog-ajax.html'"></dialog>
+
         <h3>Offcanvas Demos</h3>
 
         <p>An offcanvas menu with the body that can scroll (with <code>data-dialog</code> config being used to pass

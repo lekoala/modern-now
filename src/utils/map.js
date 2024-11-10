@@ -22,3 +22,18 @@ export function setIfValue(map, el, value) {
         map.set(el, value);
     }
 }
+
+/**
+ * Update a specific entry of an object stored in a map
+ * @param {Map|WeakMap} map
+ * @param {HTMLElement} el
+ * @param {String} k
+ * @param {*} v
+ */
+export function updateMapData(map, el, k, v) {
+    const data = map.get(el);
+    if (data) {
+        data[k] = v;
+        map.set(el, data);
+    }
+}
