@@ -311,10 +311,24 @@ export function replaceCallbacks(obj) {
 }
 
 /**
+ * @returns {HTMLElement}
+ */
+export function getDocEl() {
+    return document.documentElement;
+}
+
+/**
+ * @returns {String}
+ */
+export function getDocLang() {
+    return getDocEl().getAttribute("lang") || "en";
+}
+
+/**
  * @returns {Number}
  */
 export function getScrollBarWidth() {
-    const docEl = document.documentElement;
+    const docEl = getDocEl();
     // There is no scrollbar, no need to compute it's size
     if (docEl.scrollHeight <= docEl.clientHeight) {
         return 0;
@@ -451,4 +465,26 @@ export function globalContext() {
         MutationObserver: window.MutationObserver,
         Element: window.Element,
     };
+}
+
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {String[]} attrs
+ * @param {Function} cb A function that takes the modified element
+ */
+export function observeAttrs(el, attrs, cb) {
+    const callback = (mutationList, observer) => {
+        for (const mutation of mutationList) {
+            if (mutation.type === "attributes") {
+                cb(mutation.target, mutation.oldValue);
+            }
+        }
+    };
+    const MO = new MutationObserver(callback);
+    MO.observe(el, {
+        attributes: true,
+        attributeOldValue: true,
+        attributeFilter: attrs,
+    });
 }

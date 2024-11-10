@@ -1,9 +1,8 @@
-import createRegistry from "nonchalance/ce";
-import { define } from "nonchalance/selector";
-import { globalContext, injectCss } from "./utils/misc.js";
+import { injectCss } from "./utils/misc.js";
 import lazy from "./utils/lazy.js";
 import { setCssVar } from "./utils/attrs.js";
 import { getAndRun } from "./utils/map.js";
+import dynamicBehaviour from "./dynamicBehaviour.js";
 
 function convertRange(value, r1, r2) {
     return ((value - r1[0]) * (r2[1] - r2[0])) / (r1[1] - r1[0]) + r2[0];
@@ -34,29 +33,32 @@ const id = "mark-style";
 injectCss(css, id);
 
 const cleanupMap = new WeakMap();
-const { HTML } = createRegistry(globalContext());
-define(
+
+function initMark(el) {
+    // adjust duration to text length
+    const c = el.innerText.length;
+    setCssVar(el, "mark-duration", `${convertRange(c, [30, 120], [1, 2])}s`);
+    // start animation
+    el.dataset.active = "true";
+}
+
+dynamicBehaviour(
     "mark[data-animated]",
-    class extends HTML.Mark {
-        init() {
-            // adjust duration to text length
-            const c = this.innerText.length;
-            setCssVar(this, "mark-duration", `${convertRange(c, [30, 120], [1, 2])}s`);
-            // start animation
-            this.dataset.active = "true";
-        }
-
-        connectedCallback() {
-            cleanupMap.set(
-                this,
-                lazy(this, () => {
-                    this.init();
-                }),
-            );
-        }
-
-        disconnectedCallback() {
-            getAndRun(cleanupMap, this);
-        }
+    /**
+     * @param {HTMLElement} el
+     */
+    (el) => {
+        cleanupMap.set(
+            el,
+            lazy(el, (node) => {
+                initMark(node);
+            }),
+        );
+    },
+    /**
+     * @param {HTMLElement} el
+     */
+    (el) => {
+        getAndRun(cleanupMap, this);
     },
 );

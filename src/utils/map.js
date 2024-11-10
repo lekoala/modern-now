@@ -1,5 +1,6 @@
 /**
  * Syntax sugar when storing callback functions for elements
+ * The element is always passed to the function
  * @param {WeakMap|Map} map
  * @param {Element} el
  */

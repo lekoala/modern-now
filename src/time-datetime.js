@@ -1,5 +1,3 @@
-import createRegistry from "nonchalance/ce";
-import { define } from "nonchalance/selector";
 import { getAttr, getBoolData, getData, getMixedBoolData } from "./utils/attrs.js";
 import {
     hasTime,
@@ -13,127 +11,131 @@ import {
     toIsoDateTime,
     supportsRelativeTime,
 } from "./utils/date.js";
-import { globalContext, simpleConfig, toInt } from "./utils/misc.js";
+import { getDocEl, getDocLang, observeAttrs, simpleConfig } from "./utils/misc.js";
+import dynamicBehaviour from "./dynamicBehaviour.js";
 
-const { HTML } = createRegistry(globalContext());
-define(
-    "time[datetime]",
-    class extends HTML.Time {
-        static observedAttributes = ["datetime"];
-
-        constructor(...args) {
-            //@ts-ignore
-            super(...args);
-
-            const dt = getAttr(this, "datetime");
-            // it could be populated server side
-            if (dt && !this.innerText.trim()) {
-                this.dataset.render = "true";
-            }
-            this.renderDatetime();
+/**
+ * @param {HTMLTimeElement} el
+ */
+function renderDateTime(el) {
+    if (!el.dataset.render) {
+        return;
+    }
+    const config = simpleConfig(getData(el, "datetimeConfig"));
+    const dt = getAttr(el, "datetime");
+    const style = getData(el, "style"); // short, medium, long, full
+    const format = getData(el, "format");
+    const relative = getBoolData(el, "relative");
+    const lang = getAttr(el, "lang") || getDocLang();
+    const options = config;
+    // Style shortcut
+    if (hasTime(dt) && !options.timeStyle) {
+        options.timeStyle = style || "short";
+    }
+    if (hasDate(dt) && !options.dateStyle) {
+        options.dateStyle = style || "short";
+    }
+    // Allow passing arbitrary data variables to options
+    let customDate = false;
+    let customTime = false;
+    for (const o in el.dataset) {
+        if (["style", "format", "relative", "render"].includes(o)) {
+            continue;
         }
-
-        attributeChangedCallback(attr, v) {
-            this.renderDatetime();
+        if (["year", "month", "day"].includes(o)) {
+            customDate = true;
         }
+        if (["hour", "minute", "second"].includes(o)) {
+            customTime = true;
+        }
+        options[o] = getMixedBoolData(el, o);
+    }
+    // Not compatible with time/date style
+    if (customDate && options.dateStyle) {
+        options.dateStyle = undefined;
+    }
+    if (customTime && options.timeStyle) {
+        options.timeStyle = undefined;
+    }
+    let f = "";
 
-        renderDatetime() {
-            if (!this.dataset.render) {
-                return;
-            }
-            const config = simpleConfig(getData(this, "datetimeConfig"));
-            const dt = getAttr(this, "datetime");
-            const style = getData(this, "style"); // short, medium, long, full
-            const format = getData(this, "format");
-            const relative = getBoolData(this, "relative");
-            const lang = getAttr(this, "lang") || getAttr(document.documentElement, "lang") || "en";
-            const options = config;
-            // Style shortcut
-            if (hasTime(dt) && !options.timeStyle) {
-                options.timeStyle = style || "short";
-            }
-            if (hasDate(dt) && !options.dateStyle) {
-                options.dateStyle = style || "short";
-            }
-            // Allow passing arbitrary data variables to options
-            let customDate = false;
-            let customTime = false;
-            for (const o in this.dataset) {
-                if (["style", "format", "relative", "render"].includes(o)) {
-                    continue;
-                }
-                if (["year", "month", "day"].includes(o)) {
-                    customDate = true;
-                }
-                if (["hour", "minute", "second"].includes(o)) {
-                    customTime = true;
-                }
-                options[o] = getMixedBoolData(this, o);
-            }
-            // Not compatible with time/date style
-            if (customDate && options.dateStyle) {
-                options.dateStyle = undefined;
-            }
-            if (customTime && options.timeStyle) {
-                options.timeStyle = undefined;
-            }
-            let f = "";
+    const d = asDate(dt);
+    switch (format) {
+        case "iso":
+            f = d.toISOString();
+            break;
+        case "utc":
+            f = d.toUTCString();
+            break;
+        case "datetime":
+            f = toDateTime(d);
+            break;
+        case "date":
+            f = toDate(d);
+            break;
+        case "time":
+            f = toTime(d);
+            break;
+        default:
+            if (relative) {
+                const ranges = dateRanges();
+                const secondsElapsed = (d.getTime() - Date.now()) / 1000;
+                for (const key in ranges) {
+                    if (ranges[key] < Math.abs(secondsElapsed)) {
+                        const delta = secondsElapsed / ranges[key];
 
-            const d = asDate(dt);
-            switch (format) {
-                case "iso":
-                    f = d.toISOString();
-                    break;
-                case "utc":
-                    f = d.toUTCString();
-                    break;
-                case "datetime":
-                    f = toDateTime(d);
-                    break;
-                case "date":
-                    f = toDate(d);
-                    break;
-                case "time":
-                    f = toTime(d);
-                    break;
-                default:
-                    if (relative) {
-                        const ranges = dateRanges();
-                        const secondsElapsed = (d.getTime() - Date.now()) / 1000;
-                        for (const key in ranges) {
-                            if (ranges[key] < Math.abs(secondsElapsed)) {
-                                const delta = secondsElapsed / ranges[key];
-
-                                if (supportsRelativeTime()) {
-                                    //@ts-ignore
-                                    f = new Intl.RelativeTimeFormat(lang).format(Math.round(delta), key);
-                                } else {
-                                    // This is a very crude polyfill that only works in english
-                                    const v = Math.abs(Math.floor(delta));
-                                    const u = v === 1 ? key.replace(/s$/, "") : key;
-                                    f = `${v} ${u}`;
-                                }
-
-                                break;
-                            }
+                        if (supportsRelativeTime()) {
+                            //@ts-ignore
+                            f = new Intl.RelativeTimeFormat(lang).format(Math.round(delta), key);
+                        } else {
+                            // This is a very crude polyfill that only works in english
+                            const v = Math.abs(Math.floor(delta));
+                            const u = v === 1 ? key.replace(/s$/, "") : key;
+                            f = `${v} ${u}`;
                         }
-                    } else {
-                        //@ts-ignore
-                        try {
-                            // IOS is very sensitive, always use proper iso format
-                            const dateObj = Date.parse(toIsoDateTime(expandDateTime(dt)));
 
-                            f = new Intl.DateTimeFormat(lang, options).format(dateObj);
-                        } catch (error) {
-                            this.dataset.error = error;
-                        }
+                        break;
                     }
+                }
+            } else {
+                //@ts-ignore
+                try {
+                    // IOS is very sensitive, always use proper iso format
+                    const dateObj = Date.parse(toIsoDateTime(expandDateTime(dt)));
 
-                    break;
+                    f = new Intl.DateTimeFormat(lang, options).format(dateObj);
+                } catch (error) {
+                    el.dataset.error = error;
+                }
             }
-            if (f.length > 0) {
-                this.innerText = f;
-            }
+
+            break;
+    }
+    if (f.length > 0) {
+        el.innerText = f;
+    }
+}
+
+dynamicBehaviour(
+    "time[datetime]",
+    /**
+     * @param {HTMLTimeElement} el
+     */
+    (el) => {
+        const dt = getAttr(el, "datetime");
+
+        // it could be populated server side
+        // elements need a "render" data attribute to by dynamically populated
+        if (dt && !el.innerText.trim()) {
+            el.dataset.render = "true";
         }
+
+        renderDateTime(el);
+        observeAttrs(el, ["datetime"], (node, oldValue) => {
+            renderDateTime(node);
+        });
+    },
+    (el) => {
+        // Nothing to cleanup, observer olds a weak reference
     },
 );

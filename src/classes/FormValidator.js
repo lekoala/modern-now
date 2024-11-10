@@ -1,8 +1,8 @@
-import { addClass, getBoolData, hasAttr, hasClass, removeClass, setAttr } from "./utils/attrs.js";
-import { on } from "./utils/events.js";
-import { checkVisibility, dataAsConfig, ephemeralText, simpleConfig } from "./utils/misc.js";
-import { qs, qsa } from "./utils/query.js";
-import { ucfirst } from "./utils/str.js";
+import { addClass, getBoolData, hasAttr, hasClass, removeClass, setAttr } from "../utils/attrs.js";
+import { on } from "../utils/events.js";
+import { checkVisibility, dataAsConfig, ephemeralText, simpleConfig } from "../utils/misc.js";
+import { qs, qsa } from "../utils/query.js";
+import { ucfirst } from "../utils/str.js";
 
 /**
  * @typedef ValidatorConfig

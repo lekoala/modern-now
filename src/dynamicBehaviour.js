@@ -53,7 +53,12 @@ const {
     },
 });
 
-export default (selector, callback, cleanup) => {
+/**
+ * @param {String} selector The selector to match the behaviour
+ * @param {Function} callback
+ * @param {Function|null} cleanup
+ */
+export default (selector, callback, cleanup = null) => {
     // Update handler map
     map[selector] = [callback, cleanup];
 

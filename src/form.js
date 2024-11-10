@@ -4,7 +4,7 @@ import { getBoolData, getMixedBoolData, hasAttr, hasData, removeAttr, setAttr } 
 import { on, off } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
 import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, globalContext, simpleConfig } from "./utils/misc.js";
-import FormValidator from "./FormValidator.js";
+import FormValidator from "./classes/FormValidator.js";
 import { qs, qsa } from "./utils/query.js";
 
 const validators = new WeakMap();
