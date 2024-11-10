@@ -202,6 +202,15 @@
                 <input type="text" id="input-bound2" name="bound2" disabled data-limited="slug">
             </div>
 
+            <div>
+                <label for="input-bound3">Bound input can be changed and its value will reset when the source input is changed</label>
+                <input type="text" id="input-bound3" name="bound3" data-to="input-bound4" value="This is my title">
+                <div class="tooltip" id="customtooltip" hidden>
+                    This is a custom input<br />Any value is replicated in the other one
+                </div>
+                <input type="text" id="input-bound4" name="bound4" data-limited="slug" value="custom-slug">
+            </div>
+
         </form>
 
         <h3>File uploads</h3>
