@@ -59,6 +59,6 @@ dynamicBehaviour(
      * @param {HTMLElement} el
      */
     (el) => {
-        getAndRun(cleanupMap, this);
+        getAndRun(cleanupMap, el);
     },
 );
