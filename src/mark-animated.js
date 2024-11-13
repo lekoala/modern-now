@@ -10,7 +10,7 @@ function convertRange(value, r1, r2) {
 
 const css = /*css*/ `
 @media (prefers-reduced-motion: no-preference) {
-    mark[data-animated] {
+    mark[data-animated]:not([class]) {
         --mark-bg-color: var(--text-highlight, #fd3);
         --mark-text-color: var(--text-dark, #333);
         --mark-duration: 1s;
@@ -24,7 +24,7 @@ const css = /*css*/ `
             background-color calc(var(--mark-duration) / 4) var(--mark-ease),
             background-size var(--mark-duration) var(--mark-ease);
     }
-    mark[data-animated][data-active] {
+    mark[data-animated][data-active]:not([class]) {
         background-size: 100% 100%;
         color: var(--mark-text-color);
     }

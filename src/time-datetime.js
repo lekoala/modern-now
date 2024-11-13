@@ -13,6 +13,7 @@ import {
 } from "./utils/date.js";
 import { getDocEl, getDocLang, observeAttrs, simpleConfig } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
+import { getAndRun } from "./utils/map.js";
 
 /**
  * @param {HTMLTimeElement} el
@@ -116,6 +117,8 @@ function renderDateTime(el) {
     }
 }
 
+const cleanupMap = new WeakMap();
+
 dynamicBehaviour(
     "time[datetime]",
     /**
@@ -131,11 +134,14 @@ dynamicBehaviour(
         }
 
         renderDateTime(el);
-        observeAttrs(el, ["datetime"], (node, oldValue) => {
-            renderDateTime(node);
-        });
+        cleanupMap.set(
+            el,
+            observeAttrs(el, ["datetime"], (node, oldValue) => {
+                renderDateTime(node);
+            }),
+        );
     },
     (el) => {
-        // Nothing to cleanup, observer olds a weak reference
+        getAndRun(cleanupMap, el);
     },
 );

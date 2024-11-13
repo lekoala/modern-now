@@ -14,6 +14,36 @@
         mark[data-animated] {
             background: none;
         }
+
+        .demo-glow-holder {
+            color: #c8c2bd;
+            font-size: 2rem;
+            text-align: center;
+            line-height: 1.0625;
+            font-weight: 600;
+            letter-spacing: -0.009em;
+            background: #222;
+            padding: 2em;
+            text-align: center;
+        }
+
+        .glow-filter {
+            color: #fff;
+        }
+
+        .glow-filter[data-active] {
+            animation: glow 2s ease-out forwards;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 0px #ffffff70, 0 0 0px #ffffff6d, 0 0 0px #e6007377, 0 0 0px #e6007361, 0 0 0px #e6007354;
+            }
+
+            to {
+                text-shadow: 0 0 15px #fff, 0 0 25px #ff4da6, 0 0 35px #ff4da6, 0 0 45px #ff4da6, 0 0 55px #ff4da6;
+            }
+        }
     </style>
 </head>
 
@@ -38,6 +68,12 @@
             deserunt <a href="#" data-tooltip title="Some tooltip">i have a tooltip</a> consectetur consectetur aliquip voluptate. Esse
             incididunt adipisicing irure ipsum enim quis fugiat animated <a href="#" data-tooltip data-tooltip-placement="bottom"
                 title="I'm at the bottom with a very long content but still max 40ch">a bottom tootlip</a>.</p>
+
+        <div class="demo-glow-holder">
+            <p>You can still use data-active and custom classes with your own styles</p>
+            <p> Introducing<br><mark data-animated class="glow-filter">Illuminated Glow Text.</mark><br>Highlight the main focus text.</p>
+        </div>
+
         <p>Scroll down to see the effect!</p>
         <div style="margin-top:75vh">
             <p><mark data-animated>Ullamco commodo ullamco elit aliquip</mark> reprehenderit velit nostrud non consequat non elit aliqua ea

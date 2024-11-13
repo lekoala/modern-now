@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
-import { activeEl, doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
+import { activeEl, doWithAnimation, globalContext, hide, isDescendant, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
@@ -26,15 +26,20 @@ const globalHandler = (ev) => {
         if (close === "manual") {
             return;
         }
-        const contains = menu.contains(ev.target);
-        // close when you click outside
-        if (close === "outside" && contains) {
+        const clickInside = menu.contains(ev.target);
+        // close = outside, but we clicked outside
+        if (close === "outside" && clickInside) {
             continue;
         }
-        // close when you click inside
-        if (close === "inside" && !contains) {
+        // close = inside, but we clicked outside
+        if (close === "inside" && !clickInside) {
             continue;
         }
+        // close = class, but no class is found
+        if (close.startsWith(".") && !ev.target.closest(close)) {
+            continue;
+        }
+
         dispatch(floatingHide, menu);
     }
 };

@@ -285,7 +285,7 @@ export function simpleConfig(str) {
     try {
         return replaceCallbacks(JSON.parse(jsonString));
     } catch (error) {
-        throw `Invalid config ${str} interpreted as ${jsonString}`;
+        throw `Invalid config ${str} interpreted as ${jsonString} with error ${error}`;
     }
 }
 
@@ -472,6 +472,7 @@ export function globalContext() {
  * @param {HTMLElement} el
  * @param {String[]} attrs
  * @param {Function} cb A function that takes the modified element
+ * @returns {Function} A cleanup function to stop observing
  */
 export function observeAttrs(el, attrs, cb) {
     const callback = (mutationList, observer) => {
@@ -481,10 +482,31 @@ export function observeAttrs(el, attrs, cb) {
             }
         }
     };
-    const MO = new MutationObserver(callback);
+    let MO = new MutationObserver(callback);
     MO.observe(el, {
         attributes: true,
         attributeOldValue: true,
         attributeFilter: attrs,
     });
+
+    return () => {
+        MO.disconnect();
+        MO = null;
+    };
+}
+
+/**
+ * @param {HTMLElement} parent
+ * @param {HTMLElement} child
+ * @returns {Boolean}
+ */
+export function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
 }

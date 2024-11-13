@@ -145,9 +145,10 @@ dynamicBehaviour(
 
         // There is no "open" event in js, so we watch the open attribute and
         // trigger a custom event
+        let cleanup;
         if (el.tagName === "DIALOG" && triggers.includes("dialogOpen")) {
             // observe changes on open attribute
-            observeAttrs(el, ["open"], (dialog, oldValue) => {
+            cleanup = observeAttrs(el, ["open"], (dialog, oldValue) => {
                 const open = oldValue === null;
                 dispatch("dialogOpen", dialog, { open });
             });
@@ -177,6 +178,7 @@ dynamicBehaviour(
             triggers: triggers,
             interval: intervalReference,
             controller: controller,
+            cleanup: cleanup,
         };
         map.set(el, elData);
     },
@@ -191,6 +193,9 @@ dynamicBehaviour(
             }
             if (elData.interval) {
                 clearInterval(elData.interval);
+            }
+            if (elData.cleanup) {
+                elData.cleanup();
             }
             // Abort any pending request made by our node
             if (elData.controller) {

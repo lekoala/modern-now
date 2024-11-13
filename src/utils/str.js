@@ -44,5 +44,5 @@ export function camelToDash(str) {
  * @returns {string}
  */
 export function ucfirst(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toLocaleUpperCase() + str.slice(1);
 }

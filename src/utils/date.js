@@ -197,6 +197,7 @@ export function isDay(date) {
 }
 
 /**
+ * Returns a date object with the current day
  * @returns {Date}
  */
 export function currentDay() {
@@ -206,17 +207,45 @@ export function currentDay() {
 }
 
 /**
+ * Returns a date object with the current day, ignoring timezone
+ * @returns {Date}
+ */
+export function currentUTCDay() {
+    return dateWithoutTimezone(new Date());
+}
+
+/**
  * Convert to a datetime, ignoring timezone (will use actual day being picked)
  * @param {Date|string} date
  * @returns {string} YYYY-MM-DD HH:MM:SS
  */
 export function toDateTime(date) {
-    const d = asDate(date);
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split(".")[0].replace("T", " ");
+    return dateWithoutTimezone(date).toISOString().split(".")[0].replace("T", " ");
 }
 
 /**
- * @param {Date} date
+ * @link https://dev.to/shubhampatilsd/removing-timezones-from-dates-in-javascript-46ah
+ * @param {Date|string} date
+ * @returns {Date}
+ */
+export function dateWithoutTimezone(date) {
+    const d = asDate(date);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+}
+
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @param {Number} date
+ * @returns {Date}
+ */
+export function utcDate(year, month, date) {
+    return new Date(Date.UTC(year, month, date));
+}
+
+/**
+ * @param {Date|string} date
  * @returns {string} YYYY-MM-DD
  */
 export function toDate(date) {
@@ -224,7 +253,7 @@ export function toDate(date) {
 }
 
 /**
- * @param {Date} date
+ * @param {Date|string} date
  * @returns {string} HH:MM:SS
  */
 export function toTime(date) {

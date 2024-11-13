@@ -4,7 +4,9 @@ import { on, off, dispatch } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
 import { byId } from "./utils/query.js";
 import { normalize, slugify } from "./utils/str.js";
-import { globalContext } from "./utils/misc.js";
+import { dotPath, globalContext } from "./utils/misc.js";
+
+let isHandlingTo = false;
 
 const { HTML } = createRegistry(globalContext());
 define(
@@ -25,8 +27,30 @@ define(
             }
             const el = byId(to, "input");
             if (el) {
-                el.value = this.value;
+                // Allows mutual data-to inputs
+                if (isHandlingTo) {
+                    return;
+                }
+                isHandlingTo = true;
+                let v = this.value;
+                const t = this.dataset.toTransform;
+                if (t) {
+                    // We have some built in date conversion, otherwise it can be a custom fn
+                    if (t === "dmy") {
+                        v = v.split("-").reverse().join("/");
+                    } else if (t === "ymd") {
+                        v = v.split("/").reverse().join("-");
+                    } else {
+                        const fn = dotPath(t);
+                        if (fn) {
+                            v = fn(v);
+                        }
+                    }
+                }
+
+                el.value = v;
                 dispatch("input", el);
+                isHandlingTo = false;
             }
         }
 

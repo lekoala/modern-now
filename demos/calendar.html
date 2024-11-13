@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../dist/full.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="demo.css">
+
+    <style>
+        td.is-active button,
+        td.is-active {
+            font-weight: bold;
+        }
+
+        button.is-calendar-button {
+            background: none;
+            border-radius: 0;
+            border: 0;
+            margin: 0;
+            color: currentColor;
+        }
+
+        button.is-calendar-button:hover {
+            background: #c7cad9;
+            border: 0;
+            margin: 0;
+            color: currentColor;
+        }
+
+        td.is-inactive {
+            color: rgba(0, 0, 0, 0.3)
+        }
+
+        table.dropdown-table {
+            margin: 0;
+        }
+
+        [data-calendar] table td,
+        [data-calendar] table th {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+        <h2>Calendar</h2>
+
+        <h3>Introduction</h3>
+
+        <p>Simple calendars powered by intl extension. Styling should work well as long as your tables have proper default styles.</p>
+
+        <h3>Demo</h3>
+
+        <p>Standalone calendar using default locale.</p>
+
+        <div data-calendar></div>
+
+        <p>Using specific locale, with built in provided translations from intl extension. Try changing data-value!</p>
+
+        <div data-calendar data-value="2024-01" lang="fr"></div>
+
+        <p>Enable navigation with controls:true and do something on click. Requires a little bit of css to adjust the buttons.</p>
+
+        <script>
+            // This needs to be loaded before div is initialized
+            // therefore, it cannot be in a type="module" because html will get parsed and triggered before
+            window['app'] = window['app'] || {};
+            window['app']['calendarClick'] = (calendarEl, date) => {
+                alert(`You clicked on ${date}`);
+            }
+        </script>
+        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}" data-value="2025-03"></div>
+
+        <p>Bind to input: save value into hidden input, but display a d/m/Y value.</p>
+
+        <div>
+            <input type="hidden" id="calendar-input" data-to="calendar-input-fmt" data-to-transform="dmy" />
+            <input type="text" id="calendar-input-fmt" data-limited="mask" data-mask="99/99/9999" data-to="calendar-input" data-to-transform="ymd" placeholder="dd/mm/yyyy" size="10">
+            <button data-dropdown="calendar-dropdown" data-dropdown-close=".is-date">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#fff" viewBox="0 0 256 256">
+                    <path
+                        d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div id="calendar-dropdown" hidden style="background:#fff;padding:1em;filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.2));">
+            <div data-calendar="lang:'fr', controls: true, click: 'calendar-input', tableClass:'dropdown-table'"></div>
+        </div>
+    </main>
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>

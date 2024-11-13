@@ -1,6 +1,7 @@
 import { getAttr, getData, getMixedBoolData } from "./utils/attrs.js";
 import { dataAsConfig, getDocLang, observeAttrs, simpleConfig } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
+import { getAndRun } from "./utils/map.js";
 
 /**
  * @param {HTMLElement} el
@@ -38,15 +39,19 @@ function renderNumber(el) {
     el.innerText = Number.isNaN(nv) ? "" : formatter.format(nv);
 }
 
+const cleanupMap = new WeakMap();
 dynamicBehaviour(
     "span[data-number]",
     (el) => {
         renderNumber(el);
-        observeAttrs(el, ["data-number"], (node, oldValue) => {
-            renderNumber(node);
-        });
+        cleanupMap.set(
+            el,
+            observeAttrs(el, ["data-number"], (node, oldValue) => {
+                renderNumber(node);
+            }),
+        );
     },
     (el) => {
-        // Nothing to cleanup, observer olds a weak reference
+        getAndRun(cleanupMap, el);
     },
 );
