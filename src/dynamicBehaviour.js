@@ -1,4 +1,4 @@
-import QSAO from "../node_modules/qsa-observer/esm.js";
+import QSAO from "qsa-observer";
 import { getBoolData } from "./utils/attrs.js";
 import lazy from "./utils/lazy.js";
 import { getAndRun } from "./utils/map.js";
