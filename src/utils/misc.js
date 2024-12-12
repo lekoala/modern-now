@@ -1,6 +1,6 @@
 import { addClass, getMixedBoolData, hasAttr, hasData, removeClass } from "./attrs.js";
 import { once } from "./events.js";
-import { qs } from "./query.js";
+import { qs, qsa } from "./query.js";
 import { ucfirst } from "./str.js";
 
 /**
@@ -8,7 +8,7 @@ import { ucfirst } from "./str.js";
  * @param {String|null} id
  */
 export function injectCss(css, id = null) {
-    const style = document.createElement("style");
+    const style = ce("style");
     if (id) {
         style.id = id;
     }
@@ -142,6 +142,38 @@ export function isArray(v) {
  */
 export function isString(v) {
     return typeof v === "string" || v instanceof String;
+}
+
+/**
+ * @param {string} v
+ * @returns {Boolean|Number|null|String}
+ */
+export function strToVar(v) {
+    if (!isString(v)) {
+        return null;
+    }
+    const lv = v.toLowerCase();
+    if (lv === "true") {
+        return true;
+    }
+    if (lv === "false") {
+        return false;
+    }
+    if (v === Number(v).toString()) {
+        return Number(v);
+    }
+    return v;
+}
+
+/**
+ * @param {String} v
+ * @returns {Array}
+ */
+export function strArray(v, sep = ",") {
+    if (!v) {
+        return [];
+    }
+    return v.split(sep).map((s) => s.trim());
 }
 
 /**
@@ -287,6 +319,23 @@ export function simpleConfig(str) {
     } catch (error) {
         throw `Invalid config ${str} interpreted as ${jsonString} with error ${error}`;
     }
+}
+
+/**
+ * Convert a simple string into a node, an array of node or a properly typed value
+ * @param {String} v
+ * @returns {HTMLElement|Array<HTMLElement>|String|Number|null|Boolean}
+ */
+export function simpleParam(v) {
+    if (isString(v)) {
+        if (v.startsWith("#")) {
+            return qs(v);
+        }
+        if (v.startsWith(".")) {
+            return qsa(v);
+        }
+    }
+    return strToVar(v);
 }
 
 /**
@@ -468,7 +517,8 @@ export function globalContext() {
 }
 
 /**
- *
+ * Observice specific attributes of an element
+ * Returns a function to cleanup mutation observer
  * @param {HTMLElement} el
  * @param {String[]} attrs
  * @param {Function} cb A function that takes the modified element
@@ -493,20 +543,4 @@ export function observeAttrs(el, attrs, cb) {
         MO.disconnect();
         MO = null;
     };
-}
-
-/**
- * @param {HTMLElement} parent
- * @param {HTMLElement} child
- * @returns {Boolean}
- */
-export function isDescendant(parent, child) {
-    let node = child.parentNode;
-    while (node != null) {
-        if (node === parent) {
-            return true;
-        }
-        node = node.parentNode;
-    }
-    return false;
 }

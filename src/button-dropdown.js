@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
 import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
-import { activeEl, doWithAnimation, globalContext, hide, isDescendant, show } from "./utils/misc.js";
+import { activeEl, doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
@@ -15,32 +15,40 @@ const openMenus = new Set();
 let curr;
 let lastTrigger;
 
+/**
+ * This is called on click on document
+ * @param {MouseEvent} ev
+ * @returns {void}
+ */
 const globalHandler = (ev) => {
     if (openMenus.size === 0) {
         return;
     }
     for (const menu of openMenus) {
         // https://getbootstrap.com/docs/5.3/components/dropdowns/#auto-close-behavior
-        // default | inside | outside | manual
-        const close = menu.dataset.dropdownClose;
-        if (close === "manual") {
-            return;
-        }
-        const clickInside = menu.contains(ev.target);
-        // close = outside, but we clicked outside
-        if (close === "outside" && clickInside) {
-            continue;
-        }
-        // close = inside, but we clicked outside
-        if (close === "inside" && !clickInside) {
-            continue;
-        }
-        // close = class, but no class is found
-        if (close.startsWith(".") && !ev.target.closest(close)) {
-            continue;
-        }
+        // default | inside | outside | manual | .selector | outside,.selector
+        const closeArr = menu.dataset.dropdownClose.split(",");
 
-        dispatch(floatingHide, menu);
+        let n = null;
+        for (const close of closeArr) {
+            if (close === "outside" || close === "inside") {
+                // This works better than menu.contains(ev.target) because if the node is rerendered, it will not be there anymore
+                const clickInside = Array.from(ev.composedPath()).includes(menu);
+                if (close === "outside" && !clickInside) {
+                    n = "outside";
+                }
+                if (close === "inside" && clickInside) {
+                    n = "inside";
+                }
+            }
+            //@ts-ignore
+            if (close.startsWith(".") && ev.target.closest(close)) {
+                n = "selector";
+            }
+        }
+        if (n) {
+            dispatch(floatingHide, menu);
+        }
     }
 };
 on("click", globalHandler);

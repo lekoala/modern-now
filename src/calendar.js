@@ -315,6 +315,7 @@ const eventHandler = {
         const y = toInt(v[0]);
         const m = toInt(v[1]) - 1;
 
+        // Navigation
         if (btn.classList.contains("is-prev")) {
             const prev = getPreviousMonth(y, m);
             cal.dataset.value = toDate(prev);

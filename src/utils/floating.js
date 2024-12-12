@@ -326,7 +326,9 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             coords = computeCoordsFromPlacement(reference, floating, placement, isRTL);
 
             // despite flipping, it's outside of bounds again
-            if (axis === "y" && coords.x + floating.width > doc.clientWidth) {
+            const outsideX = axis === "x" && coords.y + floating.height > doc.clientHeight;
+            const outsideY = axis === "y" && coords.x + floating.width > doc.clientWidth
+            if (outsideX || outsideY) {
                 // use top placement
                 side = "top";
                 axis = "x";
@@ -356,6 +358,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
         setCssVar(floatingEl, "p", "50%");
     }
 
+    // Store as data attribute, useful for styling
     floatingEl.dataset.placement = placement;
 
     // Position floating element if updated

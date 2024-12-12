@@ -193,7 +193,7 @@
         </ul>
 
         <p>Closing modes : choose between manual (you have to press esc or click the button again), inside (clicking inside closes the menu)
-            or outside (clicking outside closes the menu)</p>
+            , outside (clicking outside closes the menu), .selector</p>
 
         <button type="button" data-dropdown="sweets-dropdown3" data-dropdown-close="manual">
             Manual
@@ -221,6 +221,26 @@
             <li><a href="#" class="dropdown-item">Cupcakes</a></li>
             <li><a href="#" class="dropdown-item">Chocolate</a></li>
             <li><a href="#" class="dropdown-item">Bonbons</a></li>
+        </ul>
+        <button type="button" data-dropdown="sweets-dropdown6" data-dropdown-close=".close-me">
+            Selector
+        </button>
+        <ul id="sweets-dropdown6" class="dropdown-menu" hidden>
+            <li><a href="#" class="dropdown-item">Donuts</a></li>
+            <li><a href="#" class="dropdown-item">Cupcakes</a></li>
+            <li><a href="#" class="dropdown-item">Chocolate</a></li>
+            <li><a href="#" class="dropdown-item">Bonbons</a></li>
+            <li><a href="#" class="dropdown-item close-me">Close</a></li>
+        </ul>
+        <button type="button" data-dropdown="sweets-dropdown7" data-dropdown-close=".close-me,outside">
+            Selector + outside
+        </button>
+        <ul id="sweets-dropdown7" class="dropdown-menu" hidden>
+            <li><a href="#" class="dropdown-item">Donuts</a></li>
+            <li><a href="#" class="dropdown-item">Cupcakes</a></li>
+            <li><a href="#" class="dropdown-item">Chocolate</a></li>
+            <li><a href="#" class="dropdown-item">Bonbons</a></li>
+            <li><a href="#" class="dropdown-item close-me">Close</a></li>
         </ul>
 
         <p>Nested dropdowns</p>

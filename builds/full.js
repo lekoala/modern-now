@@ -21,6 +21,7 @@ import "../src/span-number.js";
 import "../src/mark-animated.js";
 import "../src/tooltip.js";
 import "../src/htmx.js";
+import "../src/cmd.js";
 
 // Add dialog polyfill if needed
 // You can drop this if you target safari >= 15.4

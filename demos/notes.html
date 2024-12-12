@@ -39,12 +39,18 @@
             fail in very complex scenarios (in which case, use json), it's fine for most common use cases and makes handwriting config much
             more bearable.</p>
 
-        <p>There is a special syntax to pass callbacks like <code>my: {__fn: 'app.callback'}</code> which will result to <code>{my: appCallbackFunctionReference}</code>.</p>
+        <p>There is a special syntax to pass callbacks like <code>my: {__fn: 'app.callback'}</code> which will result to
+            <code>{my: appCallbackFunctionReference}</code>.
+        </p>
 
         <p>Simple configs can also point to a config provider using <code>data-config="app.myConfigProvider()"</code> which gets called on
             the global scope.</p>
 
         <p>Passing a simple string like <code>data-config="mystring"</code> results to <code>{default: "mystring"}</code> object.</p>
+
+        <h3 id="simple-params">Simple params</h3>
+
+        <p>When using list of string parameters, you can pass a selector or strings value that will be converted to proper vars.</p>
     </main>
     <footer>
         <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |

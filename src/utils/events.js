@@ -106,7 +106,7 @@ export function off(event, handler, el = null) {
 /**
  * @param {String} name
  * @param {HTMLElement|Document} el
- * @param {any} data
+ * @param {any} data Available as ev.detail in the event
  * @param {Boolean} bubbles
  */
 export function dispatch(name, el = document, data = {}, bubbles = false) {

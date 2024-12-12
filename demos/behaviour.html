@@ -49,8 +49,31 @@
 
             el.addEventListener("dblclick", (ev) => {
                 el.remove();
+            });
+
+            el.addEventListener("moveNode", (ev) => {
+                const c1 = ev.detail[0];
+                const c2 = ev.detail[1];
+                // Test if connect/disconnect callbacks are triggered incorrectly
+                // https://nolanlawson.com/2024/12/01/avoiding-unnecessary-cleanup-work-in-disconnectedcallback/
+                console.log("move", el, c1, c2);
+                if (c1.contains(el)) {
+                    c1.removeChild(el);
+                    c2.insertBefore(el, null);
+                }
+                else {
+                    c2.removeChild(el);
+                    c1.insertBefore(el, null);
+                }
+            });
+
+            el.addEventListener("resetCount", (ev) => {
+                countUp.reset();
+                countUp.start();
             })
             return () => {
+                // do any cleanup here
+                countUp = null;
                 console.log('remove count up');
             }
         }
@@ -88,7 +111,17 @@
 
         <p>Scroll below to see lazy countup using <code>data-lazy</code>.</p>
 
-        <div style="margin-top:75vh"> <span data-behaviour="countup" data-value="2500" data-lazy>0000</span></div>
+        <div style="margin-top:75vh">
+            <div id="container1"><span id="demo-countup" data-behaviour="countup" data-value="2500" data-lazy>0000</span></div>
+            <div id="container2"></div>
+            <button id="move" data-cmd="moveNode" data-cmd-for="demo-countup" data-cmd-args="#container1,#container2">Move to other
+                container</button>
+            <button id="reset" data-cmd="resetCount" data-cmd-for="demo-countup">Reset</button>
+            <button id="destroy" data-cmd="remove" data-cmd-for="demo-countup">Destroy</button>
+
+            <p>Moving doesn't reset counting</p>
+        </div>
+
     </main>
 
     <footer>

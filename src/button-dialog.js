@@ -4,6 +4,8 @@ import { byId } from "./utils/query.js";
 import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, as } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
 
+// This is pretty much a more opiniated version of https://github.com/keithamus/invokers-polyfill
+
 /**
  * @typedef {Object} HTML
  * @property {new () => HTMLButtonElement} Button

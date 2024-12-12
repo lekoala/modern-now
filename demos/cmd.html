@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modern-now</title>
+    <script type="module" src="../dist/full.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="demo.css">
+
+    <script type="module">
+
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <h1>modern-now</h1>
+    </header>
+
+    <main>
+        <a href="../index.html">Back</a>
+
+        <h2>Command</h2>
+
+        <p>Inspired by <a href="https://open-ui.org/components/invokers.explainer/">invokers</a>, execute command or dispatch events on html
+            nodes.</p>
+
+        <p>Define a <code>data-cmd</code> command that can be an original function on the element or an event name. This will target any
+            node matching <code>data-cmd-for</code>
+            that can be a selector starting with # or . or just a plain id.</p>
+
+        <p>You can pass extra arguments to the event using <code>data-cmd-args</code> that following simple params notation.</p>
+
+        <h3>Demo</h3>
+
+        <div id="mynode">This is my node</div>
+
+        <button data-cmd="remove" data-cmd-for="mynode">Delete node</button>
+
+        <div id="myeventnode">This is another node</div>
+        <button data-cmd="myEvent" data-cmd-for="myeventnode" data-cmd-args="#mynode,somestring,15,true">Trigger event</button>
+        <script type="module">
+            document.getElementById("myeventnode").addEventListener("myEvent", (ev) => {
+                console.log(ev.type, ev.detail);
+            })
+        </script>
+
+        <p>Check the console!</p>
+    </main>
+
+    <footer>
+        <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
+        Made with <span style="color:#F31830">♥</span> in
+        <svg viewBox="0 0 640 480" height="1.2ex" style="display:inline;">
+            <g fill-rule="evenodd" stroke-width="1pt">
+                <path fill="#000001" d="M0 0h213.3v480H0z" />
+                <path fill="#ffd90c" d="M213.3 0h213.4v480H213.3z" />
+                <path fill="#f31830" d="M426.7 0H640v480H426.7z" />
+            </g>
+        </svg>
+        by <a href="https://www.lekoala.be">LeKoala</a>
+    </footer>
+</body>
+
+</html>
