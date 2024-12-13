@@ -1,9 +1,9 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
-import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./utils/attrs.js";
+import { addClass, getAttr, getBoolData, hasAttr, removeAttr, setAttr, setData } from "./utils/attrs.js";
 import { dispatch, off, on } from "./utils/events.js";
 import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
-import { injectCss, show, hide, ce, isVisible, as, simpleConfig, dataAsConfig } from "./utils/misc.js";
+import { injectCss, show, hide, ce, isVisible, as, simpleConfig, dataAsConfig, supportsPopover } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
 /**
@@ -14,6 +14,7 @@ import { byId } from "./utils/query.js";
  * @property {String} class
  * @property {String} title
  * @property {Boolean} hidden Keep hidden
+ * @property {Boolean} visible Keep visible
  * @property {Boolean} click Triggers on click
  */
 
@@ -22,7 +23,7 @@ import { byId } from "./utils/query.js";
 // requires -webkit prefix for clip path
 // data-placement is set by floating utils
 const css = /*css*/ `
-.tooltip {
+div.tooltip {
   --b: 12px;
   --h: 6px;
   --p: 50%;
@@ -37,12 +38,14 @@ const css = /*css*/ `
   border-radius: min(var(--r),var(--p) - var(--b)/2) min(var(--r),100% - var(--p) - var(--b)/2) var(--r) var(--r)/var(--r);
   background: 0 0/100% calc(100% + var(--h)) var(--tooltip-bg);
   position: relative;
+  overflow: visible;
+  inset: unset;
   z-index: 0;
   max-width: max(40ch, 90vw);
   opacity:1;
   font-size: 0.875rem;
 }
-.tooltip:before {
+div.tooltip:before {
   content: " ";
   position: absolute;
   z-index: -1;
@@ -52,31 +55,31 @@ const css = /*css*/ `
   left: 0px;
   bottom: 0px;
 }
-.tooltip[data-placement="top"]:before {
+div.tooltip[data-placement="top"]:before {
   bottom: calc(-1*var(--h));
   clip-path: polygon(min(100%,var(--p) + var(--b)/2) calc(100% - var(--h)),var(--p) 100%,max(0%,var(--p) - var(--b)/2) calc(100% - var(--h)),50% 50%);
   -webkit-clip-path: polygon(min(100%,var(--p) + var(--b)/2) calc(100% - var(--h)),var(--p) 100%,max(0%,var(--p) - var(--b)/2) calc(100% - var(--h)),50% 50%);
 }
-.tooltip[data-placement="bottom"] {
+div.tooltip[data-placement="bottom"] {
   background: 0 100%/100% calc(100% + var(--h)) var(--tooltip-bg);
 }
-.tooltip[data-placement="bottom"]:before {
+div.tooltip[data-placement="bottom"]:before {
   top: calc(-1*var(--h));
   clip-path: polygon(min(100%,var(--p) + var(--b)/2) var(--h),var(--p) 0,max(0%,var(--p) - var(--b)/2) var(--h),50% 50%);
   -webkit-clip-path: polygon(min(100%,var(--p) + var(--b)/2) var(--h),var(--p) 0,max(0%,var(--p) - var(--b)/2) var(--h),50% 50%);
 }
-.tooltip[data-placement="right"] {
+div.tooltip[data-placement="right"] {
   background:  0/calc(100% + var(--h)) 100%  var(--tooltip-bg);
 }
-.tooltip[data-placement="right"]:before {
+div.tooltip[data-placement="right"]:before {
   left: calc(-1*var(--h));
   clip-path: polygon(var(--h) max(0%,var(--p) - var(--b)/2),0 var(--p),var(--h) min(100%,var(--p) + var(--b)/2),50% 50%);
   -webkit-clip-path: polygon(var(--h) max(0%,var(--p) - var(--b)/2),0 var(--p),var(--h) min(100%,var(--p) + var(--b)/2),50% 50%);
 }
-.tooltip[data-placement="left"] {
+div.tooltip[data-placement="left"] {
   background: 100%/calc(100% + var(--h)) 100% var(--tooltip-bg);
 }
-.tooltip[data-placement="left"]:before {
+div.tooltip[data-placement="left"]:before {
   right: calc(-1*var(--h));
   clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
   -webkit-clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
@@ -85,9 +88,32 @@ const css = /*css*/ `
 const id = "tooltip-style";
 injectCss(css, id);
 
+const container = ce("div");
+container.id = "tooltip-container";
+document.body.appendChild(container);
+
+const usePopover = true && supportsPopover();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
+
+function showTooltip(tooltip) {
+    if (usePopover) {
+        tooltip.showPopover();
+    }
+    show(tooltip);
+    // compute initial position
+    dispatch(floatingReposition, tooltip);
+}
+
+function hideTooltip(tooltip) {
+    if (usePopover) {
+        tooltip.hidePopover();
+    }
+    hide(tooltip);
+}
+
 /**
+ * This is the event handler for the tooltip trigger
  * @param {MouseEvent} ev
  */
 const eventHandler = (ev) => {
@@ -100,8 +126,12 @@ const eventHandler = (ev) => {
         return;
     }
     const isClick = ev.type === "click";
+    const showOnClick = getBoolData(reference, "tooltipClick");
+    const alwaysVisible = getBoolData(reference, "tooltipVisible");
+    const keepHidden = getBoolData(reference, "tooltipHidden");
     let action = null;
-    if (getBoolData(reference, "tooltipClick")) {
+
+    if (showOnClick) {
         if (isClick) {
             ev.preventDefault();
             action = isVisible(tooltip) ? "hide" : "show";
@@ -110,21 +140,19 @@ const eventHandler = (ev) => {
         action = ["mouseover", "focus"].includes(ev.type) ? "show" : "hide";
     }
     if (action === "show") {
-        const hidden = getBoolData(reference, "tooltipHidden");
-        if (!hidden) {
-            show(tooltip);
-            // compute initial position
-            dispatch(floatingReposition, tooltip);
+        if (!keepHidden && !isVisible(tooltip)) {
+            showTooltip(tooltip);
         }
-    } else if (action === "hide") {
+    } else if (action === "hide" && !alwaysVisible) {
         // Hide, unless it's focused
         if (document.activeElement !== target || isClick) {
-            hide(tooltip);
+            hideTooltip(tooltip);
         }
     }
 };
 
 /**
+ * This is the event handler for the tooltip itself
  * @param {Event} ev
  */
 const tooltipHandler = (ev) => {
@@ -144,8 +172,8 @@ const tooltipHandler = (ev) => {
             shiftPadding: 6,
         });
     }
-    if (type === floatingHide) {
-        hide(t);
+    if (type === floatingHide && !t.dataset.tooltipVisible) {
+        hideTooltip(t);
     }
 };
 
@@ -169,11 +197,14 @@ dynamicBehaviour(
         const config = simpleConfig(data.tooltip);
 
         // Data shortcut, with a tooltip prefix
-        dataAsConfig(el, config, ["distance", "placement", "target", "class", "title"], "tooltip");
+        dataAsConfig(el, config, ["distance", "placement", "target", "class", "title", "visible", "hidden"], "tooltip");
 
         // Persist some useful data attributes for our eventHandler
         if (config.hidden) {
             data.tooltipHidden = "true";
+        }
+        if (config.visible) {
+            data.tooltipVisible = "true";
         }
         if (config.click) {
             data.tooltipClick = "true";
@@ -195,7 +226,10 @@ dynamicBehaviour(
             tooltip.id = `tooltip-${i}`;
             tooltip.style.maxWidth = "40ch";
             tooltip.innerHTML = `${title}`;
-            document.body.appendChild(tooltip);
+
+            // If we have a popover parent, adding to the body is not an option
+            const parent = el.closest("dialog") || container;
+            parent.appendChild(tooltip);
 
             data.tooltipTarget = tooltip.id;
         } else if (config.target) {
@@ -209,7 +243,14 @@ dynamicBehaviour(
 
         setAttr(el, "aria-describedby", `tooltip-${i}`);
         tooltip.style.position = "fixed";
-        hide(tooltip);
+        if (usePopover) {
+            tooltip.popover = "";
+        }
+        if (!config.visible) {
+            hide(tooltip);
+        } else {
+            tooltip.dataset.tooltipVisible = "true";
+        }
         addClass(tooltip, "tooltip");
         // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tooltip_Role
         tooltip.role = "tooltip";
@@ -232,6 +273,10 @@ dynamicBehaviour(
         const cleanup = autoUpdate(tooltip);
         cleanupMap.set(tooltip, cleanup);
         on(events, eventHandler, el);
+
+        if (config.visible) {
+            showTooltip(tooltip);
+        }
     },
     /**
      * @param {HTMLElement} el

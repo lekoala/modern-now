@@ -21,3 +21,8 @@
     --marked: #ffdd33;
     --disabled: #efefef;
 }
+
+span[data-tooltip] {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+}
