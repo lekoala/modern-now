@@ -39,19 +39,21 @@
 
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.min.js"></script>
     <script type="module">
-        import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/+esm';
+        // import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.8.0/+esm';
+        // console.log("count up loaded");
 
-        window['countup'] = function (el, config) {
-            var countUp = new CountUp(el, el.dataset.value, config);
-            countUp.start();
-            console.log("start counting!");
-
-            el.addEventListener("dblclick", (ev) => {
-                el.remove();
-            });
-
-            el.addEventListener("moveNode", (ev) => {
+        const eventHandler = {
+            handleEvent: (ev) => {
+                console.log(ev);
+                eventHandler[`$${ev.type}`](ev);
+            },
+            $dblclick: (ev) => {
+                ev.target.remove();
+            },
+            $moveNode: (ev) => {
+                const el = ev.target;
                 const c1 = ev.detail[0];
                 const c2 = ev.detail[1];
                 // Test if connect/disconnect callbacks are triggered incorrectly
@@ -65,18 +67,60 @@
                     c2.removeChild(el);
                     c1.insertBefore(el, null);
                 }
-            });
-
-            el.addEventListener("resetCount", (ev) => {
-                countUp.reset();
-                countUp.start();
-            })
-            return () => {
-                // do any cleanup here
-                countUp = null;
-                console.log('remove count up');
+            },
+            $moveNodeDisconnect: (ev) => {
+                const el = ev.target;
+                const c1 = ev.detail[0];
+                const c2 = ev.detail[1];
+                // Test if connect/disconnect callbacks are triggered incorrectly
+                // https://nolanlawson.com/2024/12/01/avoiding-unnecessary-cleanup-work-in-disconnectedcallback/
+                console.log("moveNodeDisconnect", el, c1, c2);
+                if (c1.contains(el)) {
+                    c1.removeChild(el);
+                    setTimeout(() => {
+                        c2.insertBefore(el, null);
+                    }, 1000);
+                }
+                else if (c2.contains(el)) {
+                    c2.removeChild(el);
+                    setTimeout(() => {
+                        c1.insertBefore(el, null);
+                    }, 1000);
+                }
+            },
+            $resetCount: (ev) => {
+                let countUp = ev.target._countUp;
+                if (countUp) {
+                    countUp.reset();
+                    countUp.start();
+                }
             }
         }
+
+        setTimeout(() => {
+            window['countupInit'] = function (el, config) {
+                // var countUp = new CountUp(el, el.dataset.value, config);
+                var countUp = new window.countUp.CountUp(el, el.dataset.value, config);
+                el._countUp = countUp;
+                countUp.start();
+                console.log("start counting!");
+
+                el.addEventListener("dblclick", eventHandler);
+                el.addEventListener("moveNode", eventHandler);
+                el.addEventListener("moveNodeDisconnect", eventHandler);
+                el.addEventListener("resetCount", eventHandler);
+
+                return () => {
+                    // do any cleanup here
+                    countUp = null;
+                    el.removeEventListener("dblclick", eventHandler);
+                    el.removeEventListener("moveNode", eventHandler);
+                    el.removeEventListener("moveNodeDisconnect", eventHandler);
+                    el.removeEventListener("resetCount", eventHandler);
+                    console.log('remove count up');
+                }
+            }
+        }, 1000);
     </script>
 </head>
 
@@ -107,19 +151,28 @@
 
         <h3>Countup demo</h3>
 
-        <span data-behaviour="countup" data-value="2500">0000</span>
+        <p>In this demo, count up is loaded as a global var. It's init function is defined 1s after load, and it will be detected by our library.</p>
+
+        <p>You always need to wrap the library in with a function call to initiliaze. This function should return a proper cleanup callback.</p>
+
+        <span data-behaviour="countupInit" data-value="2500">0000</span>
 
         <p>Scroll below to see lazy countup using <code>data-lazy</code>.</p>
 
         <div style="margin-top:75vh">
-            <div id="container1"><span id="demo-countup" data-behaviour="countup" data-value="2500" data-lazy>0000</span></div>
+            <div id="container1">
+                <span id="demo-lazy-countup" data-behaviour="countupInit" data-value="2500" data-lazy>0000</span>
+            </div>
             <div id="container2"></div>
-            <button id="move" data-cmd="moveNode" data-cmd-for="demo-countup" data-cmd-args="#container1,#container2">Move to other
+            <button id="move" data-cmd="moveNode" data-cmd-for="demo-lazy-countup" data-cmd-args="#container1,#container2">Move to other
                 container</button>
-            <button id="reset" data-cmd="resetCount" data-cmd-for="demo-countup">Reset</button>
-            <button id="destroy" data-cmd="remove" data-cmd-for="demo-countup">Destroy</button>
+            <button id="move" data-cmd="moveNodeDisconnect" data-cmd-for="demo-lazy-countup" data-cmd-args="#container1,#container2">Move to
+                other
+                container (and disconnect)</button>
+            <button id="reset" data-cmd="resetCount" data-cmd-for="demo-lazy-countup">Reset</button>
+            <button id="destroy" data-cmd="remove" data-cmd-for="demo-lazy-countup">Destroy</button>
 
-            <p>Moving doesn't reset counting</p>
+            <p>Moving doesn't reset counting except if it takes longer than a microtask</p>
         </div>
 
     </main>

@@ -4,9 +4,23 @@ import { setIfValue, getAndRun } from "./utils/map.js";
 import { on } from "./utils/events.js";
 
 const q = new Set();
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const cleanupMap = new WeakMap();
 
+function processQueue() {
+    for (const el of q) {
+        const res = init(el);
+        if (res) {
+            q.delete(el);
+        }
+    }
+}
+
 /**
+ * Triggers init for the element. If the handler is not found
+ * add to a queue that can be processed later (eg: on page load)
  * @param {HTMLElement} el
  */
 function init(el) {
@@ -16,12 +30,28 @@ function init(el) {
     const config = simpleConfig(data.behaviourConfig);
     const handler = dotPath(name);
     if (handler) {
-        const cleanup = handler(el, config);
-        setIfValue(cleanupMap, el, cleanup);
-    } else {
-        // Maybe it's not loaded yet
-        q.add(el);
+        const cleanupFn = handler(el, config);
+        setIfValue(cleanupMap, el, cleanupFn);
+        return true;
     }
+
+    // Maybe it's not loaded yet, it will run thanks to our getter/setter or the load event
+    q.add(el);
+
+    // If the function is defined later, define a getter/setter to know about it
+    if (!name.includes(".") && !Object.hasOwn(window, name)) {
+        Object.defineProperty(window, name, {
+            get: function () {
+                return this[`_${name}`];
+            },
+            set: function (val) {
+                this[`_${name}`] = val;
+                processQueue();
+            },
+        });
+    }
+
+    return false;
 }
 
 // Make sure all scripts are loaded then run init
@@ -31,10 +61,7 @@ on(
      * @param {Event} ev
      */
     (ev) => {
-        for (const el of q) {
-            q.delete(el);
-            init(el);
-        }
+        processQueue();
     },
     window,
 );

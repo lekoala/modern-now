@@ -13,7 +13,7 @@ export function getAttr(el, name) {
 }
 
 /**
- * Empty attributes like data-on are considered true
+ * Empty attributes like data-on or data-on="" are considered true
  * @param {HTMLElement} el
  * @param {string} name using camelCase notation
  * @returns {boolean}

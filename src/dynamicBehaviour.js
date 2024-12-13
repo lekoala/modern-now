@@ -2,7 +2,7 @@ import QSAO from "qsa-observer";
 import lazy from "./utils/lazy.js";
 import { getAndRun } from "./utils/map.js";
 import { qsa } from "./utils/query.js";
-import { hasAttr } from "./utils/attrs.js";
+import { getBoolData } from "./utils/attrs.js";
 
 /**
  * Store callback function
@@ -16,6 +16,7 @@ const map = {};
 const query = [];
 /**
  * Stores cleanup function for lazy init
+ * @type {WeakMap<Element,Function>}
  */
 const lazyMap = new WeakMap();
 /**
@@ -52,7 +53,8 @@ const {
                 initialized.add(element);
             };
             // If we have a data-lazy attribute, lazily trigger init method when element is visible
-            if (hasAttr(element, "data-lazy")) {
+            // data-lazy="false" will not trigger lazy mode
+            if (getBoolData(element, "lazy")) {
                 lazyMap.set(element, lazy(element, init));
             } else {
                 init();

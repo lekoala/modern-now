@@ -12,12 +12,9 @@ define(
     class extends HTML.TextArea {
         connectedCallback() {
             this.rows = 1;
-
-            const s = this.style;
-            s.overflow = "hidden";
-            s.resize = "none";
-
-            this.handleEvent();
+            this.style.overflow = "hidden";
+            this.style.resize = "none";
+            this.handleEvent(null);
             on(events, this);
         }
 
@@ -25,6 +22,9 @@ define(
             off(events, this);
         }
 
+        /**
+         * @param {InputEvent|null} ev
+         */
         handleEvent(ev) {
             if ((!ev || ev.type === "focusout") && getBoolData(this, "trim")) {
                 this.value = this.value.trim();

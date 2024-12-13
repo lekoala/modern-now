@@ -117,6 +117,9 @@ function renderDateTime(el) {
     }
 }
 
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const cleanupMap = new WeakMap();
 
 dynamicBehaviour(

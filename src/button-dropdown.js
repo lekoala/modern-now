@@ -10,6 +10,9 @@ import { getAndRun } from "./utils/map.js";
 const events = ["click"];
 const floatingEvents = [floatingReposition, floatingHide];
 const docEvents = ["keydown", "keyup"];
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const cleanupMap = new WeakMap();
 const openMenus = new Set();
 let curr;

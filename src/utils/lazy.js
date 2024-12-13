@@ -1,6 +1,9 @@
 import { getAndRun } from "./map.js";
 import { supportsIntersectionObserver } from "./misc.js";
 
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const map = new WeakMap();
 let observer;
 

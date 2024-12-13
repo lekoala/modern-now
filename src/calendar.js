@@ -295,6 +295,9 @@ function createCalendarWithValue(el) {
     createCalendar(el, toInt(dateParts[0]), toInt(dateParts[1]));
 }
 
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const cleanupMap = new WeakMap();
 
 const eventHandler = {

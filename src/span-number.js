@@ -39,6 +39,9 @@ function renderNumber(el) {
     el.innerText = Number.isNaN(nv) ? "" : formatter.format(nv);
 }
 
+/**
+ * @type {WeakMap<Element,Function>}
+ */
 const cleanupMap = new WeakMap();
 dynamicBehaviour(
     "span[data-number]",
