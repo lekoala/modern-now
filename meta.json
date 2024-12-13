@@ -14,11 +14,11 @@
       ]
     },
     "src/utils/map.js": {
-      "bytes": 824,
+      "bytes": 832,
       "imports": []
     },
     "src/utils/attrs.js": {
-      "bytes": 5109,
+      "bytes": 5123,
       "imports": [
         {
           "path": "src/utils/misc.js",
@@ -65,7 +65,7 @@
       ]
     },
     "src/utils/lazy.js": {
-      "bytes": 1197,
+      "bytes": 1242,
       "imports": [
         {
           "path": "src/utils/map.js",
@@ -78,7 +78,7 @@
       ]
     },
     "src/dynamicBehaviour.js": {
-      "bytes": 2729,
+      "bytes": 2829,
       "imports": [
         {
           "path": "node_modules/qsa-observer/esm/index.js",
@@ -162,7 +162,7 @@
       "imports": []
     },
     "src/time-datetime.js": {
-      "bytes": 4390,
+      "bytes": 4435,
       "imports": [
         {
           "path": "src/utils/attrs.js",
@@ -187,7 +187,7 @@
       ]
     },
     "src/span-number.js": {
-      "bytes": 1732,
+      "bytes": 1777,
       "imports": [
         {
           "path": "src/utils/attrs.js",
@@ -221,7 +221,7 @@
       ]
     },
     "src/behaviour.js": {
-      "bytes": 1147,
+      "bytes": 1901,
       "imports": [
         {
           "path": "src/dynamicBehaviour.js",
@@ -318,7 +318,7 @@
       ]
     },
     "src/button-dropdown.js": {
-      "bytes": 7065,
+      "bytes": 7110,
       "imports": [
         {
           "path": "node_modules/nonchalance/esm/ce.js",
@@ -467,7 +467,7 @@
       ]
     },
     "src/textarea-autogrow.js": {
-      "bytes": 1207,
+      "bytes": 1256,
       "imports": [
         {
           "path": "node_modules/nonchalance/esm/ce.js",
@@ -554,7 +554,7 @@
       ]
     },
     "src/calendar.js": {
-      "bytes": 11645,
+      "bytes": 11690,
       "imports": [
         {
           "path": "src/dynamicBehaviour.js",
@@ -616,7 +616,7 @@
       ]
     },
     "src/tooltip.js": {
-      "bytes": 8542,
+      "bytes": 9842,
       "imports": [
         {
           "path": "src/dynamicBehaviour.js",
@@ -802,10 +802,10 @@
           "bytesInOutput": 892
         },
         "src/utils/map.js": {
-          "bytesInOutput": 61
+          "bytesInOutput": 39
         },
         "src/utils/attrs.js": {
-          "bytesInOutput": 303
+          "bytesInOutput": 262
         },
         "src/utils/events.js": {
           "bytesInOutput": 596
@@ -814,25 +814,25 @@
           "bytesInOutput": 132
         },
         "src/utils/misc.js": {
-          "bytesInOutput": 1712
+          "bytesInOutput": 1711
         },
         "src/utils/lazy.js": {
           "bytesInOutput": 252
         },
         "src/dynamicBehaviour.js": {
-          "bytesInOutput": 388
+          "bytesInOutput": 383
         },
         "src/addDialogPolyfill.js": {
           "bytesInOutput": 603
         },
         "src/button-dialog.js": {
-          "bytesInOutput": 783
+          "bytesInOutput": 782
         },
         "builds/dialog.js": {
           "bytesInOutput": 5
         }
       },
-      "bytes": 6282
+      "bytes": 6212
     },
     "dist/formatters.js": {
       "imports": [],
@@ -849,7 +849,7 @@
           "bytesInOutput": 1208
         },
         "src/utils/attrs.js": {
-          "bytesInOutput": 294
+          "bytesInOutput": 253
         },
         "src/utils/date.js": {
           "bytesInOutput": 876
@@ -858,16 +858,16 @@
           "bytesInOutput": 451
         },
         "node_modules/qsa-observer/esm/index.js": {
-          "bytesInOutput": 898
+          "bytesInOutput": 895
         },
         "src/utils/map.js": {
-          "bytesInOutput": 61
+          "bytesInOutput": 39
         },
         "src/utils/lazy.js": {
           "bytesInOutput": 252
         },
         "src/dynamicBehaviour.js": {
-          "bytesInOutput": 389
+          "bytesInOutput": 384
         },
         "src/time-datetime.js": {
           "bytesInOutput": 1251
@@ -879,7 +879,7 @@
           "bytesInOutput": 0
         }
       },
-      "bytes": 6522
+      "bytes": 6451
     },
     "dist/full.js": {
       "imports": [],
@@ -893,10 +893,10 @@
           "bytesInOutput": 902
         },
         "src/utils/map.js": {
-          "bytesInOutput": 153
+          "bytesInOutput": 131
         },
         "src/utils/attrs.js": {
-          "bytesInOutput": 896
+          "bytesInOutput": 897
         },
         "src/utils/events.js": {
           "bytesInOutput": 723
@@ -908,19 +908,19 @@
           "bytesInOutput": 254
         },
         "src/utils/misc.js": {
-          "bytesInOutput": 3833
+          "bytesInOutput": 3831
         },
         "src/utils/lazy.js": {
           "bytesInOutput": 263
         },
         "src/dynamicBehaviour.js": {
-          "bytesInOutput": 400
+          "bytesInOutput": 394
         },
         "src/addDialogPolyfill.js": {
           "bytesInOutput": 605
         },
         "src/behaviour.js": {
-          "bytesInOutput": 267
+          "bytesInOutput": 455
         },
         "src/button-dialog.js": {
           "bytesInOutput": 787
@@ -959,7 +959,7 @@
           "bytesInOutput": 273
         },
         "src/textarea-autogrow.js": {
-          "bytesInOutput": 436
+          "bytesInOutput": 441
         },
         "src/classes/FormValidator.js": {
           "bytesInOutput": 2515
@@ -974,19 +974,19 @@
           "bytesInOutput": 4067
         },
         "src/time-datetime.js": {
-          "bytesInOutput": 1262
+          "bytesInOutput": 1263
         },
         "src/span-number.js": {
-          "bytesInOutput": 574
+          "bytesInOutput": 575
         },
         "src/mark-animated.js": {
           "bytesInOutput": 1136
         },
         "src/tooltip.js": {
-          "bytesInOutput": 4134
+          "bytesInOutput": 4579
         },
         "src/htmx.js": {
-          "bytesInOutput": 1745
+          "bytesInOutput": 1744
         },
         "src/cmd.js": {
           "bytesInOutput": 290
@@ -995,7 +995,7 @@
           "bytesInOutput": 5
         }
       },
-      "bytes": 42013
+      "bytes": 42623
     },
     "dist/tooltip.js": {
       "imports": [],
@@ -1006,13 +1006,13 @@
           "bytesInOutput": 455
         },
         "node_modules/qsa-observer/esm/index.js": {
-          "bytesInOutput": 902
+          "bytesInOutput": 904
         },
         "src/utils/map.js": {
-          "bytesInOutput": 61
+          "bytesInOutput": 39
         },
         "src/utils/attrs.js": {
-          "bytesInOutput": 642
+          "bytesInOutput": 601
         },
         "src/utils/events.js": {
           "bytesInOutput": 630
@@ -1024,25 +1024,25 @@
           "bytesInOutput": 65
         },
         "src/utils/misc.js": {
-          "bytesInOutput": 1453
+          "bytesInOutput": 1521
         },
         "src/utils/lazy.js": {
           "bytesInOutput": 253
         },
         "src/dynamicBehaviour.js": {
-          "bytesInOutput": 390
+          "bytesInOutput": 385
         },
         "src/utils/floating.js": {
-          "bytesInOutput": 2630
+          "bytesInOutput": 2633
         },
         "src/tooltip.js": {
-          "bytesInOutput": 4123
+          "bytesInOutput": 4560
         },
         "builds/tooltip.js": {
           "bytesInOutput": 0
         }
       },
-      "bytes": 11867
+      "bytes": 12309
     }
   }
 }
