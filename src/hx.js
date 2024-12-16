@@ -1,14 +1,16 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
-import { getAttr, removeAttr, setAttr } from "./utils/attrs.js";
+import { addClass, getAttr, hasAttr, hasData, removeAttr, removeClass, setAttr, setData } from "./utils/attrs.js";
 import { dispatch, off, on } from "./utils/events.js";
-import { ce, debounce, debounceLeading, isString, observeAttrs, simpleConfig } from "./utils/misc.js";
-import { qs } from "./utils/query.js";
+import { as, ce, debounce, debounceLeading, isString, observeAttrs, simpleConfig } from "./utils/misc.js";
+import { byId, qs } from "./utils/query.js";
 import { toMs } from "./utils/date.js";
 import { updateMapData } from "./utils/map.js";
 
 const map = new WeakMap();
 
+let d = 0; // dialog counter
 const CUSTOM_EVENT = "hx";
+const LOAD_CLASS = "hx-loading";
 
 /**
  * @param {HTMLElement} el
@@ -33,20 +35,32 @@ function getDefaultTrigger(el) {
  * @returns {string}
  */
 function getDefaultMethod(el) {
+    // button without type submit are like a link
+    if (el.nodeName === "BUTTON" && getAttr(el, "type") !== "submit") {
+        return "GET";
+    }
     if (["A", "DIALOG"].includes(el.nodeName)) {
         return "GET";
     }
     return "POST";
 }
 
+/**
+ * @param {HTMLElement} el
+ * @param {String} target parent|self|a selector|nothing (means self)
+ * @returns {HTMLElement}
+ */
 function resolveTarget(el, target) {
     if (target === "parent") {
         return el.parentElement;
     }
-    if (isString(target)) {
-        return qs(target);
+    if (target === "self") {
+        return el;
     }
-    return el; // itself
+    if (isString(target)) {
+        return byId(target);
+    }
+    return el; // itself by default
 }
 
 dynamicBehaviour(
@@ -55,9 +69,36 @@ dynamicBehaviour(
      * @param {HTMLElement} el
      */
     (el) => {
+        const config = simpleConfig(el.dataset.hx);
+
+        // Special case for new-dialog
+        if (config.target === "new-dialog") {
+            config.target = "self";
+
+            // Create on the fly
+            const dialog = ce("dialog");
+            d++;
+            dialog.id = `dialog-${d}`;
+            dialog.dataset.dialogDismissible = "true";
+            dialog.dataset.hx = JSON.stringify(config);
+            document.body.appendChild(dialog);
+
+            // Configure our button as a dialog trigger
+            // Changing attribute will not by itself trigger MO
+            removeAttr(el, "data-hx");
+            setData(el, "dialog", dialog.id);
+            if (!hasData(el, "dialogDissmible")) {
+                setData(el, "dialogDismissible", true);
+            }
+            const clone = as(el.cloneNode(true), "button");
+            el.replaceWith(clone);
+        }
+
+        // Defaults
         const defaultTrigger = getDefaultTrigger(el);
         const defaultMethod = getDefaultMethod(el);
-        const config = simpleConfig(el.dataset.hx);
+
+        // Parameters
         const trigger = config.trigger || defaultTrigger;
         const triggers = trigger.split(" ");
         const target = config.target;
@@ -83,6 +124,11 @@ dynamicBehaviour(
 
             // Resolve target
             const targetEl = resolveTarget(el, target);
+            if (!targetEl) {
+                console.error(`Could not resolve ${target}`);
+                return;
+            }
+            addClass(targetEl, LOAD_CLASS);
             setAttr(targetEl, "aria-busy", "true");
 
             // Build headers @link https://htmx.org/docs/#request-headers
@@ -99,11 +145,12 @@ dynamicBehaviour(
             if (el instanceof HTMLInputElement) {
                 urlObj.searchParams.set(el.name, el.value);
             }
-            const response = await fetch(urlObj, {
+            const fetchParams = {
                 method: method,
                 signal: controller.signal,
                 headers: headers,
-            });
+            };
+            const response = await fetch(urlObj, fetchParams);
 
             // Process response headers @https://htmx.org/docs/#response-headers
             // no errors if jsconfig contains dom.iterable
@@ -111,6 +158,7 @@ dynamicBehaviour(
                 switch (k.toLowerCase()) {
                     case "hx-redirect":
                     case "hx-location":
+                        //todo: deal with this differently
                         window.location.href = v;
                         break;
                 }
@@ -131,6 +179,7 @@ dynamicBehaviour(
                 console.error(error);
             }
 
+            removeClass(targetEl, LOAD_CLASS);
             removeAttr(targetEl, "aria-busy");
         };
 
@@ -144,17 +193,21 @@ dynamicBehaviour(
         }
 
         // There is no "open" event in js, so we watch the open attribute and
-        // trigger a custom event
+        // trigger a custom event to trigger loading the content
         let cleanup;
         if (el.tagName === "DIALOG" && triggers.includes("dialogOpen")) {
             // observe changes on open attribute
             cleanup = observeAttrs(el, ["open"], (dialog, oldValue) => {
                 const open = oldValue === null;
-                dispatch("dialogOpen", dialog, { open });
+                if (open) {
+                    dispatch("dialogOpen", dialog);
+                }
+                // do nothing on close
             });
         }
 
         const eventHandler = (event) => {
+            event.preventDefault(); // we deal with the event ourselves
             if (url) {
                 fetchContent();
             }

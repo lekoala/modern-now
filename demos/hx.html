@@ -25,7 +25,7 @@
     <main>
         <a href="../index.html">Back</a>
 
-        <h2>Htmx</h2>
+        <h2>Hx</h2>
 
         <p>Use <a href="https://htmx.org/">htmx</a> like patterns with <code>data-hx="config options"</code>!
             All parameters are passed directly as a <a href="notes.html">simple config</a> string in the <code>data-hx</code> parameter.
@@ -37,7 +37,7 @@
             (default is <code>submit</code> for forms, <code>change</code> for inputs, <code>click</code> for all other elements).</p>
 
         <p>There is no way to "<a href="https://htmx.org/docs/#boosting">boost</a>" in our approach because we don't want to break locality
-            of behaviour. In general, this approach is (currently) much more limited in scope than htmx.</p>
+            of behaviour. In general, this approach is (currently) more limited in scope than htmx.</p>
 
         <p>Notice how loaded elements have their new behaviour attached automatically.</p>
 
@@ -45,7 +45,7 @@
 
         <p>These demos only work locally on local test server.</p>
 
-        <button data-hx="url: 'http://localhost:3000/clicked', target: '#target-div', swap: 'replaceWith'">
+        <button data-hx="url: 'http://localhost:3000/clicked', target: 'target-div', swap: 'replaceWith'">
             Click Me!
         </button>
         <div id="target-div">I'm the target</div>
@@ -56,9 +56,11 @@
 
         <div data-hx="url: 'http://localhost:3000/news', interval: '2s'">Here will be displayed news every 2s</div>
 
-        <input type="search" name="q" data-hx="url: 'http://localhost:3000/trigger_delay', trigger: 'input', target:'#search-results'"
+        <input type="search" name="q" data-hx="url: 'http://localhost:3000/trigger_delay', trigger: 'input', target:'search-results'"
             placeholder="Search...">
         <div id="search-results">Here are search results</div>
+
+        <button data-hx="url: 'http://localhost:3000/dialog', target: 'new-dialog'" data-dialog-dismissible>Ajax dialog (slow to load on purpose)</button>
     </main>
 
     <footer>

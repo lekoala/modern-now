@@ -309,7 +309,17 @@
 
         <button data-dialog="demo-ajax">Show ajax modal</button>
 
-        <dialog id="demo-ajax" data-dialog-dismissible data-hx="url: 'dialog-ajax.html'"></dialog>
+        <!-- hx is triggered each time the modal becomes visible -->
+        <dialog id="demo-ajax" data-dialog-dismissible data-hx="url: 'dialog-ajax.html', target: 'demo-ajax-content'">
+            <header><h3>Dialog header</h3></header>
+            <div id="demo-ajax-content"><!-- content is injected here --></div>
+            <footer><p>Dialog footer</p></footer>
+        </dialog>
+
+        <p>We don't even need a <code>dialog</code> element if we simply want to load it's content in a default dialog. Since we can define properties
+        either on the button or the dialog, it's easy to configure the dialog as you see fit (dimissible, etc.).</p>
+
+        <button data-hx="url: 'dialog-ajax.html', target: 'new-dialog'" data-dialog-dismissible>Show ajax modal (no dialog)</button>
 
         <h3>Offcanvas Demos</h3>
 

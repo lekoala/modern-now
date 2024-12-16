@@ -1,10 +1,8 @@
 import { getBoolData, getData, hasData, setCssVar } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { byId } from "./utils/query.js";
-import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, as } from "./utils/misc.js";
+import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
-
-// This is pretty much a more opiniated version of https://github.com/keithamus/invokers-polyfill
 
 /**
  * @typedef {Object} HTML
@@ -22,7 +20,7 @@ const dialogCloseHandler = (ev) => {
 };
 
 /**
- * Note that we rely on animation instead of transition since it makes show
+ * Note that we rely on animation instead of transition since it makes showing
  * the dialog much easier (no display:none issue)
  * @param {HTMLDialogElement} dialog
  */
@@ -40,6 +38,7 @@ function refreshScrollbarVar() {
 }
 
 /**
+ * This deals with dialog trigger AND close buttons
  * @param {MouseEvent} ev
  */
 const handleDialogClick = (ev) => {
@@ -58,7 +57,7 @@ const handleDialogClick = (ev) => {
 
     // dialog id
     const dialog = getData(btn, "dialog");
-    // close (current dialog or parent)
+    // it's a close button
     const dialogClose = getBoolData(btn, "dialogClose");
 
     // If we have a dialog setting on the button

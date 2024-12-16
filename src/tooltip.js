@@ -88,10 +88,6 @@ div.tooltip[data-placement="left"]:before {
 const id = "tooltip-style";
 injectCss(css, id);
 
-const container = ce("div");
-container.id = "tooltip-container";
-document.body.appendChild(container);
-
 const usePopover = true && supportsPopover();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
@@ -228,7 +224,7 @@ dynamicBehaviour(
             tooltip.innerHTML = `${title}`;
 
             // If we have a popover parent, adding to the body is not an option
-            const parent = el.closest("dialog") || container;
+            const parent = el.closest("dialog") || document.body;
             parent.appendChild(tooltip);
 
             data.tooltipTarget = tooltip.id;

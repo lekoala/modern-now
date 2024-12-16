@@ -20,7 +20,7 @@ import "../src/time-datetime.js";
 import "../src/span-number.js";
 import "../src/mark-animated.js";
 import "../src/tooltip.js";
-import "../src/htmx.js";
+import "../src/hx.js";
 import "../src/cmd.js";
 
 // Add dialog polyfill if needed

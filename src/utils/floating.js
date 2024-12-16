@@ -14,7 +14,7 @@
 
 import { setCssVar } from "./attrs.js";
 import { dispatch, on } from "./events.js";
-import { toInt } from "./misc.js";
+import { debounce, toInt } from "./misc.js";
 
 /**
  * @typedef Coords
@@ -74,8 +74,15 @@ const rafCallback = (ev) => {
     }
     ticking = true;
 };
+const scrollEndCallback = debounce((ev) => {
+    onResize(ev);
+}, 10);
 // Don't debounce because it's really ugly, use ticking instead
-on("scroll", rafCallback);
+on("scroll", (ev) => {
+    rafCallback(ev);
+    // smooth scrolling can create some extra move
+    scrollEndCallback(ev);
+});
 on("resize", rafCallback, window);
 
 // Escape
@@ -327,7 +334,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
 
             // despite flipping, it's outside of bounds again
             const outsideX = axis === "x" && coords.y + floating.height > doc.clientHeight;
-            const outsideY = axis === "y" && coords.x + floating.width > doc.clientWidth
+            const outsideY = axis === "y" && coords.x + floating.width > doc.clientWidth;
             if (outsideX || outsideY) {
                 // use top placement
                 side = "top";
