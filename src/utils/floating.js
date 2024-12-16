@@ -332,10 +332,15 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             placement = alignement ? `${side}-${alignement}` : side;
             coords = computeCoordsFromPlacement(reference, floating, placement, isRTL);
 
-            // despite flipping, it's outside of bounds again
+            // take into consideration that a negative x will be shifted
+            const shiftedX = coords.x > 0 ? coords.x : 0;
+
+            // despite flipping, it's outside of bounds again or collides with element
             const outsideX = axis === "x" && coords.y + floating.height > doc.clientHeight;
             const outsideY = axis === "y" && coords.x + floating.width > doc.clientWidth;
-            if (outsideX || outsideY) {
+            const collidesY = axis === "y" && shiftedX + floating.width > reference.left;
+
+            if (outsideX || outsideY || collidesY) {
                 // use top placement
                 side = "top";
                 axis = "x";
@@ -349,8 +354,8 @@ export function reposition(referenceEl, floatingEl, config = {}) {
 
     // Shift if it overflows on x axis (on y axis, we only flip)
     // Automatic if floating is larger than anchor
-    // Adjust arrow positioning variable
     let totalShift = 0;
+    let p = 50;
     if (config.shift || floating.width > reference.width) {
         if (coords.x < startX) {
             totalShift = coords.x - startX + config.shiftPadding;
@@ -360,10 +365,10 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             coords.x += totalShift;
         }
         const shiftPercentage = totalShift > 0 ? (totalShift / floating.width) * 100 : 0;
-        setCssVar(floatingEl, "p", `${50 + shiftPercentage}%`);
-    } else {
-        setCssVar(floatingEl, "p", "50%");
+        p = 50 + shiftPercentage;
     }
+    // Adjust arrow positioning variable
+    setCssVar(floatingEl, "p", `${p}%`);
 
     // Store as data attribute, useful for styling
     floatingEl.dataset.placement = placement;
