@@ -1,6 +1,14 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
 import { getAttr } from "./utils/attrs.js";
-import { currentDay, currentUTCDay, dateWithoutTimezone, expandDate, toDate, utcDate } from "./utils/date.js";
+import {
+    compareDate,
+    currentDay,
+    currentUTCDay,
+    dateWithoutTimezone,
+    expandDate,
+    toDate,
+    utcDate,
+} from "./utils/date.js";
 import { dispatch, off, on } from "./utils/events.js";
 import { getAndRun } from "./utils/map.js";
 import { getDocLang, observeAttrs, simpleConfig, toInt } from "./utils/misc.js";
@@ -72,8 +80,15 @@ function btn(v, cls = "") {
     return `<button type="button" class="${cls}" style="min-width:44px">${v}</button>`;
 }
 
-function inputNum(v, cls = "") {
-    return `<input type="number" class="${cls}" value="${v}" size="4" max="9999" style="max-width:5em;width:auto;" />`;
+function inputNum(v, cls = "", config = {}) {
+    let attrs = "";
+    if (config.minYear) {
+        attrs += ` min="${config.minYear}"`;
+    }
+    if (config.maxYear) {
+        attrs += ` max="${config.maxYear}"`;
+    }
+    return `<input type="number" class="${cls}" value="${v}" size="4" max="9999" style="max-width:5em;width:auto;"${attrs} />`;
 }
 
 function drop(arr, v, cls = "") {
@@ -83,9 +98,34 @@ function drop(arr, v, cls = "") {
     return `<select class="${cls}" style="width:auto">${opts}</select>`;
 }
 
-function tdCell(daynum, isodate, classes, attrs = "", click = null) {
-    const dayBtn = `<button type="button" class="is-calendar-button" style="width:100%;height:100%;">${daynum}</button>`;
-    return `<td class="${classes.join(" ")}" data-date="${isodate}"${attrs} style="padding:0;height:44px;">${click ? dayBtn : daynum}</td>`;
+/**
+ * @typedef CalendarCellConfig
+ * @property {Number} daynum
+ * @property {Array} classes
+ * @property {string} isodate
+ * @property {string} attrs
+ * @property {string} btnAttrs
+ * @property {string} click
+ */
+
+/**
+ *
+ * @param {CalendarCellConfig} c
+ * @returns {string}
+ */
+function tdCell(c) {
+    const dayBtn = `<button type="button" class="is-calendar-button"${c.btnAttrs}  style="width:100%;height:100%;">${c.daynum}</button>`;
+    return `<td class="${c.classes.join(" ")}" data-date="${c.isodate}"${c.attrs} style="padding:0;height:44px;">${c.click ? dayBtn : c.daynum}</td>`;
+}
+
+function checkDisabled(isodate, config, attrs = "") {
+    let a = attrs;
+    if (config.minDate && compareDate(isodate, config.minDate) < 0) {
+        a += " disabled";
+    } else if (config.maxDate && compareDate(isodate, config.maxDate) > 0) {
+        a += " disabled";
+    }
+    return a;
 }
 
 // Some other inspiration here https://github.com/duetds/date-picker/blob/master/src/components/duet-date-picker/date-utils.ts
@@ -118,6 +158,8 @@ function createCalendar(elem, year, month) {
                 if (input) {
                     input.value = v;
                     dispatch("input", input);
+                } else {
+                    console.error(`${click} not found`);
                 }
             });
         }
@@ -157,7 +199,10 @@ function createCalendar(elem, year, month) {
     let next = "";
     let justify = "center";
     if (controls) {
-        center = drop(monthsForLocale(locale, "long"), mon, "is-month") + inputNum(year, "is-year");
+        const minYear = config.minDate ? config.minDate.substring(0, 4) : null;
+        const maxYear = config.maxDate ? config.maxDate.substring(0, 4) : null;
+        center =
+            drop(monthsForLocale(locale, "long"), mon, "is-month") + inputNum(year, "is-year", { minYear, maxYear });
         prev = btn("<", "is-prev");
         next = btn(">", "is-next");
         justify = "space-between";
@@ -195,7 +240,10 @@ function createCalendar(elem, year, month) {
 
         lastMonth.setDate(daynum);
         const isodate = toDate(lastMonth);
-        rows += tdCell(daynum, isodate, classes, "", click);
+
+        const attrs = "";
+        const btnAttrs = checkDisabled(isodate, config);
+        rows += tdCell({ daynum, isodate, classes, attrs, btnAttrs, click });
 
         hasFirstLine = true;
     }
@@ -217,7 +265,8 @@ function createCalendar(elem, year, month) {
         if (isToday) {
             attrs += ' aria-current="date"';
         }
-        rows += tdCell(daynum, isodate, classes, attrs, click);
+        const btnAttrs = checkDisabled(isodate, config);
+        rows += tdCell({ daynum, isodate, classes, attrs, btnAttrs, click });
 
         if (d.getDay() === lastWeekDay) {
             // last day of week - newline
@@ -238,7 +287,10 @@ function createCalendar(elem, year, month) {
         lastDayNextMonth = daynum;
         nextMonth.setDate(daynum);
         const isodate = toDate(nextMonth);
-        rows += tdCell(daynum, isodate, classes, "", click);
+
+        const attrs = "";
+        const btnAttrs = checkDisabled(isodate, config);
+        rows += tdCell({ daynum, isodate, classes, attrs, btnAttrs, click });
 
         hasLastLine = true;
     }
@@ -258,7 +310,10 @@ function createCalendar(elem, year, month) {
                 const daynum = lastDayNextMonth + i;
                 nextMonth.setDate(daynum);
                 const isodate = toDate(nextMonth);
-                extraRow += tdCell(daynum, isodate, classes, "", click);
+
+                const attrs = "";
+                const btnAttrs = "";
+                extraRow += tdCell({ daynum, isodate, classes, attrs, btnAttrs, click });
             }
             extraRow += "</tr>";
             rows = rows + extraRow;
@@ -271,7 +326,10 @@ function createCalendar(elem, year, month) {
 
                 lastMonth.setDate(daynum);
                 const isodate = toDate(lastMonth);
-                extraRow += tdCell(daynum, isodate, classes, "", click);
+
+                const attrs = "";
+                const btnAttrs = "";
+                extraRow += tdCell({ daynum, isodate, classes, attrs, btnAttrs, click });
             }
             extraRow += "</tr>";
             rows = extraRow + rows;
@@ -357,17 +415,15 @@ const eventHandler = {
 
 const events = ["click", "change"];
 dynamicBehaviour(
-    "[data-calendar]",
+    "div[data-calendar]",
     (el) => {
         createCalendarWithValue(el);
         cleanupMap.set(el, observeAttrs(el, ["data-value"], createCalendarWithValue));
-
         on(events, eventHandler, el);
     },
     (el) => {
         getAndRun(cleanupMap, el);
         el.innerHTML = "";
-
         off(events, eventHandler, el);
     },
 );

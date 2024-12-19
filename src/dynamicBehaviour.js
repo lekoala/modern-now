@@ -4,6 +4,19 @@ import { getAndRun } from "./utils/map.js";
 import { qsa } from "./utils/query.js";
 import { getBoolData } from "./utils/attrs.js";
 
+// Sample
+// dynamicBehaviour(
+//     "selector",
+//     /**
+//      * @param {HTMLElement} el
+//      */
+//     (el) => {},
+//     /**
+//      * @param {HTMLElement} el
+//      */
+//     (el) => {},
+// );
+
 /**
  * Store callback function
  * @type {Object.<string,Array<Function>>}
@@ -74,6 +87,8 @@ const {
         }
     },
 });
+
+export { drop, parse, flush };
 
 /**
  * @param {String} selector The selector to match the behaviour

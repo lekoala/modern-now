@@ -10,6 +10,18 @@
  */
 
 /**
+ * @typedef DateComponents
+ * @property {String} year
+ * @property {String} month
+ * @property {String} day
+ * @property {String} separator
+ * @property {String} raw
+ * @property {String} format
+ */
+
+import { getDocLang, toInt } from "./misc.js";
+
+/**
  * @returns {DateRange}
  */
 export function dateRanges() {
@@ -278,4 +290,72 @@ export function toTimestamp(date = null) {
  */
 export function supportsRelativeTime() {
     return Intl.RelativeTimeFormat !== undefined;
+}
+
+export function dateFormat(lang = null) {
+    const l = lang || getDocLang();
+    const y = 2042;
+    const m = 11;
+    const d = 31;
+    const date = new Date(y, m, d, 12, 0, 0);
+    const formatter = new Intl.DateTimeFormat(l);
+    const formatted = formatter.format(date);
+    return formatted
+        .replace(`${y}`, "yyyy")
+        .replace(`${m + 1}`, "mm")
+        .replace(`${d}`, "dd");
+}
+
+/**
+ *
+ * @param {string} v
+ * @param {string} format
+ * @returns {DateComponents}
+ */
+export function dateComponents(v, format = null) {
+    const f = format || dateFormat();
+    const s = v.replace(/[a-z0-9]/g, "").substring(0, 1);
+    const parts = v.split(s);
+
+    const sf = f.replace(/[a-z0-9]/g, "").substring(0, 1);
+    const formatParts = f.split(sf);
+
+    return {
+        raw: v,
+        separator: s,
+        format: f,
+        year: parts[formatParts.indexOf("yyyy")],
+        month: parts[formatParts.indexOf("mm")],
+        day: parts[formatParts.indexOf("dd")],
+    };
+}
+
+export function dateToLocalFormat(v, lang = null, from = "yyyy-mm-dd") {
+    const f = dateFormat(lang);
+    const comp = dateComponents(v, from);
+    return f.replace("yyyy", comp.year).replace("mm", comp.month).replace("dd", comp.day);
+}
+
+export function dateToIsoFormat(v, lang = null) {
+    const f = "yyyy-mm-dd";
+    const comp = dateComponents(v, dateFormat(lang));
+    return f.replace("yyyy", comp.year).replace("mm", comp.month).replace("dd", comp.day);
+}
+
+/**
+ * @param {Date|Number|string} d1
+ * @param {Date|Number|string} d2
+ * @returns {Number} -1 if d1 < d2, 1 if d1 > d2, 0 if equal
+ */
+export function compareDate(d1, d2) {
+    const date1 = asDate(d1).getTime();
+    const date2 = asDate(d2).getTime();
+
+    if (date1 < date2) {
+        return -1;
+    }
+    if (date1 > date2) {
+        return 1;
+    }
+    return 0;
 }

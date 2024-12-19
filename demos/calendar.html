@@ -24,6 +24,10 @@
             color: currentColor;
         }
 
+        button.is-calendar-button[disabled] {
+            opacity: 0.5;
+        }
+
         button.is-calendar-button:hover {
             background: #c7cad9;
             border: 0;
@@ -47,7 +51,9 @@
 
     <style>
         .cal-drop {
-            background:#fff;padding:1em;filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.2));
+            background: #fff;
+            padding: 1em;
+            filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
         }
     </style>
 </head>
@@ -91,8 +97,9 @@
         <p>Bind to input: save value into hidden input, but display a d/m/Y value.</p>
 
         <div>
-            <input type="hidden" id="calendar-input" data-to="calendar-input-fmt" data-to-transform="dmy" />
-            <input type="text" id="calendar-input-fmt" data-limited="mask" data-mask="99/99/9999" data-to="calendar-input" data-to-transform="ymd" placeholder="dd/mm/yyyy" size="10">
+            <input type="hidden" id="calendar-input" data-to="calendar-input-fmt" data-to-transform="localDate" lang="fr" />
+            <input type="text" id="calendar-input-fmt" data-limited="mask" data-mask="99/99/9999" data-to="calendar-input"
+                data-to-transform="isoDate" placeholder="dd/mm/yyyy" size="10">
             <button data-dropdown="calendar-dropdown" data-dropdown-close="outside,.is-date">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#fff" viewBox="0 0 256 256">
                     <path
@@ -104,6 +111,10 @@
         <div id="calendar-dropdown" class="cal-drop" data-dropdown-placement="top-center" hidden>
             <div data-calendar="lang:'fr', controls: true, click: 'calendar-input', tableClass:'dropdown-table'"></div>
         </div>
+
+        <p>Input date replacement (no markup) with min date</p>
+
+        <input type="date" name="custom-date" data-calendar="minDate: '2024-11-12'">
     </main>
     <footer>
         <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
