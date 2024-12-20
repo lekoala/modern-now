@@ -357,14 +357,16 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     let totalShift = 0;
     let p = 50;
     if (config.shift || floating.width > reference.width) {
+        let dir = 1;
         if (coords.x < startX) {
             totalShift = coords.x - startX + config.shiftPadding;
             coords.x = startX + config.shiftPadding;
         } else if (coords.x + floating.width > clientWidth) {
             totalShift = clientWidth - (coords.x + floating.width) - config.shiftPadding;
             coords.x += totalShift;
+            dir = totalShift < 0 ? -1 : 1;
         }
-        const shiftPercentage = totalShift > 0 ? (totalShift / floating.width) * 100 : 0;
+        const shiftPercentage = totalShift !== 0 ? (totalShift / floating.width) * 100 * dir : 0;
         p = 50 + shiftPercentage;
     }
     // Adjust arrow positioning variable
