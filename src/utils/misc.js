@@ -312,7 +312,8 @@ export function simpleConfig(str) {
     // it's not a json string and it contains key:value elements
     if (!str.startsWith("{") && /[\w'"]\s*:\s*/.test(str)) {
         // make it a valid json string by wrapping in double quotes
-        jsonString = `{${str.replace(/([^:\s{,]*)\s*:\s*('[^']*'|"[^"]*"|[^,'"{]*)/g, (m, p1, p2) => `"${p1.replace(/['"]/g, "")}":${p2.includes('"') ? p2 : p2.replace(/'/g, '"')}`)}}`;
+        // the regex match key pairs : any valid string, quoted or unquoted => a single quoted string | a double quoted string | an [] | another value (number, bool...)
+        jsonString = `{${str.replace(/([^:\s{,]*)\s*:\s*('[^']*'|"[^"]*"|([\[].*?[\]])|[^,'"{\[]*)/g, (m, p1, p2) => `"${p1.replace(/['"]/g, "")}":${p2.includes('"') ? p2 : p2.replace(/'/g, '"')}`)}}`;
     }
     try {
         return replaceCallbacks(JSON.parse(jsonString));

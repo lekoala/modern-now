@@ -1,6 +1,11 @@
 import { on, off } from "./utils/events.js";
 import { normalize, slugify } from "./utils/str.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
+import { hasAttr } from "./utils/attrs.js";
+
+function isToken(v) {
+    return ["*", "a", "9"].includes(v);
+}
 
 const eventHandler = (ev) => {
     const el = ev.target;
@@ -57,15 +62,24 @@ const eventHandler = (ev) => {
                     token = arr[i];
                 }
 
-                // Is there a fixed mask element to add ?
+                // Is there one or two fixed mask element to add ?
                 const nv = arr[i];
                 // Append last if not token when going forward
-                if (dir === 1 && nv && !["*", "a", "9"].includes(nv)) {
+                if (dir === 1 && nv && !isToken(nv)) {
                     val += nv;
-                    // Append extra space if needed
+
+                    // Append extra token if needed
                     const nv2 = arr[i + 1];
-                    if (nv2 && nv2 === " ") {
+                    if (nv2 && !isToken(nv2)) {
                         val += nv2;
+                    }
+                }
+
+                // Remove extra token if needed
+                if (dir === -1 && nv && !isToken(nv)) {
+                    const nv2 = arr[i - 1];
+                    if (nv2 && !isToken(nv2)) {
+                        val = val.substring(0, i - 1);
                     }
                 }
 
@@ -79,6 +93,15 @@ const eventHandler = (ev) => {
             const regex = new RegExp(`[^${c} + "]`, flags);
             const replace = data.replace || "";
             cv = cv.replace(regex, replace);
+        } else if (limitation === "time") {
+            const parts = cv.split(":");
+            if (parts[0] && parts[0] > 24) {
+                parts[0] = 24;
+            }
+            if (parts[1] && parts[1] > 60) {
+                parts[1] = 60;
+            }
+            cv = parts.join(":");
         }
     }
 
@@ -89,13 +112,17 @@ const eventHandler = (ev) => {
 dynamicBehaviour(
     "input[data-limited]",
     /**
-     * @param {HTMLElement} el
+     * @param {HTMLInputElement} el
      */
     (el) => {
+        // autoset size
+        if (el.dataset.limited.includes("mask") && !hasAttr(el, "size")) {
+            el.size = el.dataset.mask.length;
+        }
         on("input", eventHandler, el);
     },
     /**
-     * @param {HTMLElement} el
+     * @param {HTMLInputElement} el
      */
     (el) => {
         off("input", eventHandler, el);

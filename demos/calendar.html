@@ -47,7 +47,9 @@
 
         <div data-calendar data-value="2024-01" lang="fr"></div>
 
-        <p>Enable navigation with controls:true and do something on click. Requires a little bit of css to adjust the buttons.</p>
+        <p>Enable navigation with controls:true and do something on click. Requires a little bit of css to adjust the buttons.
+            Min date = 2025-02 / Disabled date = weekends
+        </p>
 
         <script>
             // This needs to be loaded before div is initialized
@@ -56,8 +58,12 @@
             window['app']['calendarClick'] = (calendarEl, date) => {
                 alert(`You clicked on ${date}`);
             }
+            window['app']['disabledFn'] = (date) => {
+                return (date.getDay() === 0 || date.getDay() === 6);
+            }
         </script>
-        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02'" data-value="2025-03"></div>
+        <!-- <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: ['2025-03-02']" data-value="2025-03"></div> -->
+        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'" data-value="2025-03"></div>
 
         <p>Bind to input: save value into hidden input, but display a d/m/Y value.</p>
 

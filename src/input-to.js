@@ -48,13 +48,13 @@ const eventHandler = (ev) => {
 dynamicBehaviour(
     "input[data-to]",
     /**
-     * @param {HTMLElement} el
+     * @param {HTMLInputElement} el
      */
     (el) => {
         on("input", eventHandler, el);
     },
     /**
-     * @param {HTMLElement} el
+     * @param {HTMLInputElement} el
      */
     (el) => {
         off("input", eventHandler, el);

@@ -168,16 +168,19 @@
             <div>
                 <label for="input-placeholder">Limited based on mask. Try to paste a value like 10:00 or 10/00.</label>
 
-                <!-- this is by no means an attempt to be able to really set a time expression, it's just a basic mask. 24:69 would not be a valid time -->
-                <input type="text" id="input-placeholder" name="placeholder" data-limited="mask" data-mask="99:99" placeholder="HH:mm"
-                    size="5">
+                <!-- mask|time allow a proper masked time, with optional seconds -->
+                <input type="text" id="input-placeholder" name="placeholder" data-limited="mask|time" data-mask="99:99" placeholder="HH:mm">
                 <p><small>For a more robust solution, use <a href="https://formidable-elements.vercel.app/demo/input-mask.html"
                             target="_blank">input-mask</a></small>
                 </p>
 
                 <label for="input-placeholder2">Limited based on mask + uppercase</label>
                 <input type="text" id="input-placeholder2" name="placeholder2" data-limited="mask|upper" data-mask="aaa-999"
-                    placeholder="XYZ-999" size="7">
+                    placeholder="XYZ-999">
+
+                <label for="input-placeholderspace">Limited based on mask with space in separators that gets added automatically as needed</label>
+                <input type="text" id="input-placeholderspace" name="placeholderspace" data-limited="mask" data-mask="aa. aa. aa."
+                    placeholder="xx. yy. zz.">
 
                 <label for="input-tel">Limited tel</label>
                 <input type="tel" id="input-tel" name="tel" data-limited="mask" data-mask="+999999999999999999">

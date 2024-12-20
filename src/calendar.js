@@ -1,6 +1,7 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
 import { getAttr } from "./utils/attrs.js";
 import {
+    asDate,
     compareDate,
     currentDay,
     currentUTCDay,
@@ -12,7 +13,7 @@ import {
 } from "./utils/date.js";
 import { dispatch, off, on } from "./utils/events.js";
 import { getAndRun } from "./utils/map.js";
-import { getDocLang, observeAttrs, simpleConfig, toInt } from "./utils/misc.js";
+import { dotPath, getDocLang, observeAttrs, simpleConfig, toInt } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 import { ucfirst } from "./utils/str.js";
 
@@ -156,10 +157,22 @@ function tdCell(c) {
 }
 
 function checkDisabled(isodate, config, attrs = "") {
-    let a = attrs;
+    let d = false;
     if (config.minDate && compareDate(isodate, config.minDate) < 0) {
-        a += " disabled";
+        d = true;
     } else if (config.maxDate && compareDate(isodate, config.maxDate) > 0) {
+        d = true;
+    } else if (Array.isArray(config.disabled) && config.disabled.includes(isodate)) {
+        d = true;
+    } else if (typeof config.disabled === "function" && config.disabled(asDate(isodate))) {
+        d = true;
+    } else if (Array.isArray(config.enabled) && !config.enabled.includes(isodate)) {
+        d = true;
+    } else if (typeof config.enabled === "function" && !config.enabled(asDate(isodate))) {
+        d = true;
+    }
+    let a = attrs;
+    if (d) {
         a += " disabled";
     }
     return a;
@@ -176,7 +189,7 @@ const cellClickHandler = new WeakMap();
  */
 function createCalendar(elem, year, month) {
     if (Number.isNaN(month) || Number.isNaN(year)) {
-        elem.innerHTML = 'Invalid Date';
+        elem.innerHTML = "Invalid Date";
         return;
     }
     const mon = month - 1; // months in JS are 0..11, not 1..12
@@ -197,7 +210,16 @@ function createCalendar(elem, year, month) {
     if (config.maxDate) {
         config.maxDate = expandDate(config.maxDate);
     }
+    config.enabled = config.enabled || [];
+    if (typeof config.enabled === "string") {
+        config.enabled = dotPath(config.enabled);
+    }
+    config.disabled = config.disabled || [];
+    if (typeof config.disabled === "string") {
+        config.disabled = dotPath(config.disabled);
+    }
 
+    // Click can be a function or a given input like element
     if (click) {
         if (typeof click === "function") {
             cellClickHandler.set(elem, click);
@@ -401,7 +423,7 @@ function createCalendar(elem, year, month) {
 function createCalendarWithValue(el) {
     const data = el.dataset;
     const v = expandDate(data.value || toDate(currentDay()));
-    const dateParts = dateComponents(v, 'yyyy-mm-dd');
+    const dateParts = dateComponents(v, "yyyy-mm-dd");
     if (!data.value) {
         data.value = v;
     }

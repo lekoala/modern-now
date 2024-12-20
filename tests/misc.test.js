@@ -42,7 +42,7 @@ test("simpleConfig", () => {
         };
     }
     window._testProvider = provider;
-    expect(simpleConfig(`dateStyle:'long',timeStyle:'short'`)).toEqual({ dateStyle: 'long', timeStyle:'short' });
+    expect(simpleConfig(`dateStyle:'long',timeStyle:'short'`)).toEqual({ dateStyle: "long", timeStyle: "short" });
     expect(simpleConfig("key: 'va:lue'")).toEqual({ key: "va:lue" });
     expect(simpleConfig(`"key": "va:lue"`)).toEqual({ key: "va:lue" });
     expect(simpleConfig("key: '/value'")).toEqual({ key: "/value" });
@@ -59,6 +59,11 @@ test("simpleConfig", () => {
     expect(simpleConfig("_testProvider()")).toEqual(provider());
     expect(simpleConfig("somevalue")).toEqual({ default: "somevalue" });
     expect(simpleConfig("nested: {__fn: '_testProvider'}")).toEqual({ nested: provider });
+
+    //Arr
+    expect(simpleConfig("arr: ['my', 'value']")).toEqual({
+        arr: ["my", "value"],
+    });
 });
 
 test("supportsDialog", () => {
