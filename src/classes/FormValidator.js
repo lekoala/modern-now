@@ -132,7 +132,10 @@ async function checkRules(el) {
 
     const valid = failed.length === 0;
     const errors = failed.join(",");
-    data.validateErrors = errors;
+    if (errors || data.validateErrors) {
+        data.validateErrors = errors;
+    }
+
     if (valid) {
         removeClass(el, INVALID_CLASS);
     } else {

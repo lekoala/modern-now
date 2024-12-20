@@ -64,6 +64,11 @@ test("simpleConfig", () => {
     expect(simpleConfig("arr: ['my', 'value']")).toEqual({
         arr: ["my", "value"],
     });
+
+    expect(simpleConfig("placement: 'left', target:'customtooltip'")).toEqual({
+        placement: "left",
+        target: "customtooltip",
+    });
 });
 
 test("supportsDialog", () => {

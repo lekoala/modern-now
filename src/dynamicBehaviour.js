@@ -18,8 +18,15 @@ import { getBoolData } from "./utils/attrs.js";
 // );
 
 /**
+ * @typedef DynamicEntry
+ * @property {Function} callback
+ * @property {Function} cleanup
+ * @property {WeakSet} initialized
+ */
+
+/**
  * Store callback function
- * @type {Object.<string,Array<Function>>}
+ * @type {Object.<string,DynamicEntry>}
  */
 const map = {};
 /**
@@ -32,10 +39,6 @@ const query = [];
  * @type {WeakMap<Element,Function>}
  */
 const lazyMap = new WeakMap();
-/**
- * Track inits
- */
-const initialized = new WeakSet();
 
 const {
     drop, // an utility to drop a list of elements from being considered live
@@ -56,13 +59,15 @@ const {
      */
     async handle(element, connected, selector) {
         const handler = map[selector];
+        const initialized = handler.initialized;
+
         if (connected) {
             const init = () => {
-                // Already initialized
+                // Already initialized with this selector
                 if (initialized.has(element)) {
                     return;
                 }
-                handler[0](element);
+                handler.callback(element);
                 initialized.add(element);
             };
             // If we have a data-lazy attribute, lazily trigger init method when element is visible
@@ -77,7 +82,7 @@ const {
             await Promise.resolve();
 
             if (!element.isConnected && initialized.has(element)) {
-                const cleanup = handler[1];
+                const cleanup = handler.cleanup;
                 if (cleanup) {
                     cleanup(element);
                 }
@@ -97,7 +102,8 @@ export { drop, parse, flush };
  */
 export default (selector, callback, cleanup = null) => {
     // Update handler map
-    map[selector] = [callback, cleanup];
+    const initialized = new WeakSet();
+    map[selector] = { callback, cleanup, initialized };
 
     // Re-run QSAO with the new selector
     if (!query.includes(selector)) {
