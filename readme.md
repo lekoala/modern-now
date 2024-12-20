@@ -54,7 +54,7 @@ See demos for more informations
 - Behaviour : attach dynamic behaviour to any element
 - Dropdowns : accessible, dynamically positioned dropdowns positioned with our floating utils
 - Forms : ajax and validation for forms
-- Inputs : input form helpers (file, autogrow, limited, mask, bound, toggle)
+- Inputs : input form helpers (file, autogrow, limited, mask, bound, tel, password, toggle)
 - Calendar: dynamic calendars and date inputs
 - Mark : dynamically animated `mark` elements
 - Time : format time using i18n formatters
