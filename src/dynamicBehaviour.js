@@ -22,6 +22,7 @@ import { getBoolData } from "./utils/attrs.js";
  * @property {Function} callback
  * @property {Function} cleanup
  * @property {WeakSet} initialized
+ * @property {WeakMap} lazyMap
  */
 
 /**
@@ -34,11 +35,9 @@ const map = {};
  * @type {Array<String>}
  */
 const query = [];
-/**
- * Stores cleanup function for lazy init
- * @type {WeakMap<Element,Function>}
- */
-const lazyMap = new WeakMap();
+
+//@ts-ignore
+const DEBUG = window.DEBUG || false;
 
 const {
     drop, // an utility to drop a list of elements from being considered live
@@ -60,6 +59,11 @@ const {
     async handle(element, connected, selector) {
         const handler = map[selector];
         const initialized = handler.initialized;
+        const lazyMap = handler.lazyMap;
+
+        if (DEBUG) {
+            console.log(element, connected, selector);
+        }
 
         if (connected) {
             const init = () => {
@@ -103,7 +107,8 @@ export { drop, parse, flush };
 export default (selector, callback, cleanup = null) => {
     // Update handler map
     const initialized = new WeakSet();
-    map[selector] = { callback, cleanup, initialized };
+    const lazyMap = new WeakMap();
+    map[selector] = { callback, cleanup, initialized, lazyMap };
 
     // Re-run QSAO with the new selector
     if (!query.includes(selector)) {
