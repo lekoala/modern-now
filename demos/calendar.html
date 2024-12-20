@@ -9,51 +9,16 @@
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="stylesheet" href="demo.css">
-
-    <style>
-        td.is-active button,
-        td.is-active {
-            font-weight: bold;
-        }
-
-        button.is-calendar-button {
-            background: none;
-            border-radius: 0;
-            border: 0;
-            margin: 0;
-            color: currentColor;
-        }
-
-        button.is-calendar-button[disabled] {
-            opacity: 0.5;
-        }
-
-        button.is-calendar-button:hover {
-            background: #c7cad9;
-            border: 0;
-            margin: 0;
-            color: currentColor;
-        }
-
-        td.is-inactive {
-            color: rgba(0, 0, 0, 0.3)
-        }
-
-        table.dropdown-table {
-            margin: 0;
-        }
-
-        [data-calendar] table td,
-        [data-calendar] table th {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/calendar.css">
 
     <style>
         .cal-drop {
             background: #fff;
-            padding: 1em;
             filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
+        }
+
+        .cal-drop table {
+            margin: 0;
         }
     </style>
 </head>
@@ -92,7 +57,7 @@
                 alert(`You clicked on ${date}`);
             }
         </script>
-        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}" data-value="2025-03"></div>
+        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02'" data-value="2025-03"></div>
 
         <p>Bind to input: save value into hidden input, but display a d/m/Y value.</p>
 
@@ -114,7 +79,19 @@
 
         <p>Input date replacement (no markup) with min date</p>
 
-        <input type="date" name="custom-date" data-calendar="minDate: '2024-11-12'">
+        <input type="date" name="custom-date" value="2024-11-12" data-calendar="minDate: '2024-11-12'">
+
+        <p>Input date replacement (no markup) with custom lang</p>
+
+        <input type="date" name="custom-date-ru" value="2024-11-12" data-calendar="" lang="ru">
+
+        <p>Input date replacement (no markup) with exotic lang</p>
+
+        <input type="date" name="custom-date-kr" value="2024-11-12" data-calendar="" lang="ko">
+
+        <p>Input date replacement (no markup) disabled</p>
+
+        <input type="date" name="custom-date-disabled" value="2024-11-12" data-calendar="" disabled>
     </main>
     <footer>
         <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |

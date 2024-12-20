@@ -1,0 +1,89 @@
+/* calendar styles */
+
+[data-calendar] table {
+    background: var(--bg, #fff);
+    border: 1px solid var(--accent-bg, #f5f7ff);
+}
+
+[data-calendar] table td,
+[data-calendar] table th {
+    position: relative;
+    text-align: center;
+    border: 0;
+}
+
+[data-calendar] td.is-active button,
+[data-calendar] td.is-active {
+    font-weight: bold;
+}
+
+[data-calendar] td.is-inactive {
+    color: rgba(0, 0, 0, 0.3)
+}
+
+[data-calendar] button.is-calendar-button {
+    background: none;
+    border-radius: 0;
+    border: 0;
+    margin: 0;
+    color: currentColor;
+}
+
+[data-calendar] button.is-calendar-button[disabled] {
+    opacity: 0.5;
+}
+
+[data-calendar] button.is-calendar-button:hover {
+    background: #c7cad9;
+    border: 0;
+    margin: 0;
+    color: currentColor;
+}
+
+[data-calendar] caption {
+    background: #b3cbed;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+[data-calendar] :is(button, input, select) {
+    margin: 0;
+}
+
+[data-calendar] .is-active:after {
+    content: '';
+    border: 1px solid #b3cbed;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+/* input dropdown */
+
+.calendar-dropdown {
+    filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
+}
+
+.calendar-dropdown table {
+    margin: 0;
+}
+
+.calendar-input-group {
+    display: flex;
+}
+
+.calendar-input-group>input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+}
+
+.calendar-input-group>button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    display: flex;
+    align-items: center;
+}

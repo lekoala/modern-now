@@ -1,4 +1,5 @@
 /**
+ * Modern now - dialog build
  * Modern now/github.com/lekoala/modern-now
  * @license MIT
  */

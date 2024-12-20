@@ -19,7 +19,8 @@
  * @property {String} format
  */
 
-import { getDocLang, toInt } from "./misc.js";
+import { getDocLang } from "./misc.js";
+import { enDigits, removeSpaces, removeUnicode } from "./str.js";
 
 /**
  * @returns {DateRange}
@@ -136,9 +137,9 @@ export function toIsoDateTime(str) {
 
 /**
  * Expand string in iso formatting
- * 2024 => 2024-01-01 00:00:00
- * 2024-01 => 2024-01-01 00:00:00
- * 2024-01-01 => 2024-01-01 00:00:00
+ * 2024 => 2024-01-01
+ * 2024-01 => 2024-01-01
+ * 2024-01-01 => 2024-01-01
  *
  * @param {string|Number} str
  * @returns {string}
@@ -300,6 +301,13 @@ export function dateFormat(lang = null) {
     const date = new Date(y, m, d, 12, 0, 0);
     const formatter = new Intl.DateTimeFormat(l);
     const formatted = formatter.format(date);
+
+    // For non ascii language, use d/m/y convention. keep it mind it might be written in reverse
+    if (!formatted.includes(`${y}`)) {
+        const s = dateSeparator(formatted);
+        return `dd${s}mm${s}yyyy`;
+    }
+
     return formatted
         .replace(`${y}`, "yyyy")
         .replace(`${m + 1}`, "mm")
@@ -307,18 +315,17 @@ export function dateFormat(lang = null) {
 }
 
 /**
- *
  * @param {string} v
  * @param {string} format
  * @returns {DateComponents}
  */
 export function dateComponents(v, format = null) {
-    const f = format || dateFormat();
-    const s = v.replace(/[a-z0-9]/g, "").substring(0, 1);
-    const parts = v.split(s);
+    const s = removeSpaces(dateSeparator(v));
+    const parts = removeSpaces(v).split(s);
 
-    const sf = f.replace(/[a-z0-9]/g, "").substring(0, 1);
-    const formatParts = f.split(sf);
+    const f = format || dateFormat();
+    const sf = removeSpaces(dateSeparator(f));
+    const formatParts = removeSpaces(f).split(sf);
 
     return {
         raw: v,
@@ -330,16 +337,34 @@ export function dateComponents(v, format = null) {
     };
 }
 
+/**
+ * @param {string} v
+ * @returns {string|null} Usually a single char, but could be two chars (eg: in korean)
+ */
+export function dateSeparator(v) {
+    const res = /([-\.\/]\s?)/.exec(v);
+    return res ? res[1] : null;
+}
+
+/**
+ * @param {string} format
+ * @param {DateComponents} comp
+ * @returns {string}
+ */
+export function replaceDateComponents(format, comp) {
+    return format.replace("yyyy", comp.year).replace("mm", comp.month).replace("dd", comp.day);
+}
+
 export function dateToLocalFormat(v, lang = null, from = "yyyy-mm-dd") {
     const f = dateFormat(lang);
     const comp = dateComponents(v, from);
-    return f.replace("yyyy", comp.year).replace("mm", comp.month).replace("dd", comp.day);
+    return replaceDateComponents(f, comp);
 }
 
-export function dateToIsoFormat(v, lang = null) {
+export function dateToIsoFormat(v, lang = null, from = null) {
+    const comp = dateComponents(removeUnicode(enDigits(v)), from || dateFormat(lang));
     const f = "yyyy-mm-dd";
-    const comp = dateComponents(v, dateFormat(lang));
-    return f.replace("yyyy", comp.year).replace("mm", comp.month).replace("dd", comp.day);
+    return replaceDateComponents(f, comp);
 }
 
 /**

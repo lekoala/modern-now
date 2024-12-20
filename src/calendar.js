@@ -4,6 +4,7 @@ import {
     compareDate,
     currentDay,
     currentUTCDay,
+    dateComponents,
     dateWithoutTimezone,
     expandDate,
     toDate,
@@ -76,10 +77,18 @@ function getDay(year, month, date) {
     return utcDate(year, month, date).getDay();
 }
 
-function btn(v, cls = "") {
-    return `<button type="button" class="${cls}" style="min-width:44px">${v}</button>`;
+function btn(v, cls = "", disabled = false) {
+    const attrs = disabled ? " disabled" : "";
+    return `<button type="button" class="${cls}"${attrs} style="min-width:44px">${v}</button>`;
 }
 
+/**
+ *
+ * @param {Number} v
+ * @param {String} cls
+ * @param {Object} config
+ * @returns {String}
+ */
 function inputNum(v, cls = "", config = {}) {
     let attrs = "";
     if (config.minYear) {
@@ -91,9 +100,37 @@ function inputNum(v, cls = "", config = {}) {
     return `<input type="number" class="${cls}" value="${v}" size="4" max="9999" style="max-width:5em;width:auto;"${attrs} />`;
 }
 
-function drop(arr, v, cls = "") {
+/**
+ * @param {String} locale
+ * @param {Number} v 0-11
+ * @param {String} cls
+ * @param {Object} config
+ * @returns {String}
+ */
+function monthDrop(locale, v, cls = "", config = {}) {
+    const arr = monthsForLocale(locale, "long");
+    let min = 0;
+    let max = 11;
+    if (config.minYear) {
+        const miy = toInt(config.minYear);
+        if (miy === config.year) {
+            min = toInt(config.minMonth) - 1;
+        }
+        if (miy > config.year) {
+            min = 11;
+        }
+    }
+    if (config.maxYear) {
+        const may = toInt(config.maxYear);
+        if (may === config.year) {
+            max = toInt(config.maxMonth) - 1;
+        }
+        if (may < config.year) {
+            max = 0;
+        }
+    }
     const opts = arr.map((val, idx) => {
-        return `<option value="${idx}"${idx === v ? 'selected="selected"' : ""}>${val}</option>`;
+        return `<option value="${idx}"${idx === v ? 'selected="selected"' : ""}${idx < min || idx > max ? " disabled" : ""}>${val}</option>`;
     });
     return `<select class="${cls}" style="width:auto">${opts}</select>`;
 }
@@ -138,6 +175,10 @@ const cellClickHandler = new WeakMap();
  * @param {Number} month (from 1 to 12)
  */
 function createCalendar(elem, year, month) {
+    if (Number.isNaN(month) || Number.isNaN(year)) {
+        elem.innerHTML = 'Invalid Date';
+        return;
+    }
     const mon = month - 1; // months in JS are 0..11, not 1..12
     const d = dateWithoutTimezone(utcDate(year, mon, 1));
 
@@ -148,6 +189,14 @@ function createCalendar(elem, year, month) {
     const controls = config.controls;
     const click = config.click;
     const tableClass = config.tableClass || "";
+
+    // Expand
+    if (config.minDate) {
+        config.minDate = expandDate(config.minDate);
+    }
+    if (config.maxDate) {
+        config.maxDate = expandDate(config.maxDate);
+    }
 
     if (click) {
         if (typeof click === "function") {
@@ -201,10 +250,16 @@ function createCalendar(elem, year, month) {
     if (controls) {
         const minYear = config.minDate ? config.minDate.substring(0, 4) : null;
         const maxYear = config.maxDate ? config.maxDate.substring(0, 4) : null;
+        const minMonth = config.minDate ? config.minDate.substring(5, 7) : null;
+        const maxMonth = config.maxDate ? config.maxDate.substring(5, 7) : null;
         center =
-            drop(monthsForLocale(locale, "long"), mon, "is-month") + inputNum(year, "is-year", { minYear, maxYear });
-        prev = btn("<", "is-prev");
-        next = btn(">", "is-next");
+            monthDrop(locale, mon, "is-month", { year, minYear, maxYear, minMonth, maxMonth }) +
+            inputNum(year, "is-year", { minYear, maxYear });
+
+        const isMin = config.minDate ? compareDate(lastMonth, config.minDate) <= 0 : false;
+        const isMax = config.maxDate ? compareDate(lastDate, config.maxDate) >= 0 : false;
+        prev = btn("<", "is-prev", isMin);
+        next = btn(">", "is-next", isMax);
         justify = "space-between";
     }
 
@@ -346,11 +401,11 @@ function createCalendar(elem, year, month) {
 function createCalendarWithValue(el) {
     const data = el.dataset;
     const v = expandDate(data.value || toDate(currentDay()));
-    const dateParts = v.split("-");
+    const dateParts = dateComponents(v);
     if (!data.value) {
         data.value = v;
     }
-    createCalendar(el, toInt(dateParts[0]), toInt(dateParts[1]));
+    createCalendar(el, toInt(dateParts.year), toInt(dateParts.month));
 }
 
 /**

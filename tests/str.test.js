@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { normalize, slugify, dashToCamel, camelToDash, ucfirst } from "../src/utils/str.js";
+import { normalize, slugify, dashToCamel, camelToDash, ucfirst, enDigits } from "../src/utils/str.js";
 
 test("normalize", () => {
     expect(normalize("Crème Brûlée")).toBe("Creme Brulee");
@@ -26,4 +26,11 @@ test("camelToDash", () => {
 
 test("ucfirst", () => {
     expect(ucfirst("dataAttr")).toBe("DataAttr");
+});
+
+test("enDigits", () => {
+    // English: 0123456789 - Persian: ۰۱۲۳۴۵۶۷۸۹ - Arabic: ٠١٢٣٤٥٦٧٨٩';
+    // English: 0123456789 - Persian: 0123456789 - Arabic: 0123456789
+    expect(enDigits("۰۱۲۳۴۵۶۷۸۹")).toBe("0123456789");
+    expect(enDigits("٠١٢٣٤٥٦٧٨٩")).toBe("0123456789");
 });

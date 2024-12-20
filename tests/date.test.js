@@ -13,6 +13,9 @@ import {
     toTime,
     toTimestamp,
     toDateTime,
+    dateToIsoFormat,
+    dateFormat,
+    dateSeparator,
 } from "../src/utils/date.js";
 
 test("expandDateTime", () => {
@@ -74,4 +77,25 @@ test("to", () => {
     expect(toDate(dayTime)).toBe("2024-01-01");
     expect(toTime(dayTime)).toBe("10:00:00");
     expect(toTimestamp(dayTime)).toBe(1704103200000);
+});
+
+test("dateFormat", () => {
+    expect(dateFormat("en")).toBe("mm/dd/yyyy");
+    expect(dateFormat("ko")).toBe("yyyy. mm. dd.");
+});
+
+test("dateSeparator", () => {
+    expect(dateSeparator("dd/mm/yyyy")).toBe("/");
+    expect(dateSeparator("01/01/2024")).toBe("/");
+    expect(dateSeparator("2024-01-01")).toBe("-");
+    expect(dateSeparator("2024. 01. 01.")).toBe(". ");
+    expect(dateSeparator("٣١‏/١٢‏/٢٠٤٢")).toBe("/"); // there are hidden rtl markers
+    expect(dateSeparator("Invalid")).toBe(null);
+});
+
+test("toIso", () => {
+    expect(dateToIsoFormat("01/01/2024", "fr")).toBe("2024-01-01");
+    expect(dateToIsoFormat("2024. 01. 01.", "ko")).toBe("2024-01-01");
+    expect(dateToIsoFormat("2024. 01. 01", "ko")).toBe("2024-01-01"); // be lenient
+    expect(dateToIsoFormat("٣١‏/١٢‏/٢٠٤٢", "ar")).toBe("2042-12-31");
 });

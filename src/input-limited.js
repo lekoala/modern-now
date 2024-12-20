@@ -57,10 +57,16 @@ const eventHandler = (ev) => {
                     token = arr[i];
                 }
 
+                // Is there a fixed mask element to add ?
                 const nv = arr[i];
                 // Append last if not token when going forward
                 if (dir === 1 && nv && !["*", "a", "9"].includes(nv)) {
                     val += nv;
+                    // Append extra space if needed
+                    const nv2 = arr[i + 1];
+                    if (nv2 && nv2 === " ") {
+                        val += nv2;
+                    }
                 }
 
                 cv = val;

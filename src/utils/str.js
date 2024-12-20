@@ -46,3 +46,29 @@ export function camelToDash(str) {
 export function ucfirst(str) {
     return str.charAt(0).toLocaleUpperCase() + str.slice(1);
 }
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+export function removeSpaces(str) {
+    return str.replace(/\s/g, "");
+}
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+export function removeUnicode(str) {
+    return str.replace(/[\u{0080}-\u{FFFF}]/gu, "");
+}
+
+/**
+ * @link https://stackoverflow.com/questions/31439604/how-to-convert-persian-and-arabic-digits-of-a-string-to-english-using-javascript#answer-70635474
+ * @param {string} str
+ * @returns {string}
+ */
+export function enDigits(str) {
+    //@ts-ignore
+    return str.replace(/[٠-٩۰-۹]/g, (a) => a.charCodeAt(0) & 15);
+}
