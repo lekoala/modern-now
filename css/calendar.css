@@ -46,6 +46,10 @@
     padding: 0.5rem;
 }
 
+[data-calendar] caption :is(input, select) {
+    width: 100%;
+}
+
 [data-calendar] :is(button, input, select) {
     margin: 0;
 }

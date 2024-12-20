@@ -133,7 +133,7 @@ function monthDrop(locale, v, cls = "", config = {}) {
     const opts = arr.map((val, idx) => {
         return `<option value="${idx}"${idx === v ? 'selected="selected"' : ""}${idx < min || idx > max ? " disabled" : ""}>${val}</option>`;
     });
-    return `<select class="${cls}" style="width:auto">${opts}</select>`;
+    return `<select class="${cls}">${opts}</select>`;
 }
 
 /**
@@ -294,7 +294,7 @@ function createCalendar(elem, year, month) {
     let table = "";
 
     table += `<table class="${tableClass}">`;
-    table += `<caption><div style="display:flex;justify-content:${justify};align-items:center;">${prev}${center}${next}</div></caption>`;
+    table += `<caption><div style="display:flex;gap:0.5rem;justify-content:${justify};align-items:center;">${prev}${center}${next}</div></caption>`;
     table += "<thead><tr>";
     // Build days header
     for (const day of daysForLocale(locale, "short", firstDay)) {
