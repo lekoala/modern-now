@@ -51,6 +51,17 @@ export function ucfirst(str) {
  * @param {string} str
  * @returns {string}
  */
+export function strToUpper(str) {
+    if (!str) {
+        return "";
+    }
+    return str.toLocaleUpperCase();
+}
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 export function removeSpaces(str) {
     return str.replace(/\s/g, "");
 }

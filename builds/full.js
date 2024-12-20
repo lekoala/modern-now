@@ -14,6 +14,7 @@ import "../src/input-to.js";
 import "../src/input-file.js";
 import "../src/input-toggle.js";
 import "../src/input-password.js";
+import "../src/input-tel.js";
 import "../src/textarea-autogrow.js";
 import "../src/form.js";
 import "../src/calendar.js";
