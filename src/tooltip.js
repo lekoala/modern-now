@@ -44,6 +44,7 @@ div.tooltip {
   max-width: max(40ch, 90vw);
   opacity:1;
   font-size: 0.875rem;
+  text-wrap: pretty;
 }
 div.tooltip:before {
   content: " ";
