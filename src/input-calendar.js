@@ -89,8 +89,9 @@ define(
             const t = as(ev.target, "input");
             // Input can come from formatted or hidden input
             if (t.name.startsWith("_")) {
-                const max = t.dataset.mask.endsWith(".") ? t.size - 1 : t.size;
-                if (t.value.length < max) {
+                const max = t.size;
+                const signMax = t.dataset.mask.replace(/\.$/, "").length;
+                if (t.value.length < signMax) {
                     this.value = "";
                     return;
                 }
