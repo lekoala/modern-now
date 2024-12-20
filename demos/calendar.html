@@ -98,6 +98,20 @@
         <p>Input date replacement (no markup) disabled</p>
 
         <input type="date" name="custom-date-disabled" value="2024-11-12" data-calendar="" disabled>
+
+        <button data-dialog="demo-modal">Show calendar input in modal</button>
+
+        <dialog id="demo-modal" data-dialog-modal>
+            <p>Input</p>
+            <input type="date" name="custom-date-modal" value="2024-11-12" data-calendar="">
+
+            <p>Inline calendar in italian</p>
+            <div lang="it" data-calendar="controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'" data-value="2025-03"></div>
+
+            <button data-dialog-close>Close</button>
+        </dialog>
+
+
     </main>
     <footer>
         <a href="https://github.com/lekoala/modern-now" target="_blank">Github</a> |
