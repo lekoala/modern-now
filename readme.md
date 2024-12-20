@@ -54,19 +54,23 @@ See demos for more informations
 - Behaviour : attach dynamic behaviour to any element
 - Dropdowns : accessible, dynamically positioned dropdowns positioned with our floating utils
 - Forms : ajax and validation for forms
-- Inputs : input form helpers
+- Inputs : input form helpers (file, autogrow, limited, mask, bound, toggle)
+- Calendar: dynamic calendars and date inputs
 - Mark : dynamically animated `mark` elements
 - Time : format time using i18n formatters
 - Number : format numbers (eg: currencies) using i18n formatters
 - Toggle : hide/show elements
-- Htmx : htmx like elements that can trigger fetch requests
+- Hx : htmx like elements that can trigger fetch requests
+- Cmd : elements that trigger functions on click
 
 ## Builds
 
 You can either have:
-- full - 36kb
-- dialog - 6kb (+ dynamically loaded polyfill if needed)
-- tooltip - 11kb
+
+  dist\full.js        51.9kb
+  dist\tooltip.js     12.2kb
+  dist\formatters.js   6.4kb
+  dist\dialog.js       6.2kb
 
 Solo builds are only provided if the component is not using nonchalance.
 
