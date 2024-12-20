@@ -2,6 +2,7 @@ import { on, off } from "./utils/events.js";
 import { normalize, slugify } from "./utils/str.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
 import { hasAttr } from "./utils/attrs.js";
+import { toFloat } from "./utils/misc.js";
 
 function isToken(v) {
     return ["*", "a", "9"].includes(v);
@@ -25,8 +26,20 @@ const eventHandler = (ev) => {
             cv = normalize(cv);
         } else if (limitation === "slug") {
             cv = slugify(cv);
-        } else if (limitation === "numeric") {
-            cv = cv.replace(",", ".").replace(/[^0-9.]/g, "");
+        } else if (limitation === "numeric" || limitation === "currency") {
+            // This has the side benefit of "jumping" back to decimal when typing a new .
+            cv = cv
+                .replace(/,/g, ".")
+                .replace(/[^0-9.]/g, "")
+                .replace(/\..*\./g, ".");
+
+            // With currency, limit to two decimals
+            if (limitation === "currency" && cv.includes(".") && !cv.endsWith(".")) {
+                const decimals = Math.min(cv.split(".")[1].length, 2);
+                const mul = decimals * 10;
+                // don't use toFixed, as typing "6" would round up the decimals
+                cv = Math.floor(toFloat(cv) * mul) / mul;
+            }
         } else if (limitation === "int") {
             cv = cv.replace(/[^0-9]/g, "");
         } else if (limitation === "alpha") {
