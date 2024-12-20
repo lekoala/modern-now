@@ -1,6 +1,7 @@
 import { on, off, dispatch } from "./utils/events.js";
 import { getBoolData } from "./utils/attrs.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
+import { toFloat } from "./utils/misc.js";
 
 // add mouseenter to allow proper size after resizing the window
 const events = ["input", "focusout", "mouseenter"];
@@ -11,13 +12,16 @@ const eventHandler = (ev) => {
         el.value = el.value.trim();
     }
 
+    // note: scrollHeight doesn't take border with into account
     const s = el.style;
+
     // reset height
     s.height = "0";
 
     // compute new height or set back to null
-    const h = el.scrollHeight;
-    s.height = h === 0 ? null : `${h}px`;
+    const sh = el.scrollHeight;
+
+    s.height = sh === 0 ? null : `${sh}px`;
 };
 
 dynamicBehaviour(
@@ -29,8 +33,8 @@ dynamicBehaviour(
         el.rows = 1;
         el.style.overflow = "hidden";
         el.style.resize = "none";
-        dispatch("input", el);
         on(events, eventHandler, el);
+        dispatch("input", el);
     },
     /**
      * @param {HTMLTextAreaElement} el

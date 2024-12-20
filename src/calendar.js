@@ -166,7 +166,7 @@ function checkDisabled(isodate, config, attrs = "") {
         d = true;
     } else if (typeof config.disabled === "function" && config.disabled(asDate(isodate))) {
         d = true;
-    } else if (Array.isArray(config.enabled) && !config.enabled.includes(isodate)) {
+    } else if (Array.isArray(config.enabled) && config.enabled.length && !config.enabled.includes(isodate)) {
         d = true;
     } else if (typeof config.enabled === "function" && !config.enabled(asDate(isodate))) {
         d = true;

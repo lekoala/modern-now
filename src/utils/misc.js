@@ -121,6 +121,18 @@ export function toInt(v) {
 }
 
 /**
+ *
+ * @param {string|Number} v
+ * @returns {Number}
+ */
+export function toFloat(v) {
+    if (v === undefined) {
+        return 0;
+    }
+    return Number.parseFloat(`${v}`);
+}
+
+/**
  * @param {*} v
  * @returns {Boolean}
  */
