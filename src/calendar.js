@@ -401,7 +401,7 @@ function createCalendar(elem, year, month) {
 function createCalendarWithValue(el) {
     const data = el.dataset;
     const v = expandDate(data.value || toDate(currentDay()));
-    const dateParts = dateComponents(v);
+    const dateParts = dateComponents(v, 'yyyy-mm-dd');
     if (!data.value) {
         data.value = v;
     }
