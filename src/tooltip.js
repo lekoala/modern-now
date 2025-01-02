@@ -220,7 +220,6 @@ dynamicBehaviour(
             i++;
             tooltip = ce("div");
             tooltip.id = `tooltip-${i}`;
-            tooltip.style.maxWidth = "40ch";
             tooltip.innerHTML = `${title}`;
 
             // If we have a popover parent, adding to the body is not an option
@@ -265,7 +264,7 @@ dynamicBehaviour(
             tooltipElement: el.id,
         });
         on(floatingEvents, tooltipHandler, tooltip);
-        //cleanup is called when element is removed from the dom
+        // Cleanup is called when element is removed from the dom
         const cleanup = autoUpdate(tooltip);
         cleanupMap.set(tooltip, cleanup);
         on(events, eventHandler, el);
@@ -279,11 +278,13 @@ dynamicBehaviour(
      */
     (el) => {
         const tooltip = byId(el.dataset.tooltipTarget);
+        // Remove events from tooltip
         if (tooltip) {
             off(floatingEvents, tooltipHandler, tooltip);
             getAndRun(cleanupMap, tooltip);
             tooltip.remove();
         }
+        // Remove events from trigger
         off(events, eventHandler, el);
     },
 );
