@@ -10,3 +10,6 @@ import "../src/button-dialog.js";
 // Add dialog polyfill if needed
 // You can drop this if you target safari >= 15.4
 addDialogPolyfill();
+
+import dynamicBehaviour, { drop, parse, flush } from "../src/dynamicBehaviour.js";
+export default { dynamicBehaviour, drop, parse, flush };
