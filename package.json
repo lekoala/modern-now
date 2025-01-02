@@ -12,10 +12,10 @@
     "type": "git",
     "url": "https://github.com/lekoala/modern-now"
   },
-  "main": "./builds/full.js",
+  "main": "./dist/full.js",
   "exports": {
-    ".": "./builds/full.js",
-    "./*": "./builds/*.js"
+    ".": "./dist/full.js",
+    "./*": "./dist/*.js"
   },
   "author": "LeKoala",
   "license": "MIT",
