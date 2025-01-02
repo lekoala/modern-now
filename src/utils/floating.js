@@ -363,6 +363,9 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             coords.x = startX + config.shiftPadding;
         } else if (coords.x + floating.width > clientWidth) {
             totalShift = clientWidth - (coords.x + floating.width) - config.shiftPadding;
+            if(totalShift + coords.x < 0) {
+                totalShift -= coords.x + totalShift;
+            }
             coords.x += totalShift;
             dir = totalShift < 0 ? -1 : 1;
         }
