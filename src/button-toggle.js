@@ -1,9 +1,21 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
-import { setAttr, hasNotAttrString, toggleAttr, hasAttr, removeAttr } from "./utils/attrs.js";
+import { setAttr, hasNotAttrString, toggleAttr, hasAttr, removeAttr, hasNotClassString } from "./utils/attrs.js";
 import { doWithAnimation, globalContext, templateAsData } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
+
+/**
+ * @param {HTMLElement} el
+ * @param {String} customClass
+ * @returns {String}
+ */
+function isExpanded(el, customClass = null) {
+    if (customClass !== null) {
+        return hasNotClassString(el, customClass);
+    }
+    return hasNotAttrString(el, "hidden");
+}
 
 const events = ["click", "toggleClose"];
 const { HTML } = createRegistry(globalContext());
@@ -18,7 +30,7 @@ define(
             on(events, this);
             const el = this.el;
             const d = this.dataset;
-            this.ariaExpanded = hasNotAttrString(el, "hidden");
+            this.ariaExpanded = isExpanded(el);
             setAttr(this, "aria-controls", d.toggle);
 
             // Content can be really annoying to put in a data attr, so we support template as well
@@ -69,11 +81,11 @@ define(
                 }
             }
 
-            // make sure to have something like [hidden] { display: none !important}
-            // https://meowni.ca/hidden.is.a.lie.html
             const open = this.ariaExpanded === "false";
             if (open) {
                 doWithAnimation(el, () => {}, true);
+                // make sure to have something like [hidden] { display: none !important}
+                // https://meowni.ca/hidden.is.a.lie.html
                 toggleAttr(el, "hidden");
             } else {
                 doWithAnimation(el, () => {
@@ -90,7 +102,7 @@ define(
             const el = this.el;
             const d = this.dataset;
 
-            this.ariaExpanded = state || hasNotAttrString(el, "hidden");
+            this.ariaExpanded = state || isExpanded(el);
             if (d.toggleGroup) {
                 this.ariaSelected = this.ariaExpanded;
             }

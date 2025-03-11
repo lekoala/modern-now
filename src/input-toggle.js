@@ -1,13 +1,32 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off } from "./utils/events.js";
-import { setAttr, hasNotAttrString, toggleAttr, setRemoveAttr, getBoolData } from "./utils/attrs.js";
-import { clearInputs, globalContext, templateAsData } from "./utils/misc.js";
+import {
+    setAttr,
+    hasNotAttrString,
+    setRemoveAttr,
+    getBoolData,
+    hasNotClassString,
+    toggleClass,
+} from "./utils/attrs.js";
+import { clearInputs, globalContext } from "./utils/misc.js";
 import { byId, qs, qsa } from "./utils/query.js";
+
+/**
+ * @param {HTMLElement} el
+ * @param {String} customClass
+ * @returns {String}
+ */
+function isExpanded(el, customClass = null) {
+    if (customClass !== null) {
+        return hasNotClassString(el, customClass);
+    }
+    return hasNotAttrString(el, "hidden");
+}
 
 const { HTML } = createRegistry(globalContext());
 define(
-    "input[data-toggle]",
+    "input[type='checkbox'][data-toggle]",
     class extends HTML.Input {
         get el() {
             return byId(this.dataset.toggle);
@@ -16,7 +35,7 @@ define(
         connectedCallback() {
             on("change", this);
             const el = this.el;
-            this.ariaExpanded = hasNotAttrString(el, "hidden");
+            this.ariaExpanded = isExpanded(el, this.dataset.toggleClass);
             setAttr(this, "aria-controls", this.dataset.toggle);
             this.update();
         }
@@ -32,10 +51,17 @@ define(
         $change(ev) {
             const el = this.el;
 
-            // make sure to have something like [hidden] { display: none !important}
-            // https://meowni.ca/hidden.is.a.lie.html
-            setRemoveAttr(el, "hidden", !this.checked);
+            if (this.dataset.toggleClass) {
+                toggleClass(el, this.dataset.toggleClass);
+            } else {
+                // make sure to have something like [hidden] { display: none !important}
+                // https://meowni.ca/hidden.is.a.lie.html
+                setRemoveAttr(el, "hidden", !this.checked);
+            }
+
             this.update();
+
+            // If not checked, we might want to clear values
             if (!this.checked && getBoolData(this, "toggleClear")) {
                 clearInputs(qsa("input,textarea,select", null, this.el));
             }
@@ -43,7 +69,7 @@ define(
 
         update() {
             const el = this.el;
-            this.ariaExpanded = hasNotAttrString(el, "hidden");
+            this.ariaExpanded = isExpanded(el, this.dataset.toggleClass);
         }
     },
 );

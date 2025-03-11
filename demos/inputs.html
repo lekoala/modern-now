@@ -48,6 +48,10 @@
         :invalid+.invalid-feedback {
             display: block;
         }
+
+        .hide {
+            display: none;
+        }
     </style>
 </head>
 
@@ -116,6 +120,12 @@
             <fieldset id="advanced-options" hidden>
                 <label for="input-autogrow2">Textarea autogrow</label>
                 <textarea id="input-autogrow2" name="autogrow" data-autogrow></textarea>
+            </fieldset>
+
+            <label><input type="checkbox" data-toggle="advanced-options-class" data-toggle-clear data-toggle-class="hide"> Enable advanced potions with class</label>
+            <fieldset id="advanced-options-class" class="hide">
+                <label for="input-autogrow3">Textarea autogrow</label>
+                <textarea id="input-autogrow3" name="autogrow" data-autogrow></textarea>
             </fieldset>
         </form>
 
@@ -186,7 +196,8 @@
                 <input type="text" id="input-placeholder2" name="placeholder2" data-limited="mask|upper" data-mask="aaa-999"
                     placeholder="XYZ-999">
 
-                <label for="input-placeholderspace">Limited based on mask with space in separators that gets added automatically as needed</label>
+                <label for="input-placeholderspace">Limited based on mask with space in separators that gets added automatically as
+                    needed</label>
                 <input type="text" id="input-placeholderspace" name="placeholderspace" data-limited="mask" data-mask="aa. aa. aa."
                     placeholder="xx. yy. zz.">
 
@@ -211,7 +222,8 @@
         <form method="post" action="https://vercel-dumper.vercel.app/">
             <div>
                 <label for="input-bound">Bound with a tooltip to an input that normalize the string to a valid url segment</label>
-                <input type="text" id="input-bound" name="bound" data-to="input-bound2" data-tooltip="placement: 'left', target:'customtooltip'">
+                <input type="text" id="input-bound" name="bound" data-to="input-bound2"
+                    data-tooltip="placement: 'left', target:'customtooltip'">
                 <div class="tooltip" id="customtooltip" hidden>
                     This is a custom input<br />Any value is replicated in the other one
                 </div>
