@@ -31,12 +31,11 @@ test("getBooleanData", () => {
     const el = document.createElement("div");
     el.setAttribute("data-empty", "");
     el.dataset.bool = "true";
-    // el.dataset.empty = ""; // this doesn't seem to be seen or valid
-
+    el.dataset.dataempty = "";
 
     expect(getBoolData(el, "bool")).toBe(true);
-    expect(getAttr(el, "data-empty")).toBe("");
-    // expect(getBoolData(el, "empty")).toBe(true); // empty is true
+    expect(getBoolData(el, "empty")).toBe(true); // empty is true
+    expect(getBoolData(el, "dataempty")).toBe(true); // empty is true
 
     setAttr(el, "data-UPPER", "true");
     setAttr(el, "data-UPPERTYPE", true);
