@@ -13,9 +13,6 @@
     "url": "https://github.com/lekoala/modern-now"
   },
   "main": "./dist/full.js",
-  "exports": {
-    ".": "./dist/full.js"
-  },
   "author": "LeKoala",
   "license": "MIT",
   "scripts": {
