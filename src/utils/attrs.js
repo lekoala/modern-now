@@ -1,4 +1,5 @@
 import { isObject, toBool } from "./misc.js";
+import { camelToDash, dataCamelToDash } from "./str.js";
 
 // Use short names like getAttr to avoid automcomplete from ide
 
@@ -19,7 +20,8 @@ export function getAttr(el, name) {
  * @returns {boolean}
  */
 export function getBoolData(el, name) {
-    return el.dataset[name] === "" || toBool(el.dataset[name]);
+    // Also check attributes because the dom may not be very consistent when dealing with empty data attributes
+    return el.dataset[name] === "" || getAttr(el, `data-${dataCamelToDash(name)}`) === "" || toBool(el.dataset[name]);
 }
 
 /**

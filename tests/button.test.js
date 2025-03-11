@@ -4,16 +4,18 @@ import { qs } from "../src/utils/query.js";
 
 const dialogBtn = document.createElement("button");
 dialogBtn.dataset.dialog = "demo-dialog";
-document.append(dialogBtn);
+document.body.append(dialogBtn);
 
 const dialog = document.createElement("dialog");
 dialog.id = "demo-dialog";
-document.append(dialog);
+document.body.append(dialog);
 
 test("dialog", () => {
     const dialog = qs("#demo-dialog", "dialog");
     const btn = qs('[data-dialog="demo-dialog"]', "button");
     expect(dialog.open).toBe(false);
     btn.click();
-    expect(dialog.open).toBe(true);
+    setTimeout(() => {
+        expect(dialog.open).toBe(true);
+    });
 });

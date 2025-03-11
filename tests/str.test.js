@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { normalize, slugify, dashToCamel, camelToDash, ucfirst, enDigits } from "../src/utils/str.js";
+import { normalize, slugify, dashToCamel, camelToDash, ucfirst, enDigits, dataCamelToDash } from "../src/utils/str.js";
 
 test("normalize", () => {
     expect(normalize("Crème Brûlée")).toBe("Creme Brulee");
@@ -22,6 +22,21 @@ test("camelToDash", () => {
     expect(camelToDash("dataAttr")).toBe("data-attr");
     expect(camelToDash("DataAttr")).toBe("data-attr");
     expect(camelToDash("DATaATTR")).toBe("data-attr");
+    expect(camelToDash("HTMLlowerATTR")).toBe("htmllower-attr");
+    expect(camelToDash("MyTitle")).toBe("my-title");
+});
+
+test("dataCamelToDash", () => {
+    expect(dataCamelToDash("dataAttr")).toBe("data-attr");
+    // https://jsfiddle.net/370wdpsg/2/
+    // with multiple uppercase letters, there is a dash before each one
+    // this match behaviour of dataset conversion in browsers
+    expect(dataCamelToDash("DataAttr")).toBe("-data-attr");
+    expect(dataCamelToDash("DATaATTR")).toBe("-d-a-ta-a-t-t-r");
+    expect(dataCamelToDash("HTMLlowerATTR")).toBe("-h-t-m-llower-a-t-t-r");
+
+    // <a data--My-Title="Hello">Click me</a> => MyTitle
+    expect(dataCamelToDash("MyTitle")).toBe("-my-title");
 });
 
 test("ucfirst", () => {

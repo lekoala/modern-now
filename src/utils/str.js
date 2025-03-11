@@ -1,3 +1,5 @@
+import { ce } from "./misc.js";
+
 /**
  * @link https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
  * @param {string} str
@@ -37,6 +39,15 @@ export function dashToCamel(str) {
  */
 export function camelToDash(str) {
     return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+/**
+ * @link https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Solve_HTML_problems/Use_data_attributes#javascript_access
+ * @param {string} str
+ * @returns {string} A lowercased dash-string using DOMStringMap conventions
+ */
+export function dataCamelToDash(str) {
+    return str.replace(/([A-Z])/g, "-$1").toLowerCase();
 }
 
 /**
