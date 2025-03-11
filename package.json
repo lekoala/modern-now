@@ -14,8 +14,7 @@
   },
   "main": "./dist/full.js",
   "exports": {
-    ".": "./dist/full.js",
-    "./*": "./dist/*.js"
+    ".": "./dist/full.js"
   },
   "author": "LeKoala",
   "license": "MIT",
