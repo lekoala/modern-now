@@ -34,11 +34,13 @@ const eventHandler = (ev) => {
                 .replace(/\..*\./g, ".");
 
             // With currency, limit to two decimals
+            // Note that this is only for currencies in raw format, not formatted with i18n
             if (limitation === "currency" && cv.includes(".") && !cv.endsWith(".")) {
-                const decimals = Math.min(cv.split(".")[1].length, 2);
-                const mul = decimals * 10;
-                // don't use toFixed, as typing "6" would round up the decimals
-                cv = Math.floor(toFloat(cv) * mul) / mul;
+                const decimalPos = cv.lastIndexOf(".");
+                const decimalPart = cv.substring(decimalPos + 1);
+                const fullPart = cv.substring(0, decimalPos);
+                const decimalSize = Math.min(decimalPart.length, 2);
+                cv = `${fullPart}.${decimalPart.substring(0, decimalSize)}`;
             }
         } else if (limitation === "int") {
             cv = cv.replace(/[^0-9]/g, "");
