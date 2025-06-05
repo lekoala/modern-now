@@ -373,10 +373,11 @@ export function replaceCallbacks(obj) {
 }
 
 /**
+ * @param {Document} root
  * @returns {HTMLElement}
  */
-export function getDocEl() {
-    return document.documentElement;
+export function getDocEl(root = document) {
+    return root.documentElement;
 }
 
 /**

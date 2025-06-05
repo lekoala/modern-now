@@ -1,7 +1,7 @@
 import { getBoolData, getData, hasData, setCssVar } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { byId } from "./utils/query.js";
-import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation } from "./utils/misc.js";
+import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, getDocEl } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
 
 /**
@@ -34,7 +34,7 @@ function closeDialogWithAnimation(dialog) {
 }
 
 function refreshScrollbarVar() {
-    setCssVar(document.documentElement, "scrollbar-width", `${getScrollBarWidth()}px`);
+    setCssVar(getDocEl(), "scrollbar-width", `${getScrollBarWidth()}px`);
 }
 
 /**
@@ -71,11 +71,11 @@ const handleDialogClick = (ev) => {
         const dialogData = dialogEl.dataset;
         const dialogConfig = simpleConfig(dialogData.dialog);
         // with a backdrop ?
-        if (hasData(dialogEl, "dialogModal")) {
+        if (getBoolData(dialogEl, "dialogModal")) {
             dialogConfig.modal = true;
         }
         // dismissible ?
-        if (hasData(dialogEl, "dialogDismissible")) {
+        if (getBoolData(dialogEl, "dialogDismissible")) {
             dialogConfig.dismissible = true;
         }
         //@link https://www.javascripttutorial.net/web-apis/javascript-dialog-api/
@@ -110,7 +110,6 @@ const handleDialogClick = (ev) => {
 // Init variable
 refreshScrollbarVar();
 
-// Don't use nonchalance as it increases the solo build size
 dynamicBehaviour(
     "button[data-dialog],button[data-dialog-close]",
     /**

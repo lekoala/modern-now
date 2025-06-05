@@ -120,6 +120,9 @@ define(
         }
 
         $floatingHide(ev) {
+            if (this.ariaExpanded === "false") {
+                return;
+            }
             this.ariaExpanded = "false";
             this.hideMenu();
         }

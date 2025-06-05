@@ -30,7 +30,8 @@
     "qsa-observer": "^3.0.2"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^17",
-    "@types/bun": "^1.2.8"
+    "@happy-dom/global-registrator": "^17.5.6",
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.2.15"
   }
 }

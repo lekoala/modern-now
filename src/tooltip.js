@@ -168,6 +168,7 @@ const tooltipHandler = (ev) => {
             shiftPadding: 6,
         });
     }
+    // Hide, and not always visible
     if (type === floatingHide && !t.dataset.tooltipVisible) {
         hideTooltip(t);
     }

@@ -7,14 +7,8 @@ import { getBoolData } from "./utils/attrs.js";
 // Sample
 // dynamicBehaviour(
 //     "selector",
-//     /**
-//      * @param {HTMLElement} el
-//      */
-//     (el) => {},
-//     /**
-//      * @param {HTMLElement} el
-//      */
-//     (el) => {},
+//     (el) => { connected... },
+//     (el) => { disconnected... },
 // );
 
 /**
@@ -104,11 +98,15 @@ export { drop, parse, flush };
  * @param {Function} callback
  * @param {Function|null} cleanup
  */
-export default (selector, callback, cleanup = null) => {
+const dynamicBehaviour = (selector, callback, cleanup = null) => {
     // Update handler map
     const initialized = new WeakSet();
     const lazyMap = new WeakMap();
     map[selector] = { callback, cleanup, initialized, lazyMap };
+
+    if (DEBUG) {
+        console.log(`Register selector '${selector}'`);
+    }
 
     // Re-run QSAO with the new selector
     if (!query.includes(selector)) {
@@ -116,3 +114,5 @@ export default (selector, callback, cleanup = null) => {
         parse(qsa(selector));
     }
 };
+
+export default dynamicBehaviour;

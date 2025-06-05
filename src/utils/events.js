@@ -42,8 +42,6 @@ const passiveOpts = (type) => {
             "touchleave",
             "mouseout",
             "mouseleave",
-            // "mouseup",
-            // "mousedown",
             "mousemove",
             "mouseenter",
             "mousewheel",

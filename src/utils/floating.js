@@ -14,7 +14,7 @@
 
 import { setCssVar } from "./attrs.js";
 import { dispatch, on } from "./events.js";
-import { debounce, toInt } from "./misc.js";
+import { debounce, getDocEl, toInt } from "./misc.js";
 
 /**
  * @typedef Coords
@@ -27,19 +27,19 @@ import { debounce, toInt } from "./misc.js";
  */
 
 /**
- * @typedef {('x' | 'y')} Axis
+ * @typedef {('x'|'y')} Axis
  */
 
 /**
- * @typedef {('start' | 'end')} Alignement
+ * @typedef {('start'|'end')} Alignement
  */
 
 /**
- * @typedef {('width' | 'height')} Length
+ * @typedef {('width'|'height')} Length
  */
 
 /**
- * @typedef {( 'top' | 'right' | 'bottom' | 'left')} Side
+ * @typedef {('top'|'right'|'bottom'|'left')} Side
  */
 
 export const floatingReposition = "floatingReposition";
@@ -268,7 +268,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     // this is better than getBoundingClientRect because if reference
     // spawns on multiple line, bounding box may be incorrect
     const reference = placement === "bottom" ? rects[rects.length - 1] : rects[0];
-    const doc = referenceEl.ownerDocument.documentElement;
+    const doc = getDocEl(referenceEl.ownerDocument);
 
     // clientWidth = excluding scrollbar
     let clientWidth = doc.clientWidth;
@@ -363,7 +363,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             coords.x = startX + config.shiftPadding;
         } else if (coords.x + floating.width > clientWidth) {
             totalShift = clientWidth - (coords.x + floating.width) - config.shiftPadding;
-            if(totalShift + coords.x < 0) {
+            if (totalShift + coords.x < 0) {
                 totalShift -= coords.x + totalShift;
             }
             coords.x += totalShift;
