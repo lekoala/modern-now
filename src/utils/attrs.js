@@ -1,5 +1,5 @@
 import { isObject, toBool } from "./misc.js";
-import { camelToDash, dataCamelToDash } from "./str.js";
+import { dataCamelToDash } from "./str.js";
 
 // Use short names like getAttr to avoid automcomplete from ide
 

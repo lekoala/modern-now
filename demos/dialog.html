@@ -11,65 +11,31 @@
     <link rel="stylesheet" href="demo.css">
     <style>
         /* inset is not supported in ios < 14  https://caniuse.com/mdn-css_properties_inset */
-        @keyframes fadeIn {
+        @keyframes modalOpen {
             from {
                 opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                left: -2em;
-            }
-
-            to {
-                left: 0;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                left: 0;
-            }
-
-            to {
-                left: -2em;
-            }
-        }
-
-        @keyframes slideDown {
-            from {
                 transform: translateY(-2rem);
             }
 
             to {
+                opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes slideUp {
+        @keyframes modalClose {
             from {
+                opacity: 1;
                 transform: translateY(0);
             }
 
             to {
+                opacity: 0;
                 transform: translateY(-2rem);
             }
         }
+
+        @keyframes modalCloseDummy {}
     </style>
     <style>
         dialog {
@@ -94,11 +60,21 @@
 
         @media (prefers-reduced-motion: no-preference) {
             .dialog-animated {
-                animation: fadeIn 0.3s, slideDown 0.3s
+                --duration: 0.3s;
+                animation: modalOpen var(--duration);
+                transition:
+                    opacity var(--duration) ease-in-out,
+                    translate var(--duration) ease-in-out,
+                    display var(--duration) ease-in-out allow-discrete;
             }
 
             .dialog-animated.is-closing {
-                animation: fadeOut 0.3s, slideUp 0.3s
+                animation: modalClose var(--duration);
+            }
+
+            .dialog-animated:not([open]) {
+                translate: 0 -2rem;
+                opacity: 0;
             }
         }
 
@@ -181,8 +157,10 @@
 
         <h3>Demos</h3>
 
-        <p>A simple dialog. Inside the modal, the <code>data-dialog-close</code> attribute can be used as a close trigger.</p>
+        <p>A simple dialog. Inside the modal, the <code>data-dialog-close</code> attribute can be used as a close trigger. Closing from
+            outside only works if no backdrop prevents clicking.</p>
         <button data-dialog="demo-dialog">Show dialog</button>
+        <button data-dialog="demo-dialog" data-dialog-close>Close dialog</button>
         <dialog id="demo-dialog">I'm a dialog
             <button data-dialog-close>
                 <!-- clicking on a svg should still have the button as target -->
@@ -200,8 +178,8 @@
             <button data-dialog-close>Close</button>
         </dialog>
 
-        <p>A modal dialog. Disable scroll on the page and animates</p>
-        <button data-dialog="demo-modal-no-scroll">Show no scroll modal</button>
+        <p>A modal dialog. Disable scroll on the page and animates. Animation also works with 'Esc' with proper styles.</p>
+        <button data-dialog="demo-modal-no-scroll">Show no scroll modal with animation</button>
         <dialog id="demo-modal-no-scroll" class="dialog-no-scroll dialog-animated" data-dialog-modal><!-- or data-dialog="modal: true"-->
             I'm a modal and there are no scrollbar on the page
             <button data-dialog-close>Close</button>
@@ -209,9 +187,16 @@
 
         <p>A dismissible dialog (with <code>data-dialog-dismissible</code>)</p>
         <button data-dialog="demo-dismissible">Show dismissible modal</button>
+        <button data-dialog="demo-dismissible-animated">Show dismissible modal with animation</button>
         <dialog id="demo-dismissible" data-dialog-dismissible>
             <div>
                 I'm a dismissible modal
+                <button data-dialog-close>Close</button>
+            </div>
+        </dialog>
+        <dialog id="demo-dismissible-animated" class="dialog-animated" data-dialog-dismissible>
+            <div>
+                I'm an animated dismissible modal
                 <button data-dialog-close>Close</button>
             </div>
         </dialog>
@@ -303,7 +288,8 @@
         <h3>Ajax demos</h3>
 
         <p>You might be interested to load `dialog`'s content when opening, since they often contain optional things. This can be easily
-            achieved in combination with `data-hx` attribute. HX will make GET requests on "open" triggers by default (a custom event is fired
+            achieved in combination with `data-hx` attribute. HX will make GET requests on "open" triggers by default (a custom event is
+            fired
             since none exist in js).
         </p>
 
@@ -311,13 +297,18 @@
 
         <!-- hx is triggered each time the modal becomes visible -->
         <dialog id="demo-ajax" data-dialog-dismissible data-hx="url: 'dialog-ajax.html', target: 'demo-ajax-content'">
-            <header><h3>Dialog header</h3></header>
+            <header>
+                <h3>Dialog header</h3>
+            </header>
             <div id="demo-ajax-content"><!-- content is injected here --></div>
-            <footer><p>Dialog footer</p></footer>
+            <footer>
+                <p>Dialog footer</p>
+            </footer>
         </dialog>
 
-        <p>We don't even need a <code>dialog</code> element if we simply want to load it's content in a default dialog. Since we can define properties
-        either on the button or the dialog, it's easy to configure the dialog as you see fit (dimissible, etc.).</p>
+        <p>We don't even need a <code>dialog</code> element if we simply want to load it's content in a default dialog. Since we can define
+            properties
+            either on the button or the dialog, it's easy to configure the dialog as you see fit (dimissible, etc.).</p>
 
         <button data-hx="url: 'dialog-ajax.html', target: 'new-dialog'" data-dialog-dismissible>Show ajax modal (no dialog)</button>
 

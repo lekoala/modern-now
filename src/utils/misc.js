@@ -92,6 +92,8 @@ export function insertAfter(newNode, existingNode) {
 }
 
 /**
+ * Considers true, TRUE, 1 as true
+ *
  * @param {Number|Boolean|String} v
  * @returns {Boolean}
  */
@@ -481,39 +483,67 @@ export function ephemeralText(el, text) {
 /**
  * If animations are enabled and if the element has animation
  * wait until animationend to execute callback
- * Add a "is-closing" helper class while closing
+ * Add a "is-closing" helper class while closing and "is-opening" while opening
  * @param {HTMLElement} el
- * @param {Function} cb
+ * @param {Function|null} cb
  * @param {Boolean} open
+ * @param {Boolean} forceAnimation
  */
-export function doWithAnimation(el, cb, open = false) {
+export function doWithAnimation(el, cb = null, open = false, forceAnimation = false) {
     const closingClass = "is-closing";
     const openingClass = "is-opening";
     const cls = open ? openingClass : closingClass;
 
+    const doCb = () => {
+        removeClass(el, cls);
+        if (cb) {
+            cb();
+        }
+    };
     if (animationEnabled()) {
         const styles = getComputedStyle(el);
-        // no animation, simply close
-        // TODO: requires some work on older browser
-        const noAnimation = styles.animation.length === 0 || styles.animation.startsWith("none ");
-        if (noAnimation) {
-            cb();
+        // no animation or transition using allow-discrete, simply close
+        const noAnimation = styles.animation.length === 0 || styles.animation.startsWith("none");
+        const useDiscrete = !forceAnimation && styles.transition.includes("allow-discrete");
+
+        if (noAnimation || useDiscrete) {
+            // If we have discrete transition, no need for a helper class
+            if (cb) {
+                cb();
+            }
         } else {
+            let started = false;
+            once(
+                "animationstart",
+                /**
+                 * @param {AnimationEvent} ev
+                 */
+                (ev) => {
+                    started = true;
+                },
+            );
             once(
                 "animationend",
                 /**
                  * @param {AnimationEvent} ev
                  */
                 (ev) => {
-                    removeClass(el, cls);
-                    cb();
+                    doCb();
                 },
                 el,
             );
+            // Adding the class should start the animation
             addClass(el, cls);
+
+            // Fallback in case animation never plays
+            setTimeout(() => {
+                if (!started) {
+                    doCb();
+                }
+            }, 12);
         }
     } else {
-        cb();
+        doCb();
     }
 }
 
@@ -557,4 +587,8 @@ export function observeAttrs(el, attrs, cb) {
         MO.disconnect();
         MO = null;
     };
+}
+
+export function isChrome() {
+    return navigator.userAgentData?.brands?.some((b) => b.brand === "Google Chrome");
 }

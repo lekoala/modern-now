@@ -204,7 +204,7 @@ define(
             const el = this.el;
             openMenus.add(el);
             curr = el;
-            doWithAnimation(el, () => {}, true);
+            doWithAnimation(el, null, true);
             show(el);
             dispatch(floatingReposition, el);
             on(docEvents, this, document);

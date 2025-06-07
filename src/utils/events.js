@@ -1,8 +1,8 @@
 import { toArray } from "./misc.js";
 
 /**
- * Check if the target is self
- * The default use case is that no element is specified and the handler is simply handleEvent on the element itself
+ * Check if the target is self. The default use case is that no element
+ * is specified and the handler is simply `handleEvent` on the element itself
  * @link https://webreflection.medium.com/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
  * @param {HTMLElement|EventListenerOrEventListenerObject} handler
  * @param {HTMLElement|Document|Window} el
@@ -17,7 +17,7 @@ const optionalTarget = (handler, el) => {
     if (typeof handler === "function") {
         return document;
     }
-    // Handler is an HTMLElement, use this we handleEvent
+    // Handler is an HTMLElement, use this with handleEvent
     if (handler instanceof HTMLElement) {
         return handler;
     }
@@ -55,9 +55,9 @@ const passiveOpts = (type) => {
 
 /**
  * Typically use like this:
- * on("click", this); // bound to this handleEvent
- * on("click", this, document); // bound to document and handled by this handleEvent
- * on("click", () => {}); // bound to document
+ * - on("click", this); => bound to this handleEvent
+ * - on("click", this, document); => bound to document and handled by this handleEvent
+ * - on("click", () => {}); => bound to document
  * Automatically sets passive option
  *
  * @param {String|Array} event
@@ -73,7 +73,7 @@ export function on(event, handler, el = null) {
 }
 
 /**
- *  @link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#once
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#once
  * @param {String|Array} event
  * @param {EventListenerOrEventListenerObject|HTMLElement} handler
  * @param {HTMLElement|Document|Window} el

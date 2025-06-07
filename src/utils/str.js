@@ -1,5 +1,3 @@
-import { ce } from "./misc.js";
-
 /**
  * @link https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
  * @param {string} str

@@ -91,14 +91,12 @@ const {
     },
 });
 
-export { drop, parse, flush };
-
 /**
  * @param {String} selector The selector to match the behaviour
  * @param {Function} callback
  * @param {Function|null} cleanup
  */
-const dynamicBehaviour = (selector, callback, cleanup = null) => {
+function dynamicBehaviour(selector, callback, cleanup = null) {
     // Update handler map
     const initialized = new WeakSet();
     const lazyMap = new WeakMap();
@@ -113,6 +111,7 @@ const dynamicBehaviour = (selector, callback, cleanup = null) => {
         query.push(selector);
         parse(qsa(selector));
     }
-};
+}
 
 export default dynamicBehaviour;
+export { drop, parse, flush };

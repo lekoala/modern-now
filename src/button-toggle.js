@@ -83,7 +83,7 @@ define(
 
             const open = this.ariaExpanded === "false";
             if (open) {
-                doWithAnimation(el, () => {}, true);
+                doWithAnimation(el, null, true);
                 // make sure to have something like [hidden] { display: none !important}
                 // https://meowni.ca/hidden.is.a.lie.html
                 toggleAttr(el, "hidden");
