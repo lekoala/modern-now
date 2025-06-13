@@ -10,7 +10,14 @@ import dynamicBehaviour from "./dynamicBehaviour.js";
  * @property {Boolean} dismissible
  */
 
+/**
+ * When clicking on the backdrop, the nodename is the dialog itself
+ * This works really well IF the dialog has no padding (otherwise clicking on the padded area would trigger this)
+ * @param {MouseEvent} ev
+ */
 const dialogBackdropCloseHandler = (ev) => {
+    /** @type {HTMLDialogElement} */
+    //@ts-ignore
     const t = ev.target;
     // https://stackoverflow.com/questions/25864259/how-to-close-the-new-html-dialog-tag-by-clicking-on-its-backdrop
     if (t.nodeName === "DIALOG") {
@@ -18,8 +25,7 @@ const dialogBackdropCloseHandler = (ev) => {
         if (document.activeElement === t) {
             t.blur();
         }
-        // Discrete transition only works in chrome
-        closeDialogWithAnimation(t, !isChrome());
+        closeDialogWithAnimation(t);
     }
 };
 
@@ -27,10 +33,12 @@ const dialogBackdropCloseHandler = (ev) => {
  * Note that we rely on animation instead of transition since it makes showing the dialog much easier (no display:none issue).
  * Keep in mind that this will not trigger when using 'Esc' unless we have some specifc :not([open]) with allow-discrete transitions
  * @link https://frontendmasters.com/blog/the-dialog-element-with-entry-and-exit-animations/
+ * The alternative to this is to hide visually and keep display:block always on, then you can animate as you wish
+ * but you need to deal with inert
+ * @link https://codepen.io/lekoalabe/pen/NPqMwJB
  * @param {HTMLDialogElement} dialog
- * @param {Boolean} force
  */
-function closeDialogWithAnimation(dialog, force = false) {
+function closeDialogWithAnimation(dialog) {
     if (!dialog || !dialog.open) {
         return;
     }
@@ -40,7 +48,6 @@ function closeDialogWithAnimation(dialog, force = false) {
             dialog.close();
         },
         false,
-        force,
     );
 }
 
@@ -53,7 +60,7 @@ function refreshScrollbarVar() {
 }
 
 /**
- *
+ * Get dialog linked to a button
  * @param {HTMLButtonElement} btn
  * @returns {HTMLDialogElement|null}
  */
@@ -71,6 +78,7 @@ function getBtnDialog(btn) {
 }
 
 /**
+ * Reads config on the dialog element
  * @param {HTMLDialogElement} dialogEl
  * @returns {DialogConfig}
  */
@@ -102,6 +110,7 @@ const handleDialogClick = (ev) => {
     }
 
     // Look for button, maybe we clicked on some nested html tag (or svg) inside the button
+    /** @type {HTMLButtonElement} */
     //@ts-ignore
     const btn = ev.target.closest("button");
     if (!btn) {
@@ -134,7 +143,7 @@ const handleDialogClick = (ev) => {
                 }
             } else {
                 // It's just a dialog, use show()
-                // Will not close with 'Escp' since it's not blocking the UI
+                // Will not close with 'Esc' since it's not blocking the UI
                 dialogEl.show();
             }
         }

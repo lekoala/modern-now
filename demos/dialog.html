@@ -10,34 +10,22 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="stylesheet" href="demo.css">
     <style>
-        /* inset is not supported in ios < 14  https://caniuse.com/mdn-css_properties_inset */
         @keyframes modalOpen {
             from {
-                opacity: 0;
-                transform: translateY(-2rem);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
+                transform: translateY(100%)
             }
         }
 
         @keyframes modalClose {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
             to {
-                opacity: 0;
-                transform: translateY(-2rem);
+                transform: scale(.75)
             }
         }
-
-        @keyframes modalCloseDummy {}
     </style>
     <style>
+        @import "https://unpkg.com/open-props";
+
+        /* inset is not supported in ios < 14  https://caniuse.com/mdn-css_properties_inset */
         dialog {
             top: 0px;
             right: 0px;
@@ -45,6 +33,17 @@
             bottom: 0px;
         }
 
+        dialog.demo-dialog {
+            max-inline-size: min(90vw, 60ch);
+            border-radius: 0.5rem;
+            padding: 0;
+            border: solid 1px #ccc;
+            box-shadow: 0 0 2rem 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /*
+        If dismissible, make sure we can't click on the dialog
+        */
         dialog[data-dialog-dismissible] {
             padding: 0;
         }
@@ -59,23 +58,71 @@
         }
 
         @media (prefers-reduced-motion: no-preference) {
-            .dialog-animated {
+
+            /* with transition-behavior, modern browsers can happily play transitions properly, including on Esc */
+            .dialog-transition {
                 --duration: 0.3s;
-                animation: modalOpen var(--duration);
                 transition:
                     opacity var(--duration) ease-in-out,
+                    scale var(--duration) ease-in-out,
                     translate var(--duration) ease-in-out,
                     display var(--duration) ease-in-out allow-discrete;
             }
 
-            .dialog-animated.is-closing {
-                animation: modalClose var(--duration);
+            .dialog-transition[open] {
+                translate: 0 0;
+
+                @starting-style {
+                    translate: 0 100%;
+                }
             }
 
-            .dialog-animated:not([open]) {
-                translate: 0 -2rem;
+            .dialog-transition:not([open]) {
+                scale: 0.75;
                 opacity: 0;
             }
+
+            /* use helper is-closing class. requires watching animation start/end in js to actually hide when animation is finished */
+            .dialog-animated {
+                --duration: 0.3s;
+                transition: opacity var(--duration);
+                animation-direction: forwards;
+                animation-duration: var(--duration);
+            }
+
+            .dialog-animated[open] {
+                animation: modalOpen var(--duration);
+            }
+
+            .dialog-animated[open].is-closing {
+                animation: modalClose var(--duration);
+                opacity: 0;
+            }
+
+            /* visually hides but keep dispay:block to allow animation to play. Requires inert. */
+            .dialog-block-animated {
+                --duration: 0.3s;
+                display: block;
+                transition: opacity var(--duration);
+                animation-name: modalClose;
+                animation-direction: forwards;
+                animation-duration: var(--duration);
+            }
+
+            .dialog-block-animated[open] {
+                animation-name: modalOpen;
+            }
+
+            .dialog-block-animated:not([open]) {
+                pointer-events: none;
+                opacity: 0;
+            }
+        }
+
+        dialog.dialog-blur::backdrop {
+            --bg: rgba(255, 255, 255, 0.8);
+            opacity: 1;
+            backdrop-filter: blur(0.25rem);
         }
 
         /*
@@ -182,21 +229,32 @@
         <button data-dialog="demo-modal-no-scroll">Show no scroll modal with animation</button>
         <dialog id="demo-modal-no-scroll" class="dialog-no-scroll dialog-animated" data-dialog-modal><!-- or data-dialog="modal: true"-->
             I'm a modal and there are no scrollbar on the page
+            <br /> <br />
             <button data-dialog-close>Close</button>
         </dialog>
 
         <p>A dismissible dialog (with <code>data-dialog-dismissible</code>)</p>
         <button data-dialog="demo-dismissible">Show dismissible modal</button>
         <button data-dialog="demo-dismissible-animated">Show dismissible modal with animation</button>
+        <button data-dialog="demo-dismissible-transition">Show dismissible modal with transition</button>
         <dialog id="demo-dismissible" data-dialog-dismissible>
             <div>
                 I'm a dismissible modal
+                <br /> <br />
                 <button data-dialog-close>Close</button>
             </div>
         </dialog>
-        <dialog id="demo-dismissible-animated" class="dialog-animated" data-dialog-dismissible>
+        <dialog id="demo-dismissible-animated" class="dialog-animated dialog-blur demo-dialog" data-dialog-dismissible>
             <div>
                 I'm an animated dismissible modal
+                <br /> <br />
+                <button data-dialog-close>Close</button>
+            </div>
+        </dialog>
+        <dialog id="demo-dismissible-transition" class="dialog-transition dialog-blur demo-dialog" data-dialog-dismissible>
+            <div>
+                I'm an animated dismissible modal using allow-discrete
+                <br /> <br />
                 <button data-dialog-close>Close</button>
             </div>
         </dialog>
