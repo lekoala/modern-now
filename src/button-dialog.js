@@ -15,17 +15,22 @@ import dynamicBehaviour from "./dynamicBehaviour.js";
  * This works really well IF the dialog has no padding (otherwise clicking on the padded area would trigger this)
  * @param {MouseEvent} ev
  */
-const dialogBackdropCloseHandler = (ev) => {
+const handleDialogClick = (ev) => {
     /** @type {HTMLDialogElement} */
     //@ts-ignore
     const t = ev.target;
     // https://stackoverflow.com/questions/25864259/how-to-close-the-new-html-dialog-tag-by-clicking-on-its-backdrop
-    if (t.nodeName === "DIALOG") {
+    if (t.nodeName === "DIALOG" && getDialogConfig(t).dismissible) {
         // If dialog is focused, transition won't play (animation works fine)
         if (document.activeElement === t) {
             t.blur();
         }
         closeDialogWithAnimation(t);
+    }
+
+    const btn = t.closest("button");
+    if (btn && getBoolData(btn, "dialogClose")) {
+        closeDialogWithAnimation(btn.closest("dialog"));
     }
 };
 
@@ -99,10 +104,10 @@ function getDialogConfig(dialogEl) {
 }
 
 /**
- * This deals with dialog trigger AND close buttons
+ * This deals with button opening/closing dialogs
  * @param {MouseEvent} ev
  */
-const handleDialogClick = (ev) => {
+const handleButtonClick = (ev) => {
     // If it doesn't support dialog and it's not yet polyfilled
     // see https://github.com/GoogleChrome/dialog-polyfill/blob/master/dist/dialog-polyfill.esm.js#L850
     if (!supportsDialog() && !HTMLFormElement.prototype.submit.toString().includes("call(this)")) {
@@ -117,44 +122,31 @@ const handleDialogClick = (ev) => {
         return;
     }
 
-    // dialog
     const dialogEl = getBtnDialog(btn);
-    // it's a close button (could be outside of modal)
-    const dialogClose = getBoolData(btn, "dialogClose");
-
-    // If we have a dialog linked on the button
-    if (dialogEl) {
-        //@link https://www.javascripttutorial.net/web-apis/javascript-dialog-api/
-        if (dialogClose) {
-            closeDialogWithAnimation(dialogEl);
-        } else {
-            // Read the config each time we open the dialog
-            const dialogConfig = getDialogConfig(dialogEl);
-
-            // If dismissible or modal, use showModal()
-            if (dialogConfig.dismissible || dialogConfig.modal) {
-                refreshScrollbarVar();
-                // Will close when using 'Esc' since it's blocking the UI
-                dialogEl.showModal();
-
-                // listen for a click outside the modal
-                if (dialogConfig.dismissible) {
-                    on("click", dialogBackdropCloseHandler, dialogEl);
-                }
-            } else {
-                // It's just a dialog, use show()
-                // Will not close with 'Esc' since it's not blocking the UI
-                dialogEl.show();
-            }
-        }
-
-        // Return early
+    if (!dialogEl) {
         return;
     }
 
-    // No dialog and clicked on a close button ? Look for closest dialog
+    // it's a close button (can be outside of modal)
+    const dialogClose = getBoolData(btn, "dialogClose");
+    //@link https://www.javascripttutorial.net/web-apis/javascript-dialog-api/
     if (dialogClose) {
-        closeDialogWithAnimation(btn.closest("dialog"));
+        closeDialogWithAnimation(dialogEl);
+        return;
+    }
+
+    // Read the config each time we open the dialog
+    const dialogConfig = getDialogConfig(dialogEl);
+
+    // If dismissible or modal, use showModal()
+    if (dialogConfig.dismissible || dialogConfig.modal) {
+        refreshScrollbarVar();
+        // Will close when using 'Esc' since it's blocking the UI
+        dialogEl.showModal();
+    } else {
+        // It's just a dialog, use show()
+        // Will not close with 'Esc' since it's not blocking the UI
+        dialogEl.show();
     }
 };
 
@@ -162,22 +154,26 @@ const handleDialogClick = (ev) => {
 refreshScrollbarVar();
 
 dynamicBehaviour(
-    "button[data-dialog],button[data-dialog-close]",
+    "button[data-dialog]",
     /**
      * @param {HTMLButtonElement} el
      */
     (el) => {
-        on("click", handleDialogClick, el);
+        on("click", handleButtonClick, el);
+        const dialogEl = getBtnDialog(el);
+        if (dialogEl) {
+            on("click", handleDialogClick, dialogEl);
+        }
     },
     /**
      * @param {HTMLButtonElement} el
      */
     (el) => {
-        off("click", handleDialogClick, el);
+        off("click", handleButtonClick, el);
         // Cleanup close handler on dialog if set
         const dialogEl = getBtnDialog(el);
         if (dialogEl) {
-            off("click", dialogBackdropCloseHandler, dialogEl);
+            off("click", handleDialogClick, dialogEl);
         }
     },
 );
