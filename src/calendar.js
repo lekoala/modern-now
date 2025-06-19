@@ -18,6 +18,28 @@ import { byId } from "./utils/query.js";
 import { ucfirst } from "./utils/str.js";
 
 /**
+ * @typedef CalendarConfig
+ * @property {String} lang
+ * @property {Boolean} controls
+ * @property {String} tableClass
+ * @property {String} click A function reference or an input id
+ * @property {Number} firstDay
+ * @property {String} minDate
+ * @property {String} maxDate
+ * @property {String} value
+ */
+
+/**
+ * @typedef CalendarCellConfig
+ * @property {Number} daynum
+ * @property {Array} classes
+ * @property {string} isodate
+ * @property {string} attrs
+ * @property {string} btnAttrs
+ * @property {string} click
+ */
+
+/**
  * @param {String} locale
  * @param {*} month short|long
  * @returns {Array} An array with 12 entries, starting with January
@@ -137,16 +159,6 @@ function monthDrop(locale, v, cls = "", config = {}) {
 }
 
 /**
- * @typedef CalendarCellConfig
- * @property {Number} daynum
- * @property {Array} classes
- * @property {string} isodate
- * @property {string} attrs
- * @property {string} btnAttrs
- * @property {string} click
- */
-
-/**
  *
  * @param {CalendarCellConfig} c
  * @returns {string}
@@ -184,25 +196,15 @@ const cellClickHandler = new WeakMap();
 
 /**
  * @param {HTMLElement} elem
- * @param {Number} year
- * @param {Number} month (from 1 to 12)
+ * @returns {CalendarConfig}
  */
-function createCalendar(elem, year, month) {
-    if (Number.isNaN(month) || Number.isNaN(year)) {
-        elem.innerHTML = "Invalid Date";
-        return;
-    }
-    const mon = month - 1; // months in JS are 0..11, not 1..12
-    const d = dateWithoutTimezone(utcDate(year, mon, 1));
-
-    // Config
+function getCalendarConfig(elem) {
     const data = elem.dataset;
     const config = simpleConfig(data.calendar);
-    const locale = getAttr(elem, "lang") || config.lang || getDocLang();
-    const controls = config.controls;
-    const click = config.click;
-    const tableClass = config.tableClass || "";
-
+    // Shortcuts
+    if (data.value) {
+        config.value = data.value;
+    }
     // Expand
     if (config.minDate) {
         config.minDate = expandDate(config.minDate);
@@ -218,6 +220,28 @@ function createCalendar(elem, year, month) {
     if (typeof config.disabled === "string") {
         config.disabled = dotPath(config.disabled);
     }
+    return config;
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {Number} year
+ * @param {Number} month (from 1 to 12)
+ */
+function createCalendar(elem, year, month) {
+    if (Number.isNaN(month) || Number.isNaN(year)) {
+        elem.innerHTML = "Invalid Date";
+        return;
+    }
+    const mon = month - 1; // months in JS are 0..11, not 1..12
+    const d = dateWithoutTimezone(utcDate(year, mon, 1));
+
+    // Config
+    const config = getCalendarConfig(elem);
+    const locale = getAttr(elem, "lang") || config.lang || getDocLang();
+    const controls = config.controls;
+    const click = config.click;
+    const tableClass = config.tableClass || "";
 
     // Click can be a function or a given input like element
     if (click) {
@@ -246,6 +270,11 @@ function createCalendar(elem, year, month) {
     const thisDate = today.getDate();
     const thisMonth = today.getMonth();
     const thisYear = today.getFullYear();
+
+    const valueDate = asDate(config.value);
+    const activeDate = config.value.toString().length <= 7 ? 0 : valueDate.getDate();
+    const activeMonth = valueDate.getMonth();
+    const activeYear = valueDate.getFullYear();
 
     // Get the first day of the month
     const dayOne = d.getDay();
@@ -330,16 +359,20 @@ function createCalendar(elem, year, month) {
     for (let i = 1; i <= lastDate; i++) {
         // Check if the current date is today
         const isToday = i === thisDate && mon === thisMonth && year === thisYear;
+        const isActive = i === activeDate && mon === activeMonth && year === activeYear;
 
         d.setDate(i);
         const isodate = toDate(d);
         const classes = baseCellClass.concat([]);
         if (isToday) {
+            classes.push("is-today");
+        }
+        if (isActive) {
             classes.push("is-active");
         }
         const daynum = i;
         let attrs = "";
-        if (isToday) {
+        if (isActive) {
             attrs += ' aria-current="date"';
         }
         const btnAttrs = checkDisabled(isodate, config);
@@ -422,8 +455,8 @@ function createCalendar(elem, year, month) {
 
 function createCalendarWithValue(el) {
     const data = el.dataset;
-    const v = expandDate(data.value || toDate(currentDay()));
-    const dateParts = dateComponents(v, "yyyy-mm-dd");
+    const v = data.value || toDate(currentDay());
+    const dateParts = dateComponents(expandDate(v), "yyyy-mm-dd");
     if (!data.value) {
         data.value = v;
     }

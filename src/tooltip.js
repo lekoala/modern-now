@@ -1,5 +1,5 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
-import { addClass, getAttr, getBoolData, hasAttr, removeAttr, setAttr, setData } from "./utils/attrs.js";
+import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./utils/attrs.js";
 import { dispatch, off, on } from "./utils/events.js";
 import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";

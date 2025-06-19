@@ -132,11 +132,13 @@ dynamicBehaviour(
 
         // it could be populated server side
         // elements need a "render" data attribute to by dynamically populated
+        // if there is no content, always render (client side)
         if (dt && !el.innerText.trim()) {
             el.dataset.render = "true";
         }
 
         renderDateTime(el);
+        // Observe changes in datetime attribute and render if changed
         cleanupMap.set(
             el,
             observeAttrs(el, ["datetime"], (node, oldValue) => {
@@ -144,7 +146,11 @@ dynamicBehaviour(
             }),
         );
     },
+    /**
+     * @param {HTMLTimeElement} el
+     */
     (el) => {
+        // Cleanup mutation observer
         getAndRun(cleanupMap, el);
     },
 );

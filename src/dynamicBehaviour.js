@@ -79,12 +79,18 @@ const {
             // https://nolanlawson.com/2024/12/01/avoiding-unnecessary-cleanup-work-in-disconnectedcallback/
             await Promise.resolve();
 
-            if (!element.isConnected && initialized.has(element)) {
-                const cleanup = handler.cleanup;
-                if (cleanup) {
-                    cleanup(element);
-                }
+            if (!element.isConnected) {
+                // Cleanup lazy element if it wasn't initialized
                 getAndRun(lazyMap, element);
+
+                // If it was initialized, we may need to run some cleanup callback
+                if (initialized.has(element)) {
+                    const cleanup = handler.cleanup;
+                    if (cleanup) {
+                        cleanup(element);
+                    }
+                }
+
                 initialized.delete(element);
             }
         }

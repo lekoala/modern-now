@@ -43,9 +43,13 @@
 
         <div data-calendar></div>
 
-        <p>Using specific locale, with built in provided translations from intl extension. Try changing data-value!</p>
+        <p>Display a custom month, using specific locale, with built in provided translations from intl extension. Try changing data-value!</p>
 
         <div data-calendar data-value="2024-01" lang="fr"></div>
+
+        <p>Setting a custom value</p>
+
+        <div data-calendar data-value="2024-01-16" lang="fr"></div>
 
         <p>Enable navigation with controls:true and do something on click. Requires a little bit of css to adjust the buttons.
             Min date = 2025-02 / Disabled date = weekends
@@ -85,7 +89,7 @@
 
         <p>Input date replacement (no markup) with min date</p>
 
-        <input type="date" name="custom-date" value="2024-11-12" data-calendar="minDate: '2024-11-12'">
+        <input type="date" name="custom-date" value="2025-01-06" data-calendar="minDate: '2024-11-12'">
 
         <p>Input date replacement (no markup) with custom lang</p>
 

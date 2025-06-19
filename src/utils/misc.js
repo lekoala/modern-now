@@ -578,7 +578,7 @@ export function globalContext() {
 }
 
 /**
- * Observice specific attributes of an element
+ * Observe specific attributes of an element
  * Returns a function to cleanup mutation observer
  * @param {HTMLElement} el
  * @param {String[]} attrs

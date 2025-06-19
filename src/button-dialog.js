@@ -75,7 +75,7 @@ function refreshScrollbarVar() {
  * @param {HTMLButtonElement} btn
  * @returns {HTMLDialogElement|null}
  */
-function getBtnDialog(btn) {
+function getDialog(btn) {
 	const dialog = getData(btn, "dialog");
 	if (!dialog) {
 		return;
@@ -131,7 +131,7 @@ const handleButtonClick = (ev) => {
 		return;
 	}
 
-	const dialogEl = getBtnDialog(btn);
+	const dialogEl = getDialog(btn);
 	if (!dialogEl) {
 		return;
 	}
@@ -169,7 +169,7 @@ dynamicBehaviour(
 	 */
 	(el) => {
 		on("click", handleButtonClick, el);
-		const dialogEl = getBtnDialog(el);
+		const dialogEl = getDialog(el);
 		if (dialogEl) {
 			setAttr(el, "aria-controls", dialogEl.id);
 			on("click", handleDialogClick, dialogEl);
@@ -181,7 +181,7 @@ dynamicBehaviour(
 	(el) => {
 		off("click", handleButtonClick, el);
 		// Cleanup close handler on dialog if set
-		const dialogEl = getBtnDialog(el);
+		const dialogEl = getDialog(el);
 		if (dialogEl) {
 			off("click", handleDialogClick, dialogEl);
 		}
