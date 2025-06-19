@@ -43,6 +43,7 @@
 }
 
 [data-calendar] caption {
+    --gap: 0;
     background: #b3cbed;
     margin: 0;
     padding: 0.5rem;
@@ -50,6 +51,15 @@
 
 [data-calendar] caption :is(input, select) {
     width: 100%;
+}
+
+[data-calendar] caption :is(button, input, select) {
+    height: 44px;
+    border-radius: 0;
+}
+
+[data-calendar] caption.with-controls {
+    padding: 0;
 }
 
 [data-calendar] :is(button, input, select) {

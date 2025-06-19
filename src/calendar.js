@@ -26,7 +26,8 @@ import { ucfirst } from "./utils/str.js";
  * @property {Number} firstDay
  * @property {String} minDate
  * @property {String} maxDate
- * @property {String} value
+ * @property {Array|Function} enabled
+ * @property {Array|Function} disabled
  */
 
 /**
@@ -41,7 +42,7 @@ import { ucfirst } from "./utils/str.js";
 
 /**
  * @param {String} locale
- * @param {*} month short|long
+ * @param {String} month short|long
  * @returns {Array} An array with 12 entries, starting with January
  */
 function monthsForLocale(locale = "en-US", month = "short") {
@@ -51,16 +52,16 @@ function monthsForLocale(locale = "en-US", month = "short") {
 
 /**
  * @param {String} locale
- * @param {*} weekday short|long
+ * @param {String} weekday short|long
  * @param {Number} firstDay First day (Monday by default = 1)
  * @returns {Array} An array with 7 entries, starting with selected first day
  */
 function daysForLocale(locale = "en-US", weekday = "short", firstDay = 1) {
     const now = new Date();
+    //@ts-ignore
     const format = new Intl.DateTimeFormat(locale, { weekday }).format;
-    return [...Array(7).keys()].map((day) =>
-        format(new Date().getTime() - (now.getDay() - ((day + firstDay) % 7)) * 86400000),
-    );
+    const days = [...Array(7).keys()];
+    return days.map((day) => format(Date.now() - (now.getDay() - ((day + firstDay) % 7)) * 86400000));
 }
 
 function formatWithLocale(date, locale = "en-US") {
@@ -72,16 +73,59 @@ function formatWithLocale(date, locale = "en-US") {
     );
 }
 
+/**
+ * @param {String} d
+ * @returns {String}
+ */
+function getYear(d) {
+    return d.toString().split("-")[0];
+}
+
+/**
+ * @param {String} d
+ * @returns {String}
+ */
+function getMonth(d) {
+    return d.toString().split("-")[1];
+}
+
+/**
+ * @param {String} d
+ * @returns {String}
+ */
+function getYearMonth(d) {
+    return `${getYear(d)}-${getMonth(d)}`;
+}
+
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @returns {Date}
+ */
 function getLastDayOfMonth(year, month) {
     // Set the next month, then 0 (= -1 day)
     return utcDate(year, toInt(month) + 1, 0);
 }
 
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @returns {Date}
+ */
 function getLastDayOfPreviousMonth(year, month) {
     // Set the month, then 0 (= -1 day)
     return utcDate(year, toInt(month), 0);
 }
 
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @param {Number} date
+ * @returns {Date}
+ */
 function getPreviousMonth(year, month, date = 1) {
     if (month === 0) {
         return utcDate(toInt(year) - 1, 11, date);
@@ -89,6 +133,13 @@ function getPreviousMonth(year, month, date = 1) {
     return utcDate(year, toInt(month) - 1, date);
 }
 
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @param {Number} date
+ * @returns {Date}
+ */
 function getNextMonth(year, month, date = 1) {
     if (month === 11) {
         return utcDate(toInt(year) + 1, 0, date);
@@ -96,10 +147,23 @@ function getNextMonth(year, month, date = 1) {
     return utcDate(year, toInt(month) + 1, date);
 }
 
+/**
+ *
+ * @param {Number} year
+ * @param {Number} month
+ * @param {Number} date
+ * @returns {Number}
+ */
 function getDay(year, month, date) {
     return utcDate(year, month, date).getDay();
 }
 
+/**
+ * @param {String} v
+ * @param {String} cls
+ * @param {Boolean} disabled
+ * @returns {String}
+ */
 function btn(v, cls = "", disabled = false) {
     const attrs = disabled ? " disabled" : "";
     return `<button type="button" class="${cls}"${attrs} style="min-width:44px">${v}</button>`;
@@ -168,6 +232,14 @@ function tdCell(c) {
     return `<td class="${c.classes.join(" ")}" data-date="${c.isodate}"${c.attrs} style="padding:0;height:44px;">${c.click ? dayBtn : c.daynum}</td>`;
 }
 
+/**
+ * Check if the date is disabled. If so, will update the attributes
+ * Checks: min/max date, disabled/enabled config
+ * @param {String} isodate
+ * @param {CalendarConfig} config
+ * @param {String} attrs current attributes
+ * @returns {String}
+ */
 function checkDisabled(isodate, config, attrs = "") {
     let d = false;
     if (config.minDate && compareDate(isodate, config.minDate) < 0) {
@@ -190,10 +262,6 @@ function checkDisabled(isodate, config, attrs = "") {
     return a;
 }
 
-// Some other inspiration here https://github.com/duetds/date-picker/blob/master/src/components/duet-date-picker/date-utils.ts
-
-const cellClickHandler = new WeakMap();
-
 /**
  * @param {HTMLElement} elem
  * @returns {CalendarConfig}
@@ -201,10 +269,6 @@ const cellClickHandler = new WeakMap();
 function getCalendarConfig(elem) {
     const data = elem.dataset;
     const config = simpleConfig(data.calendar);
-    // Shortcuts
-    if (data.value) {
-        config.value = data.value;
-    }
     // Expand
     if (config.minDate) {
         config.minDate = expandDate(config.minDate);
@@ -224,6 +288,50 @@ function getCalendarConfig(elem) {
 }
 
 /**
+ * @param {HTMLElement} node
+ * @returns {HTMLDivElement}
+ */
+function getParentCalendar(node) {
+    return node.closest("[data-calendar]");
+}
+
+// Some other inspiration here https://github.com/duetds/date-picker/blob/master/src/components/duet-date-picker/date-utils.ts
+
+const cellClickHandler = new WeakMap();
+
+/**
+ * @param {string} click
+ * @param {HTMLElement} elem
+ */
+function setClickHandler(click, elem) {
+    if (typeof click === "function") {
+        cellClickHandler.set(elem, click);
+    } else {
+        cellClickHandler.set(elem, (node, v) => {
+            const input = byId(click, "input");
+            if (input) {
+                input.value = v;
+                dispatch("input", input);
+            } else {
+                console.error(`${click} not found`);
+            }
+        });
+    }
+}
+
+const chevronLeft = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="m15 18-6-6 6-6"/></svg>`;
+const chevronRight = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="m9 18 6-6-6-6"/></svg>`;
+const isPrev = "is-prev";
+const isNext = "is-next";
+const isInactive = "is-inactive";
+const isYear = "is-year";
+const isMonth = "is-month";
+const isDate = "is-date";
+const isActive = "is-active";
+const isToday = "is-today";
+
+/**
+ * Create a calendar for a given year and month
  * @param {HTMLElement} elem
  * @param {Number} year
  * @param {Number} month (from 1 to 12)
@@ -238,6 +346,7 @@ function createCalendar(elem, year, month) {
 
     // Config
     const config = getCalendarConfig(elem);
+    const state = elem.dataset;
     const locale = getAttr(elem, "lang") || config.lang || getDocLang();
     const controls = config.controls;
     const click = config.click;
@@ -245,19 +354,7 @@ function createCalendar(elem, year, month) {
 
     // Click can be a function or a given input like element
     if (click) {
-        if (typeof click === "function") {
-            cellClickHandler.set(elem, click);
-        } else {
-            cellClickHandler.set(elem, (node, v) => {
-                const input = byId(click, "input");
-                if (input) {
-                    input.value = v;
-                    dispatch("input", input);
-                } else {
-                    console.error(`${click} not found`);
-                }
-            });
-        }
+        setClickHandler(click, elem);
     }
 
     // Create our variables
@@ -271,8 +368,9 @@ function createCalendar(elem, year, month) {
     const thisMonth = today.getMonth();
     const thisYear = today.getFullYear();
 
-    const valueDate = asDate(config.value);
-    const activeDate = config.value.toString().length <= 7 ? 0 : valueDate.getDate();
+    const stateValue = state.value ? state.value.toString() : toDate(currentDay());
+    const valueDate = asDate(stateValue);
+    const activeDate = stateValue.length <= 7 ? 0 : valueDate.getDate();
     const activeMonth = valueDate.getMonth();
     const activeYear = valueDate.getFullYear();
 
@@ -287,31 +385,39 @@ function createCalendar(elem, year, month) {
 
     // Get the last date of the previous month (date 0 = last day of prev month)
     const lastMonth = getLastDayOfPreviousMonth(year, mon);
-
     const lastMonthDate = lastMonth.getDate();
-
     const nextMonth = getNextMonth(year, mon);
 
-    const baseCellClass = ["is-date"];
+    // Check if given date is valid
+    const isMin = config.minDate ? compareDate(lastMonth, config.minDate) <= 0 : false;
+    const isMax = config.maxDate ? compareDate(lastDate, config.maxDate) >= 0 : false;
 
-    let center = formatWithLocale(d, locale);
-    let prev = "";
-    let next = "";
-    let justify = "center";
+    const baseCellClass = [isDate];
+
+    // Our header has three parts. By default center contains the month/year in text
+    const caption = {
+        center: formatWithLocale(d, locale),
+        before: "",
+        after: "",
+        justify: "center",
+        elClass: "",
+    };
+
+    // With controls, replace the title with select menus and add buttons to navigate
     if (controls) {
-        const minYear = config.minDate ? config.minDate.substring(0, 4) : null;
-        const maxYear = config.maxDate ? config.maxDate.substring(0, 4) : null;
-        const minMonth = config.minDate ? config.minDate.substring(5, 7) : null;
-        const maxMonth = config.maxDate ? config.maxDate.substring(5, 7) : null;
-        center =
-            monthDrop(locale, mon, "is-month", { year, minYear, maxYear, minMonth, maxMonth }) +
-            inputNum(year, "is-year", { minYear, maxYear });
+        const minYear = config.minDate ? getYear(config.minDate) : null;
+        const maxYear = config.maxDate ? getYear(config.maxDate) : null;
+        const minMonth = config.minDate ? getMonth(config.minDate) : null;
+        const maxMonth = config.maxDate ? getMonth(config.maxDate) : null;
 
-        const isMin = config.minDate ? compareDate(lastMonth, config.minDate) <= 0 : false;
-        const isMax = config.maxDate ? compareDate(lastDate, config.maxDate) >= 0 : false;
-        prev = btn("<", "is-prev", isMin);
-        next = btn(">", "is-next", isMax);
-        justify = "space-between";
+        caption.center =
+            monthDrop(locale, mon, isMonth, { year, minYear, maxYear, minMonth, maxMonth }) +
+            inputNum(year, isYear, { minYear, maxYear });
+
+        caption.before = btn(chevronLeft, isPrev, isMin);
+        caption.after = btn(chevronRight, isNext, isMax);
+        caption.justify = "space-between";
+        caption.elClass = "with-controls";
     }
 
     // https://www.webaccessibility.com/resource-library/platform/?platform=61
@@ -323,7 +429,7 @@ function createCalendar(elem, year, month) {
     let table = "";
 
     table += `<table class="${tableClass}">`;
-    table += `<caption><div style="display:flex;gap:0.5rem;justify-content:${justify};align-items:center;">${prev}${center}${next}</div></caption>`;
+    table += `<caption class="${caption.elClass}"><div style="display:flex;gap:var(--gap,0.5rem);justify-content:${caption.justify};align-items:center;">${caption.before}${caption.center}${caption.after}</div></caption>`;
     table += "<thead><tr>";
     // Build days header
     for (const day of daysForLocale(locale, "short", firstDay)) {
@@ -340,7 +446,7 @@ function createCalendar(elem, year, month) {
     // Loop to add the last dates of the previous month
     for (let i = dayOne === 0 ? 7 : dayOne; i > firstDay; i--) {
         const classes = baseCellClass.concat([]);
-        classes.push("is-inactive");
+        classes.push(isInactive);
 
         const daynum = lastMonthDate - i + 1 + firstDay;
 
@@ -358,21 +464,21 @@ function createCalendar(elem, year, month) {
     // Loop to add the dates of the current month
     for (let i = 1; i <= lastDate; i++) {
         // Check if the current date is today
-        const isToday = i === thisDate && mon === thisMonth && year === thisYear;
-        const isActive = i === activeDate && mon === activeMonth && year === activeYear;
+        const currentIsToday = i === thisDate && mon === thisMonth && year === thisYear;
+        const currentIsActive = i === activeDate && mon === activeMonth && year === activeYear;
 
         d.setDate(i);
         const isodate = toDate(d);
         const classes = baseCellClass.concat([]);
-        if (isToday) {
-            classes.push("is-today");
+        if (currentIsToday) {
+            classes.push(isToday);
         }
-        if (isActive) {
-            classes.push("is-active");
+        if (currentIsActive) {
+            classes.push(isActive);
         }
         const daynum = i;
         let attrs = "";
-        if (isActive) {
+        if (currentIsActive) {
             attrs += ' aria-current="date"';
         }
         const btnAttrs = checkDisabled(isodate, config);
@@ -391,7 +497,7 @@ function createCalendar(elem, year, month) {
     let lastDayNextMonth = null;
     for (let i = dayend; i < 6 + firstDay; i++) {
         const classes = baseCellClass.concat([]);
-        classes.push("is-inactive");
+        classes.push(isInactive);
 
         const daynum = i - dayend + 1;
         lastDayNextMonth = daynum;
@@ -415,7 +521,7 @@ function createCalendar(elem, year, month) {
         if (hasFirstLine) {
             for (let i = 1; i < 8; i++) {
                 const classes = baseCellClass.concat([]);
-                classes.push("is-inactive");
+                classes.push(isInactive);
 
                 const daynum = lastDayNextMonth + i;
                 nextMonth.setDate(daynum);
@@ -430,7 +536,7 @@ function createCalendar(elem, year, month) {
         } else {
             for (let i = 7; i > 0; i--) {
                 const classes = baseCellClass.concat([]);
-                classes.push("is-inactive");
+                classes.push(isInactive);
 
                 const daynum = lastMonthDate - i + 1;
 
@@ -455,12 +561,16 @@ function createCalendar(elem, year, month) {
 
 function createCalendarWithValue(el) {
     const data = el.dataset;
-    const v = data.value || toDate(currentDay());
-    const dateParts = dateComponents(expandDate(v), "yyyy-mm-dd");
-    if (!data.value) {
-        data.value = v;
+    // Set default state
+    if (!data.value && !data.display) {
+        data.value = toDate(currentDay());
     }
-    createCalendar(el, toInt(dateParts.year), toInt(dateParts.month));
+    if (!data.display) {
+        const v = data.value || toDate(currentDay());
+        const dateParts = dateComponents(expandDate(v), "yyyy-mm-dd");
+        data.display = `${dateParts.year}-${dateParts.month}`;
+    }
+    createCalendar(el, toInt(getYear(data.display)), toInt(getMonth(data.display)));
 }
 
 /**
@@ -479,23 +589,24 @@ const eventHandler = {
             return;
         }
 
-        /** @type {HTMLDivElement} */
-        const cal = btn.closest("[data-calendar]");
-        const v = cal.dataset.value.split("-");
+        const cal = getParentCalendar(btn);
+        const data = cal.dataset;
+        const v = data.display;
 
-        const y = toInt(v[0]);
-        const m = toInt(v[1]) - 1;
+        const y = toInt(getYear(v));
+        const m = toInt(getMonth(v)) - 1; // Month is -1 based
 
         // Navigation
-        if (btn.classList.contains("is-prev")) {
+        if (btn.classList.contains(isPrev)) {
             const prev = getPreviousMonth(y, m);
-            cal.dataset.value = toDate(prev);
+            data.display = getYearMonth(toDate(prev));
         }
-        if (btn.classList.contains("is-next")) {
+        if (btn.classList.contains(isNext)) {
             const next = getNextMonth(y, m);
-            cal.dataset.value = toDate(next);
+            data.display = getYearMonth(toDate(next));
         }
 
+        // Click on a date
         /** @type {HTMLTableCellElement} */
         const cell = btn.closest("td[data-date]");
         if (cell) {
@@ -507,18 +618,19 @@ const eventHandler = {
     $change: (ev) => {
         const input = ev.target;
 
-        /** @type {HTMLDivElement} */
-        const cal = input.closest("[data-calendar]");
-        const v = cal.dataset.value.split("-");
+        const cal = getParentCalendar(input);
+        const data = cal.dataset;
+        const v = data.display;
 
-        const y = toInt(v[0]);
-        const m = toInt(v[1]) - 1;
+        const y = toInt(getYear(v));
+        const m = toInt(getMonth(v)) - 1; // Month is -1 based
 
-        if (input.classList.contains("is-month")) {
-            cal.dataset.value = toDate(utcDate(y, input.value, 1));
+        const iv = input.value;
+        if (input.classList.contains(isMonth)) {
+            data.display = toDate(utcDate(y, iv, 1));
         }
-        if (input.classList.contains("is-year")) {
-            cal.dataset.value = toDate(utcDate(input.value, m, 1));
+        if (input.classList.contains(isYear)) {
+            data.display = toDate(utcDate(iv, m, 1));
         }
     },
 };
@@ -531,7 +643,7 @@ dynamicBehaviour(
      */
     (el) => {
         createCalendarWithValue(el);
-        cleanupMap.set(el, observeAttrs(el, ["data-value"], createCalendarWithValue));
+        cleanupMap.set(el, observeAttrs(el, ["data-value", "data-display"], createCalendarWithValue));
         on(events, eventHandler, el);
     },
     /**

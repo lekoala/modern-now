@@ -315,6 +315,8 @@ export function dateFormat(lang = null) {
 }
 
 /**
+ * Returns components from a date
+ * Detects date separator automatically
  * @param {string} v
  * @param {string} format
  * @returns {DateComponents}

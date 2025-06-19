@@ -20,6 +20,10 @@
         .cal-drop table {
             margin: 0;
         }
+
+        .calendar-dropdown {
+            z-index: 1;
+        }
     </style>
 </head>
 
@@ -39,20 +43,22 @@
 
         <h3>Demo</h3>
 
-        <p>Standalone calendar using default locale.</p>
+        <p>Standalone calendar using default locale. Use current date as default value if not set.</p>
 
         <div data-calendar></div>
 
-        <p>Display a custom month, using specific locale, with built in provided translations from intl extension. Try changing data-value!</p>
+        <p>Display a custom month, using specific locale, with built in provided translations from intl extension. Try changing
+            <code>data-value</code> or <code>data-display</code>!
+        </p>
 
-        <div data-calendar data-value="2024-01" lang="fr"></div>
+        <div data-calendar data-display="2024-01" lang="fr"></div>
 
-        <p>Setting a custom value</p>
+        <p>Setting a custom value (!= today)</p>
 
         <div data-calendar data-value="2024-01-16" lang="fr"></div>
 
         <p>Enable navigation with controls:true and do something on click. Requires a little bit of css to adjust the buttons.
-            Min date = 2025-02 / Disabled date = weekends
+            Min date = 2025-02 / Disabled date = weekends. Inner value and display value are separated in two attributes.
         </p>
 
         <script>
@@ -60,6 +66,7 @@
             // therefore, it cannot be in a type="module" because html will get parsed and triggered before
             window['app'] = window['app'] || {};
             window['app']['calendarClick'] = (calendarEl, date) => {
+                calendarEl.dataset.value = date; // set current value
                 alert(`You clicked on ${date}`);
             }
             window['app']['disabledFn'] = (date) => {
@@ -67,7 +74,8 @@
             }
         </script>
         <!-- <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: ['2025-03-02']" data-value="2025-03"></div> -->
-        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'" data-value="2025-03"></div>
+        <div data-calendar="lang:'fr', controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'"
+            data-value="2025-03"></div>
 
         <p>Bind to input: save value into hidden input, but display a d/m/Y value.</p>
 
@@ -110,7 +118,9 @@
             <input type="date" name="custom-date-modal" value="2024-11-12" data-calendar="">
 
             <p>Inline calendar in italian</p>
-            <div lang="it" data-calendar="controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'" data-value="2025-03"></div>
+            <div lang="it"
+                data-calendar="controls: true, click: {__fn: 'app.calendarClick'}, minDate: '2025-02', disabled: 'app.disabledFn'"
+                data-value="2025-03"></div>
 
             <button data-dialog-close>Close</button>
         </dialog>
