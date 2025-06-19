@@ -46,8 +46,10 @@ import { ucfirst } from "./utils/str.js";
  * @returns {Array} An array with 12 entries, starting with January
  */
 function monthsForLocale(locale = "en-US", month = "short") {
+    //@ts-ignore
     const applyFormat = new Intl.DateTimeFormat(locale, { month }).format;
-    return [...Array(12).keys()].map((m) => applyFormat(new Date(Date.UTC(2024, m))));
+    const months = [...Array(12).keys()];
+    return months.map((m) => applyFormat(new Date(Date.UTC(2024, m))));
 }
 
 /**
@@ -64,6 +66,12 @@ function daysForLocale(locale = "en-US", weekday = "short", firstDay = 1) {
     return days.map((day) => format(Date.now() - (now.getDay() - ((day + firstDay) % 7)) * 86400000));
 }
 
+/**
+ *
+ * @param {Date|Number} date
+ * @param {String} locale
+ * @returns {String}
+ */
 function formatWithLocale(date, locale = "en-US") {
     return ucfirst(
         new Intl.DateTimeFormat(locale, {
