@@ -131,6 +131,31 @@
         .dropdown-sub svg path {
             fill: var(--accent);
         }
+
+        /* transition */
+
+        #drop-transition {
+            --duration: 0.3s;
+            transition:
+                opacity var(--duration) ease-in-out,
+                scale var(--duration) ease-in-out,
+                display var(--duration) ease-in-out allow-discrete;
+        }
+
+        #drop-transition.is-opened {
+            scale: 1;
+            translate: 0 0;
+
+            @starting-style {
+                scale: 1.1;
+                opacity: 0;
+            }
+        }
+
+        #drop-transition:not(.is-opened) {
+            scale: 1.1;
+            opacity: 0;
+        }
     </style>
 
 </head>
@@ -186,6 +211,16 @@
             Dropdown with arrows and a fancy zoom animation
         </button>
         <ul id="arrow-drop" class="dropdown-menu" hidden>
+            <li><a href="#" class="dropdown-item">Donuts</a></li>
+            <li><a href="#" class="dropdown-item">Cupcakes</a></li>
+            <li><a href="#" class="dropdown-item">Chocolate</a></li>
+            <li><a href="#" class="dropdown-item">Bonbons</a></li>
+        </ul>
+
+        <button type="button" data-dropdown="drop-transition" data-dropdown-placement="bottom">
+            Dropdown with a fancy zoom transition
+        </button>
+        <ul id="drop-transition" class="dropdown-menu" hidden>
             <li><a href="#" class="dropdown-item">Donuts</a></li>
             <li><a href="#" class="dropdown-item">Cupcakes</a></li>
             <li><a href="#" class="dropdown-item">Chocolate</a></li>

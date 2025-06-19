@@ -1,12 +1,13 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
-import { hasNotAttrString, setAttr, removeAttr, setData } from "./utils/attrs.js";
+import { hasNotAttrString, setAttr, removeAttr, setData, addClass, removeClass } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
 import { activeEl, doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
+const isOpened = "is-opened";
 const events = ["click"];
 const floatingEvents = [floatingReposition, floatingHide];
 const docEvents = ["keydown", "keyup"];
@@ -107,6 +108,9 @@ define(
             this[`$${ev.type}`](ev);
         }
 
+        /**
+         * @param {Event} ev
+         */
         $floatingReposition(ev) {
             const el = this.el;
             const d = el.dataset;
@@ -119,14 +123,16 @@ define(
             });
         }
 
+        /**
+         * @param {Event} ev
+         */
         $floatingHide(ev) {
-            if (this.ariaExpanded === "false") {
-                return;
-            }
-            this.ariaExpanded = "false";
             this.hideMenu();
         }
 
+        /**
+         * @param {KeyboardEvent} ev
+         */
         $keyup(ev) {
             // When tabbing, we might change menu
             if (ev.key === "Tab") {
@@ -200,19 +206,27 @@ define(
         }
 
         showMenu() {
+            if (this.ariaExpanded === "true") {
+                return;
+            }
             this.ariaExpanded = "true";
             const el = this.el;
+            // is-open class acts pretty much like the [open] attribute for a dialog
+            addClass(el, isOpened);
             openMenus.add(el);
             curr = el;
-            doWithAnimation(el, null, true);
             show(el);
             dispatch(floatingReposition, el);
+            doWithAnimation(el, () => {}, true);
             on(docEvents, this, document);
         }
 
         hideMenu() {
-            this.ariaExpanded = "false";
+            if (this.ariaExpanded === "false") {
+                return;
+            }
             const el = this.el;
+            removeClass(el, isOpened);
             openMenus.delete(el);
             if (curr === el) {
                 curr = getLastOpenedMenu();
@@ -220,9 +234,14 @@ define(
                     lastTrigger.focus(); // restore focus
                 }
             }
-            doWithAnimation(el, () => {
-                hide(el);
-            });
+            doWithAnimation(
+                el,
+                () => {
+                    hide(el);
+                    this.ariaExpanded = "false";
+                },
+                false,
+            );
             off(docEvents, this, document);
         }
     },

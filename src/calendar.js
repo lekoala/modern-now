@@ -493,11 +493,17 @@ const eventHandler = {
 const events = ["click", "change"];
 dynamicBehaviour(
     "div[data-calendar]",
+    /**
+     * @param {HTMLDivElement} el
+     */
     (el) => {
         createCalendarWithValue(el);
         cleanupMap.set(el, observeAttrs(el, ["data-value"], createCalendarWithValue));
         on(events, eventHandler, el);
     },
+    /**
+     * @param {HTMLDivElement} el
+     */
     (el) => {
         getAndRun(cleanupMap, el);
         el.innerHTML = "";
