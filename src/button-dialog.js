@@ -1,7 +1,7 @@
-import { getBoolData, getData, hasData, setCssVar } from "./utils/attrs.js";
+import { getBoolData, getData, setCssVar } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { byId } from "./utils/query.js";
-import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, getDocEl, isChrome } from "./utils/misc.js";
+import { supportsDialog, getScrollBarWidth, simpleConfig, doWithAnimation, getDocEl } from "./utils/misc.js";
 import dynamicBehaviour from "./dynamicBehaviour.js";
 
 /**
