@@ -57,7 +57,8 @@ const passiveOpts = (type) => {
  * Typically use like this:
  * - on("click", this); => bound to this handleEvent
  * - on("click", this, document); => bound to document and handled by this handleEvent
- * - on("click", () => {}); => bound to document
+ * - on("click", () => {}); => bound to document and handled by function
+ * - on("click", () => {}, el); => bound to el and handled by function
  * Automatically sets passive option
  *
  * @param {String|Array} event

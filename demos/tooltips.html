@@ -31,6 +31,30 @@
         // you can actually pass an array to querySelectorAll since it's a DOMString which will be converted to a string
         // console.log(document.querySelectorAll(['a', 'h2']))
     </script>
+    <style>
+        #squared-tooltip {
+            --r: 0;
+        }
+
+        .dynamic {
+            margin-inline-end: 1rem;
+        }
+
+        .dark {
+            background-color: hsl(232, 11%, 15%);
+            color: #dcdcdc;
+            padding: 1rem;
+        }
+
+        .dark a {
+            color: #ffb300;
+        }
+
+        .dark-tooltip {
+            --accent: #9b5317;
+            --accent-hover: #d3660d;
+        }
+    </style>
 </head>
 
 <body>
@@ -58,18 +82,37 @@
 
         <h3>Demo</h3>
 
-        <p>A <span data-tooltip="" title="Always visible" data-tooltip-visible="true">tooltip that is always visible</span> thanks to <code>data-tooltip-visible="true"</code>.</p>
+        <p>A <span data-tooltip="" title="Always visible" data-tooltip-visible="true">tooltip that is always visible</span> thanks to
+            <code>data-tooltip-visible="true"</code>.
+        </p>
 
-        <p> <span data-tooltip="visible: true" title="I'm a long tooltip with an arrow well placed">Nostrud</span> deserunt culpa aliqua mollit sit ex mollit irure incididunt non anim. <span data-tooltip="visible: true" title="I'm a long tooltip with an arrow well placed always visible">Anim</span> aliquip ullamco
+        <p> <span data-tooltip="visible: true" title="I'm a long tooltip with an arrow well placed">Nostrud</span> deserunt culpa aliqua
+            mollit sit ex mollit irure incididunt non anim. <span data-tooltip="visible: true"
+                title="I'm a long tooltip with an arrow well placed always visible">Anim</span> aliquip ullamco
             dolor anim Lorem
             deserunt <a href="#" data-tooltip title="Some tooltip">i have a tooltip</a> consectetur consectetur aliquip voluptate. Esse
             incididunt adipisicing irure ipsum enim quis fugiat animated <a href="#" data-tooltip="bottom"
                 title="I'm at the bottom with a very long content but still max 40ch">a bottom tootlip</a>. I have a <a href="#"
-                data-tooltip="placement: 'top', target:'tt-target'">specific target</a>. I'm a <a href="#popover-target" data-tooltip="placement:'right'" data-tooltip-click
+                data-tooltip="placement: 'top', target:'tt-target'">specific target</a>. I'm a <a href="#squared-tooltip"
+                data-tooltip>squared tooltip</a>. I'm a <a href="#popover-target" data-tooltip="placement:'right'" data-tooltip-click
                 data-tooltip-distance="12px">popover target that triggers on click</a>.</p>
 
+
         <div id="tt-target" hidden>I'm a custom target</div>
+        <div id="squared-tooltip" hidden>No border radius for me!</div>
         <div id="popover-target" hidden>I'm a popover target that<br />flips to right or left<br /> depending on the available space</div>
+
+        <hr>
+
+        <h3>Dark background</h3>
+
+        <div class="dark">
+            Commodo cillum ut exercitation sit excepteur aliquip. Esse duis quis pariatur <a data-tooltip="class: 'dark-tooltip'"
+                title="On dark background">quis
+                laboris</a> officia mollit aute Lorem enim do. Nisi ipsum eiusmod sit irure Lorem fugiat amet est adipisicing. Veniam ea
+            consectetur adipisicing mollit eiusmod commodo tempor incididunt laborum nulla commodo non. Quis reprehenderit labore veniam
+            est. Dolor nostrud esse enim aliquip ad laboris velit mollit. Exercitation veniam nisi dolore laboris anim tempor sit.
+        </div>
 
         <hr>
 
@@ -79,7 +122,7 @@
                 <path fill-rule="evenodd"
                     d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
             </svg>
-            I'm a button with a popover. The svg icon doesn't break the tooltip</button>
+            I'm a button with a popover. Click on me! The svg icon doesn't break the tooltip</button>
 
         <hr>
 

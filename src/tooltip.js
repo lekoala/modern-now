@@ -3,7 +3,7 @@ import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./
 import { dispatch, off, on } from "./utils/events.js";
 import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
-import { injectCss, show, hide, ce, isVisible, as, simpleConfig, dataAsConfig, supportsPopover } from "./utils/misc.js";
+import { injectCss, show, hide, ce, isVisible, simpleConfig, dataAsConfig, supportsPopover } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
 /**
@@ -22,8 +22,9 @@ import { byId } from "./utils/query.js";
 // cannot use inset as it's only supported in ios > 14 https://caniuse.com/mdn-css_properties_inset
 // requires -webkit prefix for clip path
 // data-placement is set by floating utils
-const css = /*css*/ `
-div.tooltip {
+// shadows are based on this https://codyhouse.co/nuggets/beautiful-css-shadows to work on any background
+// there is a slight delay before show animation to avoid triggering hover when clicking moving over an element
+const css = /*css*/ `div.tooltip {
   --b: 12px;
   --h: 6px;
   --p: 50%;
@@ -31,10 +32,13 @@ div.tooltip {
   --tooltip-color-start: var(--accent, rgb(139, 59, 210));
   --tooltip-color-end: var(--accent-hover, rgb(47, 30, 152));
   --tooltip-bg: linear-gradient(45deg, var(--tooltip-color-start), var(--tooltip-color-end));
+  --tooltip-transition: 0.15s;
+  --tooltip-scale: 0.9;
   pointer-events: none;
   user-select: none;
   padding: 0.125em 0.5em;
   color: #fff;
+  border: 0;
   border-radius: min(var(--r),var(--p) - var(--b)/2) min(var(--r),100% - var(--p) - var(--b)/2) var(--r) var(--r)/var(--r);
   background: 0 0/100% calc(100% + var(--h)) var(--tooltip-bg);
   position: relative;
@@ -42,8 +46,35 @@ div.tooltip {
   inset: unset;
   z-index: 0;
   max-width: max(40ch, 90vw);
-  opacity:1;
+  opacity: 1;
   font-size: 0.875rem;
+  box-shadow:
+    inset 0 0 0.5px 1px hsla(0, 0%,  100%, 0.1),
+    0 0 0 1px hsla(0, 0%, 0%, 0.05),
+    0 0.5px 0.5px hsla(0, 0%, 0%, 0.04),
+    0 1px 1.5px hsla(0, 0%, 0%, 0.08),
+    0 3px 6px hsla(0, 0%, 0%, 0.14);
+}
+@media (prefers-reduced-motion: no-preference) {
+    div.tooltip {
+        transition:
+            opacity var(--tooltip-transition) ease-in-out,
+            scale var(--tooltip-transition) ease-in-out,
+            display var(--tooltip-transition) ease-in-out allow-discrete;
+
+        @starting-style {
+            opacity: 0;
+            scale: var(--tooltip-scale);
+        }
+    }
+    div.tooltip:not(.tooltip-click) {
+        transition-delay: var(--tooltip-transition);
+    }
+    div.tooltip[hidden] {
+        transition-delay: 0s;
+        scale: var(--tooltip-scale);
+        opacity:0;
+    }
 }
 div.tooltip:before {
   content: " ";
@@ -83,8 +114,8 @@ div.tooltip[data-placement="left"]:before {
   right: calc(-1*var(--h));
   clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
   -webkit-clip-path: polygon(calc(100% - var(--h)) max(0%,var(--p) - var(--b)/2),100% var(--p),calc(100% - var(--h)) min(100%,var(--p) + var(--b)/2),50% 50%);
-}
-`;
+}`;
+
 const id = "tooltip-style";
 injectCss(css, id);
 
@@ -92,6 +123,9 @@ const usePopover = true && supportsPopover();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
 
+/**
+ * @param {HTMLElement} tooltip
+ */
 function showTooltip(tooltip) {
     if (usePopover) {
         tooltip.showPopover();
@@ -101,6 +135,9 @@ function showTooltip(tooltip) {
     dispatch(floatingReposition, tooltip);
 }
 
+/**
+ * @param {HTMLElement} tooltip
+ */
 function hideTooltip(tooltip) {
     if (usePopover) {
         tooltip.hidePopover();
@@ -110,12 +147,13 @@ function hideTooltip(tooltip) {
 
 /**
  * This is the event handler for the tooltip trigger
- * @param {MouseEvent} ev
+ * @param {MouseEvent & {target:HTMLElement}} ev
  */
 const eventHandler = (ev) => {
-    const target = as(ev.target, "div");
+    const target = ev.target;
     // if the target is already the tooltip trigger, then target = reference
-    const reference = as(target.closest("[data-tooltip]"), "a");
+    /** @type {HTMLAnchorElement} */
+    const reference = target.closest("[data-tooltip]");
     const data = reference.dataset;
     const tooltip = byId(data.tooltipTarget);
     if (!tooltip) {
@@ -149,11 +187,9 @@ const eventHandler = (ev) => {
 
 /**
  * This is the event handler for the tooltip itself
- * @param {Event} ev
+ * @param {Event & {target:HTMLElement}} ev
  */
 const tooltipHandler = (ev) => {
-    /** @type {HTMLElement} */
-    //@ts-ignore
     const t = ev.target;
     const type = ev.type;
     const d = t.dataset;
@@ -175,8 +211,6 @@ const tooltipHandler = (ev) => {
 };
 
 const cleanupMap = new WeakMap();
-
-// tooltips are implemented as dynamic behaviour because it can apply to multiple type of nodes
 
 let i = 0;
 dynamicBehaviour(
@@ -237,7 +271,7 @@ dynamicBehaviour(
             return;
         }
 
-        setAttr(el, "aria-describedby", `tooltip-${i}`);
+        setAttr(el, "aria-describedby", tooltip.id);
         tooltip.style.position = "fixed";
         if (usePopover) {
             tooltip.popover = "";
@@ -248,14 +282,18 @@ dynamicBehaviour(
             tooltip.dataset.tooltipVisible = "true";
         }
         addClass(tooltip, "tooltip");
+        // Clickable tooltips don't have a transition delay
+        if (config.click) {
+            addClass(el, "tooltip-click");
+        }
+        if (config.class) {
+            addClass(tooltip, config.class);
+        }
         // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tooltip_Role
         tooltip.role = "tooltip";
         // see https://web.dev/articles/building/a-tooltip-component
         tooltip.inert = true;
         tooltip.tabIndex = -1;
-        if (config.class) {
-            addClass(tooltip, config.class);
-        }
         if (!el.id) {
             el.id = `${tooltip.id}-target`;
         }
