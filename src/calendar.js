@@ -303,7 +303,9 @@ function getParentCalendar(node) {
     return node.closest("[data-calendar]");
 }
 
-// Some other inspiration here https://github.com/duetds/date-picker/blob/master/src/components/duet-date-picker/date-utils.ts
+// Some other inspiration here
+// https://github.com/duetds/date-picker/blob/master/src/components/duet-date-picker/date-utils.ts
+// https://github.com/t1m0n/air-datepicker
 
 const cellClickHandler = new WeakMap();
 
