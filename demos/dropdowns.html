@@ -157,27 +157,98 @@
             opacity: 0;
         }
 
-        /* drawer */
+        /* Drawer */
+        @keyframes slideFromBottom {
+            0% {
+                transform: translate3d(0, var(--initial-transform, 100%), 0);
+            }
+
+            100% {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes slideToBottom {
+            0% {
+                transform: translate3d(0, 0, 0);
+
+            }
+
+            100% {
+                transform: translate3d(0, var(--initial-transform, 100%), 0);
+            }
+        }
+
+        .mobile-drawer-close {
+            display: none;
+        }
 
         @media (max-width: 767.98px) {
-            .dropdown-menu.mobile-drawer {
+            .mobile-drawer-close {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                top: 1rem;
+                right: 1rem;
+                background: none;
+                width: 24px;
+                height: 24px;
+                border-radius: 24px;
+                line-height: 24px;
+                color: currentColor;
+                padding: 0;
+                border: 0;
+            }
+
+            .mobile-drawer {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                border-top-left-radius: var(--bs-border-radius);
-                border-top-right-radius: var(--bs-border-radius);
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
+                z-index: 9999;
+                /* needs a base anim*/
             }
-        }
 
-        /* :dir hack */
-        :dir(rtl) {
-            --dir: 'rtl';
-        }
-        :dir(ltr) {
-            --dir: 'ltr';
+            /* START ANIM */
+            .mobile-drawer {
+                animation: slideFromBottom 0s;
+                /* needs a base anim*/
+            }
+
+            .mobile-drawer.is-opening {
+                animation: slideFromBottom 0.3s;
+            }
+
+            .mobile-drawer.is-closing {
+                animation: slideToBottom 0.3s;
+            }
+
+            /* END ANIM */
+
+            /* START NO SCROLL */
+            html:has(.mobile-drawer.is-opened) {
+                overflow: hidden;
+                padding-inline-end: var(--scrollbar-width);
+            }
+
+            /* END NO SCROLL */
+
+            /* START OVERLAY */
+            html:has(.mobile-drawer.is-opened) .dropdown-overlay {
+                position: fixed;
+                background: rgba(255, 255, 255, 0.8);
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+                animation: fadeIn 0.3s;
+                z-index: 9998;
+            }
+
+            /* END OVERLAY */
+
         }
     </style>
 
@@ -260,12 +331,23 @@
             <li><a href="#" class="dropdown-item">Bonbons</a></li>
         </ul>
 
-        <p>Advanced dropdown content in RTL container</p>
+        <p>Advanced dropdown content in RTL container ( dir="rtl" is required for mixed
+            dir attributes for older browsers on the button or the dropdown). A custom drawer is used on mobile with
+            <code>data-dropdown-drawer="true"</code>. <a href="https://github.com/jiaweing/DropDrawer" target="_blank">Credits to
+                DropDrawer</a>.
+        </p>
 
         <div dir="rtl">
-            <button type="button" data-dropdown="drop-filters">Dropdown with a form and a mobile version</button>
+            <button type="button" data-dropdown="drop-filters" data-dropdown-drawer="true">Dropdown with a form and a drawer for mobile
+                version</button>
             <div id="drop-filters" class="dropdown-menu mobile-drawer" hidden style="display:flex">
-                <form action="" class="px-2">
+                <button class="mobile-drawer-close" data-dropdown-close><svg xmlns="http://www.w3.org/2000/svg" width="800" height="800"
+                        viewBox="0 0 24 24">
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path
+                            d="M18.36 19.78 12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z" />
+                    </svg></button>
+                <form action="" class="p-3">
                     <label>
                         <input type="checkbox"> Pick me
                     </label>

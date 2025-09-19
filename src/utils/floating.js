@@ -252,7 +252,6 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     }
 
     const rects = referenceEl.getClientRects();
-
     const floating = floatingEl.getBoundingClientRect();
     const rtl = isRTL(referenceEl);
     /** @type {Placement} */
@@ -273,10 +272,9 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     let clientWidth = doc.clientWidth;
     let clientHeight = doc.clientHeight;
 
-    const scrollBarWidth = window.innerWidth - clientWidth;
-
     // on mobile, having a viewport larger than 100% can make window.innerX very different than doc.clientX
-    if (scrollBarWidth > 20) {
+    const checkViewportWidth = window.innerWidth - clientWidth;
+    if (checkViewportWidth > 20) {
         clientWidth = window.innerWidth;
         clientHeight = window.innerHeight;
     }

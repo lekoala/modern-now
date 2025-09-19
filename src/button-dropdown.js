@@ -1,9 +1,19 @@
 import createRegistry from "nonchalance/ce";
 import { define } from "nonchalance/selector";
 import { on, off, dispatch } from "./utils/events.js";
-import { hasNotAttrString, setAttr, removeAttr, setData, addClass, removeClass } from "./utils/attrs.js";
+import { hasNotAttrString, setAttr, removeAttr, setData, addClass, removeClass, hasAttr } from "./utils/attrs.js";
 import { autoUpdate, floatingHide, floatingReposition, reposition } from "./utils/floating.js";
-import { activeEl, doWithAnimation, globalContext, hide, show } from "./utils/misc.js";
+import {
+    activeEl,
+    ce,
+    doWithAnimation,
+    globalContext,
+    hide,
+    isAnimating,
+    refreshScrollbarVar,
+    show,
+    toInt,
+} from "./utils/misc.js";
 import { byId, qsa } from "./utils/query.js";
 import { getAndRun } from "./utils/map.js";
 
@@ -45,9 +55,14 @@ const globalHandler = (ev) => {
                     n = "inside";
                 }
             }
-            //@ts-ignore
-            if (close.startsWith(".") && ev.target.closest(close)) {
-                n = "selector";
+            // Allows classes or [attrs]
+            const isClassOrAttr = close.startsWith(".") || close.startsWith("[");
+            if (isClassOrAttr) {
+                //@ts-ignore
+                const closest = ev.target.closest(close);
+                if (closest !== menu) {
+                    n = "selector";
+                }
             }
         }
         if (n) {
@@ -60,6 +75,11 @@ on("click", globalHandler);
 function getLastOpenedMenu() {
     return Array.from(openMenus).pop();
 }
+
+const dropdownOverlay = ce("div");
+dropdownOverlay.classList.add("dropdown-overlay");
+document.body.prepend(dropdownOverlay);
+refreshScrollbarVar();
 
 const { HTML } = createRegistry(globalContext());
 define(
@@ -81,7 +101,11 @@ define(
             // Options can be defined on the button or on the menu
             const placement = data.dropdownPlacement || elData.dropdownPlacement || "bottom-start";
             const distance = data.dropdownDistance || elData.dropdownDistance || 6;
-            const close = data.dropdownClose || elData.dropdownClose || "default";
+            const shift = data.dropdownShift || elData.dropdownShift || 6;
+            const drawer = data.dropdownDrawer || elData.dropdownDrawer || false;
+            const drawerBreakpoint = toInt(data.dropdownDrawerBreakpoint || elData.dropdownDrawerBreakpoint || 768);
+            const defaultClose = drawer ? "outside,[data-dropdown-close]" : "default";
+            const close = data.dropdownClose || elData.dropdownClose || defaultClose;
 
             // https://meowni.ca/hidden.is.a.lie.html
             this.ariaExpanded = hasNotAttrString(el, "hidden");
@@ -93,8 +117,15 @@ define(
                 dropdown: "true",
                 dropdownPlacement: placement,
                 dropdownDistance: distance,
+                dropdownShift: shift,
                 dropdownClose: close,
             });
+            if (drawer) {
+                setData(el, {
+                    dropdownDrawer: drawer,
+                    dropdownDrawerBreakpoint: drawerBreakpoint,
+                });
+            }
             cleanupMap.set(el, autoUpdate(el));
             on(events, this);
             on(floatingEvents, this, el);
@@ -118,12 +149,22 @@ define(
         $floatingReposition(ev) {
             const el = this.el;
             const d = el.dataset;
+            const min = toInt(d.dropdownDrawerBreakpoint);
+            if (d.dropdownDrawer && window.innerWidth < min) {
+                // Cancels reposition coords
+                refreshScrollbarVar();
+                setAttr(el, "aria-role", "dialog");
+                el.style.left = "0";
+                el.style.top = "auto";
+                return;
+            }
+            setAttr(el, "aria-role", "menu");
             reposition(this, el, {
                 placement: d.dropdownPlacement,
                 distance: d.dropdownDistance,
                 flip: true,
                 shift: true,
-                shiftPadding: 6,
+                shiftPadding: toInt(d.dropdownShift),
             });
         }
 
@@ -210,12 +251,13 @@ define(
         }
 
         showMenu() {
-            if (this.ariaExpanded === "true") {
+            const el = this.el;
+            if (this.ariaExpanded === "true" || isAnimating(el)) {
                 return;
             }
             this.ariaExpanded = "true";
-            const el = this.el;
             // is-open class acts pretty much like the [open] attribute for a dialog
+            // it is added as soon as the dialog is visible, so you can have is-open is-opening
             addClass(el, isOpened);
             openMenus.add(el);
             curr = el;
@@ -226,10 +268,11 @@ define(
         }
 
         hideMenu() {
-            if (this.ariaExpanded === "false") {
+            const el = this.el;
+            if (this.ariaExpanded === "false" || isAnimating(el)) {
                 return;
             }
-            const el = this.el;
+            this.ariaExpanded = "false";
             removeClass(el, isOpened);
             openMenus.delete(el);
             if (curr === el) {
@@ -242,7 +285,6 @@ define(
                 el,
                 () => {
                     hide(el);
-                    this.ariaExpanded = "false";
                 },
                 false,
             );

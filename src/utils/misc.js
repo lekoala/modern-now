@@ -1,4 +1,4 @@
-import { addClass, getMixedBoolData, hasAttr, hasClass, hasData, removeClass } from "./attrs.js";
+import { addClass, getMixedBoolData, hasAttr, hasClass, hasData, removeClass, setCssVar } from "./attrs.js";
 import { once } from "./events.js";
 import { qs, qsa } from "./query.js";
 import { ucfirst } from "./str.js";
@@ -285,7 +285,7 @@ export function debounce(fn, timeout = 300) {
 }
 
 /**
- * Triggers right with the first event, and ignores subsequent events (great when listening to clicks)
+ * Triggers right with the first event, and ignores subsequent events until timeout (great when listening to clicks)
  * @param {Function} fn
  * @param {Number} timeout
  * @returns {Function}
@@ -411,6 +411,14 @@ export function getScrollBarWidth() {
 }
 
 /**
+ * This function is useful for offcanvas or modals with scroll disabled.
+ * We want to avoid content reflow due to the scrollbars being hidden
+ */
+export function refreshScrollbarVar() {
+    setCssVar(getDocEl(), "scrollbar-width", `${getScrollBarWidth()}px`);
+}
+
+/**
  * Basically test for Safari < 15.4 and firefox < 98
  * @link https://caniuse.com/dialog
  * @returns {Boolean}
@@ -514,6 +522,100 @@ export function ephemeralText(el, text) {
 }
 
 /**
+ * @param {HTMLElement} el
+ * @returns {Boolean}
+ */
+export function isAnimating(el) {
+    const closingClass = "is-closing";
+    const openingClass = "is-opening";
+    const isOpening = hasClass(el, openingClass);
+    const isClosing = hasClass(el, closingClass);
+    return isClosing || isOpening;
+}
+
+/**
+ * Parses a CSS time value (e.g., "0.5s", "500ms") and returns the time in milliseconds.
+ * @param {string} timeString
+ * @returns {number}
+ */
+export function parseCSSTime(timeString) {
+    if (timeString.endsWith("ms")) {
+        return toFloat(timeString);
+    }
+    if (timeString.endsWith("s")) {
+        return toFloat(timeString) * 1000;
+    }
+    return 0;
+}
+
+/**
+ * Waits for the longest-running CSS animation or transition on an element to complete.
+ * @param {HTMLElement} el The element to monitor.
+ * @returns {Promise<void>} A promise that resolves when the animation/transition ends.
+ */
+export function waitForAnimation(el) {
+    return new Promise((resolve) => {
+        const styles = getComputedStyle(el);
+
+        // Get all durations and delays
+        const animationDurations = styles.animationDuration.split(", ");
+        const animationDelays = styles.animationDelay.split(", ");
+        const transitionDurations = styles.transitionDuration.split(", ");
+        const transitionDelays = styles.transitionDelay.split(", ");
+
+        // Calculate the longest total time for animations
+        const maxAnimationTime = Math.max(
+            ...animationDurations.map((duration, i) => {
+                return parseCSSTime(duration) + parseCSSTime(animationDelays[i] || "0s");
+            }),
+        );
+
+        // Calculate the longest total time for transitions
+        const maxTransitionTime = Math.max(
+            ...transitionDurations.map((duration, i) => {
+                return parseCSSTime(duration) + parseCSSTime(transitionDelays[i] || "0s");
+            }),
+        );
+
+        const maxDuration = Math.max(maxAnimationTime, maxTransitionTime);
+
+        // If there's no animation/transition, resolve immediately
+        if (maxDuration === 0) {
+            resolve();
+            return;
+        }
+
+        let isResolved = false;
+        const events = ["animationend", "transitionend", "animationcancel", "transitioncancel"];
+
+        const onEnd = (event) => {
+            // IMPORTANT: Ensure the event is for the element itself, not a child.
+            if (event.target !== el || isResolved) {
+                return;
+            }
+            isResolved = true;
+            clearTimeout(timeout);
+            for (const name of events) {
+                el.removeEventListener(name, onEnd);
+            }
+            resolve();
+        };
+
+        // Fallback timer: resolve after the max duration + a small buffer
+        // This handles cases where the 'end' event doesn't fire for some reason.
+        const timeout = setTimeout(() => {
+            if (isResolved) return;
+            onEnd({ target: el }); // Simulate the end event
+        }, maxDuration + 50); // 50ms buffer for safety
+
+        // Add listeners
+        for (const name of events) {
+            el.addEventListener(name, onEnd);
+        }
+    });
+}
+
+/**
  * If animations are enabled and if the element has animation
  * wait until animationend to execute callback
  * Add a "is-closing" helper class while closing and "is-opening" while opening
@@ -521,71 +623,29 @@ export function ephemeralText(el, text) {
  * @param {Function|null} cb
  * @param {Boolean} open
  */
-export function doWithAnimation(el, cb = null, open = false) {
+export async function doWithAnimation(el, cb = null, open = false) {
     const closingClass = "is-closing";
     const openingClass = "is-opening";
-    const cls = open ? openingClass : closingClass;
+    // Ignore actions when animation is in progress
+    if (isAnimating(el)) {
+        return;
+    }
 
-    const doCb = () => {
-        removeClass(el, cls);
+    // No animations
+    if (!animationEnabled()) {
         if (cb) {
             cb();
         }
-    };
-
-    // Ignore actions when animation is in progress
-    const isOpening = hasClass(el, openingClass);
-    const isClosing = hasClass(el, closingClass);
-    if (isClosing || isOpening) {
         return;
     }
 
-    if (!animationEnabled()) {
-        doCb();
-        return;
-    }
-    const styles = getComputedStyle(el);
-    // no animation or transition using allow-discrete, simply close
-    const noAnimation = styles.animation.length === 0 || styles.animation.startsWith("none");
-    const allowDiscrete = styles.transitionBehavior && styles.transitionBehavior.includes("allow-discrete");
-
-    if (noAnimation && !allowDiscrete) {
-        doCb();
-        return;
-    }
-
-    const animationOrTransition = allowDiscrete ? "transition" : "animation";
-
-    // Fallback in case animation never plays
-    const to = setTimeout(() => {
-        if (!started) {
-            doCb();
-        }
-    }, 12);
-
-    let started = false;
-    once(
-        `${animationOrTransition}start`,
-        /**
-         * @param {AnimationEvent} ev
-         */
-        (ev) => {
-            started = true;
-            clearTo(to);
-        },
-    );
-    once(
-        `${animationOrTransition}end`,
-        /**
-         * @param {AnimationEvent} ev
-         */
-        (ev) => {
-            doCb();
-        },
-        el,
-    );
-    // Adding the class should start the animation
+    const cls = open ? openingClass : closingClass;
     addClass(el, cls);
+    await waitForAnimation(el);
+    removeClass(el, cls);
+    if (cb) {
+        cb();
+    }
 }
 
 /**
