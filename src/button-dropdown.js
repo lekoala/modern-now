@@ -71,6 +71,10 @@ define(
 
         connectedCallback() {
             const el = this.el;
+            if (!el) {
+                console.error(`Element does not exist: ${this.dataset.dropdown}`);
+                return;
+            }
             const data = this.dataset;
             const elData = el.dataset;
 

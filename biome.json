@@ -7,7 +7,11 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": ["**", "!**/dist/**/*.js", "!**/*.d.ts"]
+        "includes": [
+            "**",
+            "!**/dist/**/*.js",
+            "!**/*.d.ts"
+        ]
     },
     "formatter": {
         "enabled": true,
@@ -28,6 +32,9 @@
             "recommended": true,
             "complexity": {
                 "useOptionalChain": "off"
+            },
+            "suspicious": {
+                "noTsIgnore": "off"
             },
             "style": {
                 "noParameterAssign": "error",

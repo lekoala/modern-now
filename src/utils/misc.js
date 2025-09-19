@@ -437,6 +437,35 @@ export function supportsIntersectionObserver() {
 }
 
 /**
+ * @link https://caniuse.com/css-dir-pseudo
+ * @returns {Boolean}
+ */
+export function supportsDirSelector() {
+    if (window.CSS) {
+        return CSS.supports("selector(:dir(rtl))");
+    }
+    return false;
+}
+
+/**
+ * Checks if an element is RTL without trigger a reflow
+ * When mixing ltr and rtl content, only modern browsers (baseline 2023)
+ * will properly respect ancestors (a parent with dir="rtl")
+ *
+ * @param {HTMLElement} el
+ * @returns {Boolean}
+ */
+export function isRTL(el) {
+    if (el.dir) {
+        return el.dir === "rtl";
+    }
+    if (supportsDirSelector()) {
+        return el.matches(":dir(rtl)");
+    }
+    return document.dir === "rtl";
+}
+
+/**
  * @returns {Boolean}
  */
 export function animationEnabled() {
@@ -518,7 +547,7 @@ export function doWithAnimation(el, cb = null, open = false) {
     const styles = getComputedStyle(el);
     // no animation or transition using allow-discrete, simply close
     const noAnimation = styles.animation.length === 0 || styles.animation.startsWith("none");
-    const allowDiscrete = styles.transitionBehavior.includes("allow-discrete");
+    const allowDiscrete = styles.transitionBehavior && styles.transitionBehavior.includes("allow-discrete");
 
     if (noAnimation && !allowDiscrete) {
         doCb();

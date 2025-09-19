@@ -14,7 +14,7 @@
 
 import { setCssVar } from "./attrs.js";
 import { dispatch, on } from "./events.js";
-import { debounce, getDocEl, toInt } from "./misc.js";
+import { debounce, getDocEl, toInt, isRTL } from "./misc.js";
 
 /**
  * @typedef Coords
@@ -161,9 +161,9 @@ export function flipSide(side) {
  * @param {Coords} coords
  * @param {Side} side
  * @param {Number} offset
- * @param {Boolean} isRTL
+ * @param {Boolean} rtl
  */
-export function applyOffset(coords, side, offset, isRTL = false) {
+export function applyOffset(coords, side, offset, rtl = false) {
     switch (side) {
         case "top":
             coords.y -= offset;
@@ -172,10 +172,10 @@ export function applyOffset(coords, side, offset, isRTL = false) {
             coords.y += offset;
             break;
         case "left":
-            coords.x += isRTL ? offset : -offset;
+            coords.x += rtl ? offset : -offset;
             break;
         case "right":
-            coords.x += isRTL ? -offset : offset;
+            coords.x += rtl ? -offset : offset;
             break;
         default:
             console.warn(`Invalid side ${side}`);
@@ -251,11 +251,10 @@ export function reposition(referenceEl, floatingEl, config = {}) {
         return;
     }
 
-    const referenceStyles = window.getComputedStyle(referenceEl);
     const rects = referenceEl.getClientRects();
 
     const floating = floatingEl.getBoundingClientRect();
-    const isRTL = referenceStyles.direction === "rtl";
+    const rtl = isRTL(referenceEl);
     /** @type {Placement} */
     //@ts-ignore
     let placement = config.placement || "bottom";
@@ -294,9 +293,9 @@ export function reposition(referenceEl, floatingEl, config = {}) {
         clientHeight = bounds.y + bounds.height;
     }
 
-    let coords = computeCoordsFromPlacement(reference, floating, placement, isRTL);
+    let coords = computeCoordsFromPlacement(reference, floating, placement, rtl);
     const offset = toInt(`${distance}`);
-    applyOffset(coords, side, offset, isRTL);
+    applyOffset(coords, side, offset, rtl);
 
     // Flip if it overflows on axis
     if (flip) {
@@ -330,7 +329,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
         if (placementChanged) {
             // apply flipping
             placement = alignement ? `${side}-${alignement}` : side;
-            coords = computeCoordsFromPlacement(reference, floating, placement, isRTL);
+            coords = computeCoordsFromPlacement(reference, floating, placement, rtl);
 
             // take into consideration that a negative x will be shifted
             const shiftedX = coords.x > 0 ? coords.x : 0;
@@ -345,10 +344,10 @@ export function reposition(referenceEl, floatingEl, config = {}) {
                 side = "top";
                 axis = "x";
                 placement = alignement ? `${side}-${alignement}` : side;
-                coords = computeCoordsFromPlacement(reference, floating, placement, isRTL);
+                coords = computeCoordsFromPlacement(reference, floating, placement, rtl);
             }
 
-            applyOffset(coords, side, offset, isRTL);
+            applyOffset(coords, side, offset, rtl);
         }
     }
 
