@@ -177,6 +177,152 @@
             padding-inline-end: var(--scrollbar-width);
         }
     </style>
+    <style>
+        @keyframes backdropFade {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes openModal {
+            0% {
+                scale: 95%;
+                opacity: 0;
+                transform: translate3d(0, 5%, 0);
+            }
+
+            100% {
+                scale: 100%;
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes closeModal {
+            0% {
+                scale: 100%;
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+
+            100% {
+                scale: 95%;
+                opacity: 0;
+                transform: translate3d(0, 5%, 0);
+            }
+        }
+
+        @keyframes slideFromBottom {
+            0% {
+                transform: translate3d(0, var(--initial-transform, 100%), 0);
+            }
+
+            100% {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes slideToBottom {
+            0% {
+                transform: translate3d(0, 0, 0);
+
+            }
+
+            100% {
+                transform: translate3d(0, var(--initial-transform, 100%), 0);
+            }
+        }
+
+
+        .responsive-modal {
+            top: 0px;
+            right: 0px;
+            left: 0px;
+            bottom: 0px;
+        }
+
+        .responsive-modal {
+            animation: openModal 0.15s;
+        }
+
+        .responsive-modal.is-closing {
+            animation: closeModal 0.15s;
+        }
+
+
+        @media (max-width: 767.98px) {
+            .responsive-modal {
+                top: auto;
+                right: 0px;
+                left: 0px;
+                bottom: 0px;
+                max-height: 80vh;
+                max-width: 100%;
+                margin: unset;
+                height: auto;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            /* This can be applied directly thanks to top layer, no need for is-opening */
+            .responsive-modal {
+                animation: slideFromBottom 0.15s;
+            }
+
+            .responsive-modal.is-closing {
+                animation: slideToBottom 0.15s;
+            }
+        }
+
+        .responsive-modal button[data-dialog-close] {
+            background: none;
+            border: 0;
+            position: absolute;
+            top: 0.7rem;
+            right: 1rem;
+        }
+
+        .responsive-modal button[data-dialog-close]:focus {
+            outline: 0;
+            opacity: 0.6;
+        }
+
+        .responsive-modal header {
+            font-size: 1.4rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .responsive-modal section {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        dialog.responsive-modal::backdrop {
+            --bg: rgba(0, 0, 0, 0.8);
+            opacity: 1;
+            backdrop-filter: blur(0.25rem);
+            transition: opacity 2s;
+        }
+
+        .responsive-modal[open]::backdrop {
+            animation: backdropFade 0.15s ease forwards;
+        }
+
+
+        /* This could be limited to the media query if needed */
+        html:has(.responsive-modal[open]) {
+            overflow: hidden;
+            padding-inline-end: var(--scrollbar-width);
+        }
+    </style>
 </head>
 
 <body>
@@ -391,6 +537,20 @@
         <h3>Responsive modal</h3>
 
         <p>Credits to <a href="https://github.com/redpangilinan/credenza" target="_blank">Credenza</a>.</p>
+
+        <button data-dialog="responsive-modal">Responsive modal</button>
+        <dialog id="responsive-modal" class="responsive-modal" data-dialog="dismissible: true">
+            <header>Responsive dialog</header>
+            <section>
+                <p>A simple, yet beautiful, responsive modal</p>
+                <p>It is displayed as a dismissible modal for desktop, and as a drawer on mobile</p>
+                <button data-dialog-close><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path
+                            d="M18.36 19.78 12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z" />
+                    </svg></button>
+            </section>
+        </dialog>
     </main>
 
     <footer>

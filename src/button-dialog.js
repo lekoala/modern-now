@@ -18,6 +18,22 @@ import dynamicBehaviour from "./dynamicBehaviour.js";
  */
 
 /**
+ *
+ * @param {HTMLDialogElement} dialog
+ * @param {MouseEvent} event
+ * @returns {Boolean}
+ */
+function isOutsideDialog(dialog, event) {
+    const rect = dialog.getBoundingClientRect();
+    return (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+    );
+}
+
+/**
  * When clicking on the backdrop, the nodename is the dialog itself
  * This works really well IF the dialog has no padding (otherwise clicking on the padded area would trigger this)
  * @param {MouseEvent} ev
@@ -27,7 +43,8 @@ const handleDialogClick = (ev) => {
     //@ts-ignore
     const t = ev.target;
     // https://stackoverflow.com/questions/25864259/how-to-close-the-new-html-dialog-tag-by-clicking-on-its-backdrop
-    if (t.nodeName === "DIALOG" && getDialogConfig(t).dismissible) {
+    // Add a isOutsideDialog check to avoid any click inside the dialog and avoids requiring wrapping the content
+    if (t.nodeName === "DIALOG" && getDialogConfig(t).dismissible && isOutsideDialog(t, ev)) {
         // If dialog is focused, transition won't play (animation works fine)
         if (document.activeElement === t) {
             t.blur();
