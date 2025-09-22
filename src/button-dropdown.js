@@ -35,10 +35,19 @@ let lastTrigger;
  * @returns {void}
  */
 const globalHandler = (ev) => {
-    if (openMenus.size === 0) {
-        return;
-    }
+    closeMenusOnClick(ev);
+};
+on("click", globalHandler);
+
+/**
+ * @param {MouseEvent} ev
+ * @param {HTMLElement} ignoreMenu
+ */
+function closeMenusOnClick(ev, ignoreMenu = null) {
     for (const menu of openMenus) {
+        if (menu === ignoreMenu) {
+            continue;
+        }
         // https://getbootstrap.com/docs/5.3/components/dropdowns/#auto-close-behavior
         // default | inside | outside | manual | .selector | outside,.selector
         const closeArr = menu.dataset.dropdownClose.split(",");
@@ -69,8 +78,7 @@ const globalHandler = (ev) => {
             dispatch(floatingHide, menu);
         }
     }
-};
-on("click", globalHandler);
+}
 
 function getLastOpenedMenu() {
     return Array.from(openMenus).pop();
@@ -242,6 +250,7 @@ define(
          */
         $click(ev) {
             ev.stopPropagation(); // Don't trigger global handler
+            closeMenusOnClick(ev, this.el);
             if (this.ariaExpanded === "false") {
                 this.showMenu();
                 lastTrigger = this;
