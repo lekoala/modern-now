@@ -86,7 +86,14 @@ function getLastOpenedMenu() {
 
 const dropdownOverlay = ce("div");
 dropdownOverlay.classList.add("dropdown-overlay");
-document.body.prepend(dropdownOverlay);
+
+/**
+ * @param {HTMLElement} el
+ */
+function addOverlay(el) {
+    el.parentElement.prepend(dropdownOverlay);
+}
+
 refreshScrollbarVar();
 
 const { HTML } = createRegistry(globalContext());
@@ -270,6 +277,7 @@ define(
             addClass(el, isOpened);
             openMenus.add(el);
             curr = el;
+            addOverlay(el);
             show(el);
             dispatch(floatingReposition, el);
             doWithAnimation(el, () => {}, true);
