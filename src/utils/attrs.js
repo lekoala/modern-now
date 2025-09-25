@@ -160,7 +160,8 @@ export function assignStyles(el, map) {
 }
 
 /**
- *
+ * Only works if the variable is set inline on the element!
+ * Otherwise you need to use getComputedStyle
  * @param {HTMLElement} el
  * @param {string} name
  * @returns {string}

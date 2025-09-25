@@ -1,9 +1,20 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
-import { addClass, getAttr, getBoolData, removeAttr, setAttr, setData } from "./utils/attrs.js";
-import { dispatch, off, on } from "./utils/events.js";
+import { addClass, getAttr, getBoolData, hasAttr, removeAttr, setAttr, setData } from "./utils/attrs.js";
+import { dispatch, off, on, once } from "./utils/events.js";
 import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
-import { injectCss, show, hide, ce, isVisible, simpleConfig, dataAsConfig, supportsPopover } from "./utils/misc.js";
+import {
+    injectCss,
+    show,
+    hide,
+    ce,
+    isVisible,
+    simpleConfig,
+    dataAsConfig,
+    supportsPopover,
+    clearTo,
+    setTo,
+} from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
 /**
@@ -33,9 +44,8 @@ const css = /*css*/ `div.tooltip {
   --tooltip-color-start: var(--accent, rgb(139, 59, 210));
   --tooltip-color-end: var(--accent-hover, rgb(47, 30, 152));
   --tooltip-bg: linear-gradient(45deg, var(--tooltip-color-start), var(--tooltip-color-end));
-  --tooltip-transition: 0.1s;
+  --tooltip-transition: 0.15s;
   --tooltip-delay: 0.1s;
-  --tooltip-scale: 0.9;
   pointer-events: none;
   user-select: none;
   padding: 0.125em 0.5em;
@@ -65,11 +75,13 @@ const css = /*css*/ `div.tooltip {
 
         @starting-style {
             opacity: 0;
-            scale: var(--tooltip-scale);
         }
     }
     div.tooltip:not(.tooltip-click) {
         transition-delay: var(--tooltip-delay);
+    }
+    div.tooltip.tooltip-instant {
+        transition-delay: 0s;
     }
     div.tooltip[hidden] {
         transition-delay: 0s;
@@ -123,16 +135,35 @@ const usePopover = true && supportsPopover();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
 
+let visibleFlag = false;
+
 /**
  * @param {HTMLElement} tooltip
  */
 function showTooltip(tooltip) {
+    tooltip.classList.remove("tooltip-instant");
+    if (visibleFlag) {
+        tooltip.classList.add("tooltip-instant");
+    }
+
     if (usePopover) {
         tooltip.showPopover();
     }
+
     show(tooltip);
     // compute initial position
     dispatch(floatingReposition, tooltip);
+
+    // set flag once displayed
+    once(
+        "transitionend",
+        (ev) => {
+            if (isVisible(tooltip)) {
+                visibleFlag = true;
+            }
+        },
+        tooltip,
+    );
 }
 
 /**
@@ -143,6 +174,16 @@ function hideTooltip(tooltip) {
         tooltip.hidePopover();
     }
     hide(tooltip);
+
+    once(
+        "transitionend",
+        (ev) => {
+            if (!isVisible(tooltip)) {
+                visibleFlag = false;
+            }
+        },
+        tooltip,
+    );
 }
 
 /**
@@ -247,7 +288,7 @@ dynamicBehaviour(
             config.target = href.substring(1);
         }
 
-        const title = config.title || getAttr(el, "title");
+        const title = config.title || getAttr(el, "aria-label") || getAttr(el, "title");
         if (title) {
             // create from title attribute
             removeAttr(el, "title");
@@ -256,6 +297,7 @@ dynamicBehaviour(
             tooltip = ce("div");
             tooltip.id = `tooltip-${i}`;
             tooltip.innerHTML = `${title}`;
+            tooltip.dataset.tooltipGenerated = "";
 
             // If we have a popover parent, adding to the body is not an option
             const parent = el.closest("dialog") || document.body;
@@ -271,7 +313,10 @@ dynamicBehaviour(
             return;
         }
 
-        setAttr(el, "aria-describedby", tooltip.id);
+        // Add a describedby unless already labelled
+        if (!hasAttr(el, "aria-label")) {
+            setAttr(el, "aria-describedby", tooltip.id);
+        }
         tooltip.style.position = "fixed";
         if (usePopover) {
             tooltip.popover = "";
@@ -321,7 +366,10 @@ dynamicBehaviour(
         if (tooltip) {
             off(floatingEvents, tooltipHandler, tooltip);
             getAndRun(cleanupMap, tooltip);
-            tooltip.remove();
+            // Remove generated tooltips
+            if (tooltip.dataset.tooltipGenerated) {
+                tooltip.remove();
+            }
         }
         // Remove events from trigger
         off(events, eventHandler, el);

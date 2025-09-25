@@ -277,7 +277,7 @@ export function debounce(fn, timeout = 300) {
     let timer;
     return (...args) => {
         clearTo(timer);
-        timer = setTimeout(() => {
+        timer = setTo(() => {
             timer = undefined;
             fn(...args);
         }, timeout);
@@ -297,7 +297,7 @@ export function debounceLeading(fn, timeout = 300) {
             fn(...args);
         }
         clearTo(timer);
-        timer = setTimeout(() => {
+        timer = setTo(() => {
             timer = undefined;
         }, timeout);
     };
@@ -494,6 +494,15 @@ export function clearTo(to) {
     }
 }
 
+/**
+ * @param {Function} callback
+ * @param {Number} delay
+ * @returns {Number}
+ */
+export function setTo(callback, delay = 0) {
+    return setTimeout(callback, delay);
+}
+
 const timeoutMap = new WeakMap();
 /**
  * Add a temporary text to a node
@@ -513,7 +522,7 @@ export function ephemeralText(el, text) {
     }
     timeoutMap.set(
         el,
-        setTimeout(() => {
+        setTo(() => {
             doWithAnimation(el, () => {
                 el.innerHTML = "";
             });
@@ -603,7 +612,7 @@ export function waitForAnimation(el) {
 
         // Fallback timer: resolve after the max duration + a small buffer
         // This handles cases where the 'end' event doesn't fire for some reason.
-        const timeout = setTimeout(() => {
+        const timeout = setTo(() => {
             if (isResolved) return;
             onEnd({ target: el }); // Simulate the end event
         }, maxDuration + 50); // 50ms buffer for safety

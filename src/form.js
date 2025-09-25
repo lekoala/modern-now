@@ -3,7 +3,7 @@ import { define } from "nonchalance/selector";
 import { getBoolData, getMixedBoolData, hasAttr, hasData, removeAttr, setAttr } from "./utils/attrs.js";
 import { on, off } from "./utils/events.js";
 import { getAttr } from "./utils/attrs.js";
-import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, globalContext, simpleConfig } from "./utils/misc.js";
+import { as, ce, clearInputs, clearTo, dotPath, ephemeralText, globalContext, setTo, simpleConfig } from "./utils/misc.js";
 import FormValidator from "./classes/FormValidator.js";
 import { qs, qsa } from "./utils/query.js";
 
@@ -177,7 +177,7 @@ define(
             if (validator || isAjax) {
                 if (submitter) {
                     // Wrap in a timeout to avoid flashing during validation
-                    disabledTo = setTimeout(() => {
+                    disabledTo = setTo(() => {
                         setAttr(submitter, "disabled", "disabled");
                     }, 0);
                 }
@@ -226,7 +226,7 @@ define(
 
             if (submitter) {
                 // Always remove disabled
-                setTimeout(() => {
+                setTo(() => {
                     removeAttr(submitter, "disabled");
                 }, 2000); // don't allow clicking like a mad man
             }
