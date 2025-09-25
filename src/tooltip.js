@@ -12,8 +12,8 @@ import {
     simpleConfig,
     dataAsConfig,
     supportsPopover,
-    clearTo,
     setTo,
+    clearTo,
 } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
@@ -82,6 +82,7 @@ const css = /*css*/ `div.tooltip {
     }
     div.tooltip.tooltip-instant {
         transition-delay: 0s;
+        --tooltip-transition: 0;
     }
     div.tooltip[hidden] {
         transition-delay: 0s;
@@ -135,14 +136,17 @@ const usePopover = true && supportsPopover();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
 
+let loadedFlag = false;
 let visibleFlag = false;
+let to;
 
 /**
  * @param {HTMLElement} tooltip
  */
 function showTooltip(tooltip) {
+    clearTo(to);
     tooltip.classList.remove("tooltip-instant");
-    if (visibleFlag) {
+    if (visibleFlag || !loadedFlag) {
         tooltip.classList.add("tooltip-instant");
     }
 
@@ -175,15 +179,11 @@ function hideTooltip(tooltip) {
     }
     hide(tooltip);
 
-    once(
-        "transitionend",
-        (ev) => {
-            if (!isVisible(tooltip)) {
-                visibleFlag = false;
-            }
-        },
-        tooltip,
-    );
+    to = setTo(() => {
+        if (!isVisible(tooltip)) {
+            visibleFlag = false;
+        }
+    }, 150);
 }
 
 /**
@@ -252,6 +252,11 @@ const tooltipHandler = (ev) => {
 };
 
 const cleanupMap = new WeakMap();
+
+once("DOMContentLoaded", (ev) => {
+    visibleFlag = false;
+    loadedFlag = true;
+});
 
 let i = 0;
 dynamicBehaviour(
