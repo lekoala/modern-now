@@ -120,7 +120,7 @@ export function toArray(v) {
  * @returns {Number}
  */
 export function toInt(v) {
-    if (v === undefined) {
+    if (v === undefined || v === '') {
         return 0;
     }
     return Number.parseInt(`${v}`);

@@ -24,6 +24,7 @@ import { byId } from "./utils/query.js";
 // data-placement is set by floating utils
 // shadows are based on this https://codyhouse.co/nuggets/beautiful-css-shadows to work on any background
 // there is a slight delay before show animation to avoid triggering hover when clicking moving over an element
+// don't use scale animation as it messes up positioning
 const css = /*css*/ `div.tooltip {
   --b: 12px;
   --h: 6px;
@@ -32,7 +33,8 @@ const css = /*css*/ `div.tooltip {
   --tooltip-color-start: var(--accent, rgb(139, 59, 210));
   --tooltip-color-end: var(--accent-hover, rgb(47, 30, 152));
   --tooltip-bg: linear-gradient(45deg, var(--tooltip-color-start), var(--tooltip-color-end));
-  --tooltip-transition: 0.15s;
+  --tooltip-transition: 0.1s;
+  --tooltip-delay: 0.1s;
   --tooltip-scale: 0.9;
   pointer-events: none;
   user-select: none;
@@ -59,7 +61,6 @@ const css = /*css*/ `div.tooltip {
     div.tooltip {
         transition:
             opacity var(--tooltip-transition) ease-in-out,
-            scale var(--tooltip-transition) ease-in-out,
             display var(--tooltip-transition) ease-in-out allow-discrete;
 
         @starting-style {
@@ -68,11 +69,10 @@ const css = /*css*/ `div.tooltip {
         }
     }
     div.tooltip:not(.tooltip-click) {
-        transition-delay: var(--tooltip-transition);
+        transition-delay: var(--tooltip-delay);
     }
     div.tooltip[hidden] {
         transition-delay: 0s;
-        scale: var(--tooltip-scale);
         opacity:0;
     }
 }

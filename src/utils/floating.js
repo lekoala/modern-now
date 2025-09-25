@@ -266,6 +266,11 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     // this is better than getBoundingClientRect because if reference
     // spawns on multiple line, bounding box may be incorrect
     const reference = placement === "bottom" ? rects[rects.length - 1] : rects[0];
+
+    // Avoid issue if somehow we cannot compute DOMRect
+    if (!reference) {
+        return;
+    }
     const doc = getDocEl(referenceEl.ownerDocument);
 
     // clientWidth = excluding scrollbar
@@ -375,7 +380,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     // Store as data attribute, useful for styling
     floatingEl.dataset.placement = placement;
 
-    // Position floating element if updated
+    // Position floating element
     Object.assign(floatingEl.style, {
         left: `${coords.x}px`,
         top: `${coords.y}px`,
