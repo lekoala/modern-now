@@ -120,7 +120,7 @@ export function toArray(v) {
  * @returns {Number}
  */
 export function toInt(v) {
-    if (v === undefined || v === '') {
+    if (v === undefined || v === "") {
         return 0;
     }
     return Number.parseInt(`${v}`);
@@ -451,6 +451,17 @@ export function supportsIntersectionObserver() {
 export function supportsDirSelector() {
     if (window.CSS) {
         return CSS.supports("selector(:dir(rtl))");
+    }
+    return false;
+}
+
+/**
+ * @link https://caniuse.com/css-anchor-positioning
+ * @returns {Boolean}
+ */
+export function supportsAnchor() {
+    if (window.CSS) {
+        return CSS.supports("anchor-name: --foo");
     }
     return false;
 }

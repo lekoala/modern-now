@@ -300,6 +300,8 @@ export function reposition(referenceEl, floatingEl, config = {}) {
     const offset = toInt(`${distance}`);
     applyOffset(coords, side, offset, rtl);
 
+    const viewportMargin = 128;
+
     // Flip if it overflows on axis
     if (flip) {
         let placementChanged = false;
@@ -310,7 +312,8 @@ export function reposition(referenceEl, floatingEl, config = {}) {
         if (axis === "x" && (cy < startY || cy + floating.height >= clientHeight)) {
             if (cy < startY && cy >= clientHeight) {
                 floatingEl.style.maxHeight = "90vh";
-            } else {
+            } else if (floating.height <= clientHeight - viewportMargin) {
+                // only flip if the floating element can fit in viewport, otherwise keep base direction
                 side = flipSide(side);
                 placementChanged = true;
             }
@@ -324,7 +327,7 @@ export function reposition(referenceEl, floatingEl, config = {}) {
             }
         }
         // If there is not much space at all in the viewport, then it's better to use top/bottom
-        if (axis === "y" && doc.clientWidth - floating.width < 100) {
+        if (axis === "y" && doc.clientWidth - floating.width < viewportMargin) {
             side = "top";
             axis = "x";
             placementChanged = true;

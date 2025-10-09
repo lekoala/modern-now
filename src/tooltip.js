@@ -1,5 +1,5 @@
 import dynamicBehaviour from "./dynamicBehaviour.js";
-import { addClass, getAttr, getBoolData, hasAttr, removeAttr, setAttr, setData } from "./utils/attrs.js";
+import { addClass, getAttr, getBoolData, hasAttr, removeAttr, setAttr, setCssVar, setData } from "./utils/attrs.js";
 import { dispatch, off, on, once } from "./utils/events.js";
 import { autoUpdate, reposition, floatingHide, floatingReposition } from "./utils/floating.js";
 import { getAndRun } from "./utils/map.js";
@@ -14,6 +14,7 @@ import {
     supportsPopover,
     setTo,
     clearTo,
+    supportsAnchor,
 } from "./utils/misc.js";
 import { byId } from "./utils/query.js";
 
@@ -27,6 +28,7 @@ import { byId } from "./utils/query.js";
  * @property {Boolean} hidden Keep hidden
  * @property {Boolean} visible Keep visible
  * @property {Boolean} click Triggers on click
+ * @property {Boolean} anchor Use CSS anchors
  */
 
 // see https://css-generators.com/tooltip-speech-bubble/
@@ -99,6 +101,17 @@ div.tooltip:before {
   left: 0px;
   bottom: 0px;
 }
+@supports (anchor-name: --foo) {
+    div.tooltip.tooltip-anchored {
+        position-area: start span-all;
+        position-try: flip-block;
+        margin-inline: 0;
+        margin-block: var(--tooltip-distance, 6px);
+    }
+    div.tooltip.tooltip-anchored:before {
+        display:none;
+    }
+}
 div.tooltip[data-placement="top"]:before {
   bottom: calc(-1*var(--h));
   clip-path: polygon(min(100%,var(--p) + var(--b)/2) calc(100% - var(--h)),var(--p) 100%,max(0%,var(--p) - var(--b)/2) calc(100% - var(--h)),50% 50%);
@@ -133,6 +146,7 @@ const id = "tooltip-style";
 injectCss(css, id);
 
 const usePopover = true && supportsPopover();
+const useAnchor = true && supportsAnchor();
 const events = ["mouseover", "mouseout", "focus", "blur", "click"];
 const floatingEvents = [floatingHide, floatingReposition];
 
@@ -274,7 +288,12 @@ dynamicBehaviour(
         const config = simpleConfig(data.tooltip);
 
         // Data shortcut, with a tooltip prefix
-        dataAsConfig(el, config, ["distance", "placement", "target", "class", "title", "visible", "hidden"], "tooltip");
+        dataAsConfig(
+            el,
+            config,
+            ["distance", "placement", "target", "class", "title", "visible", "hidden", "anchor"],
+            "tooltip",
+        );
 
         // Persist some useful data attributes for our eventHandler
         if (config.hidden) {
@@ -287,6 +306,8 @@ dynamicBehaviour(
             data.tooltipClick = "true";
         }
 
+        const anchored = useAnchor && config.anchor;
+
         // use href if no target
         const href = getAttr(el, "href");
         if (!config.target && href && href.indexOf("#") === 0) {
@@ -295,10 +316,11 @@ dynamicBehaviour(
 
         const title = config.title || getAttr(el, "aria-label") || getAttr(el, "title");
         if (title) {
-            // create from title attribute
+            i++;
+
+            // avoid native browser tooltip displayed due to title attr
             removeAttr(el, "title");
 
-            i++;
             tooltip = ce("div");
             tooltip.id = `tooltip-${i}`;
             tooltip.innerHTML = `${title}`;
@@ -316,6 +338,16 @@ dynamicBehaviour(
         }
         if (!tooltip) {
             return;
+        }
+
+        if (anchored) {
+            el.style.setProperty("anchor-name", `--${tooltip.id}`);
+            tooltip.style.setProperty("position-anchor", `--${tooltip.id}`);
+            if (config.distance) {
+                setCssVar(tooltip, "tooltip-distance", `${config.distance}px`);
+            }
+
+            addClass(tooltip, "tooltip-anchored");
         }
 
         // Add a describedby unless already labelled
@@ -352,7 +384,9 @@ dynamicBehaviour(
             tooltipDistance: config.distance || "6",
             tooltipElement: el.id,
         });
-        on(floatingEvents, tooltipHandler, tooltip);
+        if (!anchored) {
+            on(floatingEvents, tooltipHandler, tooltip);
+        }
         // Cleanup is called when element is removed from the dom
         const cleanup = autoUpdate(tooltip);
         cleanupMap.set(tooltip, cleanup);
